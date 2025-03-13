@@ -1,0 +1,7 @@
+<div class="file-select-wrapper">
+  <div class="file-select-text">
+    <mat-icon>file_upload</mat-icon>
+    <span>{{ displayText }}</span>
+  </div>
+  <input type="file" class="file-input" [accept]="acceptedFileTypes" [multiple]="multipleFilesSelectable" (change)="onChange($event)" #fileUpload />
+</div>

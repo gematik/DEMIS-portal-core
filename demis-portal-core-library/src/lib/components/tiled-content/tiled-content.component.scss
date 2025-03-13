@@ -1,0 +1,17 @@
+:host ::ng-deep {
+  display: flex;
+
+  .mat-sidenav {
+    min-width: 240px;
+  }
+
+  .tiled-content-wrapper {
+    overflow: auto;
+    scrollbar-gutter: stable both-edges;
+  }
+
+  .content-tile-container {
+    max-width: 1172px;
+    margin: auto;
+  }
+}

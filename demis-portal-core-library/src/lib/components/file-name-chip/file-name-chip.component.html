@@ -1,0 +1,8 @@
+<mat-chip class="file-name-chip" [disableRipple]="true">
+  <mat-icon class="prefix-icon">description</mat-icon>
+  <span class="file-name">{{ fileName }}{{ fileSize ? ' (' + (fileSize | fileSize) + ')' : '' }}</span>
+
+  <button id="file-delete-button" mat-icon-button type="button" (click)="onDeleteClicked()" [disabled]="!canDelete">
+    <mat-icon>delete</mat-icon>
+  </button>
+</mat-chip>

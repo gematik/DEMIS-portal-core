@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  .file-name-chip {
+    height: fit-content;
+
+    .prefix-icon {
+      margin-right: 8px;
+    }
+
+    .file-name {
+      font-weight: 400;
+      min-width: 300px;
+    }
+
+    .mdc-evolution-chip__text-label {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

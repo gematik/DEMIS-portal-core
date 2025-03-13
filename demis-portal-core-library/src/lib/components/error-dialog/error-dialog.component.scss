@@ -1,0 +1,48 @@
+#error-dialog-title {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+#error-dialog-title-icon {
+  color: var(--gem-demis-error-color);
+  margin-right: var(--gem-demis-icon-to-text-padding);
+}
+
+.general-info {
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-top: 1.2rem;
+  margin-bottom: 1.6rem;
+}
+
+#error-list {
+  max-height: 33vh;
+  overflow: auto;
+
+  .error-item {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    margin-bottom: 0.6rem;
+    margin-top: 0.6rem;
+
+    &-icon {
+      color: var(--gem-demis-error-color);
+      font-size: 1.4rem;
+      padding-right: var(--gem-demis-icon-to-text-padding);
+    }
+  }
+}
+
+.error-dialog-actions {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: var(--gem-demis-icon-to-text-padding);
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
