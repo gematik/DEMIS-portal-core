@@ -1,0 +1,36 @@
+.file-select-wrapper {
+  position: relative;
+  display: flex;
+  height: 10rem;
+  border: 1px dashed var(--gem-demis-border-color);
+  padding: 8px;
+  background-color: #ffffff;
+
+  .file-input {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .file-select-text {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    color: var(--gem-demis-primary-color);
+    font-weight: 500;
+  }
+}
+
+.mat-icon {
+  margin-right: 8px;
+  min-width: 24px;
+}

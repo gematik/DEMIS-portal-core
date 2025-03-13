@@ -1,0 +1,56 @@
+table {
+  width: 100%;
+  table-layout: auto;
+  border: 1px solid;
+  border-color: #bdbdbd;
+  box-shadow: none;
+  background-color: #ffffff;
+  /* round the corners of the tabel */
+  border-radius: 5px;
+  border-collapse: separate; /* Ensures rounded corners are visible */
+  overflow: hidden;
+
+  th {
+    background-color: #fafafa;
+  }
+
+  caption {
+    text-align: left;
+  }
+
+  td.mat-column-furtherInformation {
+    width: 0px;
+  }
+}
+
+.upload-error-title-icon {
+  color: #f44336;
+  background-color: #ffffff;
+}
+
+.upload-error-cell {
+  padding: 8px 16px;
+}
+
+.knowledge-db-search-icon {
+  color: #000e52;
+}
+
+.upload-error-copy-button {
+  color: #000e52;
+  border-color: #000e52;
+}
+
+.upload-error-close-button {
+  color: #000e52;
+  border: 2px solid #000e52;
+  border-color: #000e52;
+}
+
+::ng-deep .mat-mdc-dialog-surface {
+  background-color: white;
+}
+
+::ng-deep .mat-mdc-dialog-content {
+  overflow-x: hidden;
+}

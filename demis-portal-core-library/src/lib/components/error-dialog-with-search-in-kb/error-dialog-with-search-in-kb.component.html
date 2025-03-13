@@ -1,0 +1,42 @@
+<mat-dialog-content>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" id="errors-table">
+    <caption>
+      <h2 mat-dialog-title>
+        <mat-icon class="upload-error-title-icon">error_outline</mat-icon>
+        <span id="error-dialog-title">
+          {{ errorTitle }}
+        </span>
+      </h2>
+    </caption>
+    <ng-container matColumnDef="text">
+      <th mat-header-cell *matHeaderCellDef>Fehlermeldungen</th>
+      <td mat-cell *matCellDef="let element" class="upload-error-cell">{{ element.text }}</td>
+    </ng-container>
+
+    @if(atLeastOneErrorHaveQueryString()){
+    <ng-container matColumnDef="furtherInformation">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell class="furtherInformation" *matCellDef="let element">
+        @if(element.queryString){
+        <a mat-icon-button
+          [href]="'https://wiki.gematik.de/dosearchsite.action?where=DSKB&queryString=' + encodeQueryString(element.queryString)"
+          target="_blank" rel="noopener noreferrer">
+          <mat-icon class="knowledge-db-search-icon">menu_book</mat-icon>
+        </a>
+        }
+      </td>
+    </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns();"></tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions>
+  @if(clipboardContent){
+  <button id="copy-errors-btn" mat-stroked-button class="upload-error-copy-button" color="secondary"
+    (click)="onCopyErrors()">Fehlermeldungen kopieren</button>
+  }
+  <button id="close-btn" mat-flat-button class="upload-error-close-button" color="primary"
+    (click)="onNoClick()">Schlie&szlig;en</button>
+</mat-dialog-actions>

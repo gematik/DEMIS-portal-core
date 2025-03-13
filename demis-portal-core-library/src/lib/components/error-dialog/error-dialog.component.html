@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>
+  <span id="error-dialog-title">
+    <mat-icon id="error-dialog-title-icon">report_problem</mat-icon>
+    <span id="error-dialog-title-text">{{ errorTitle() }}</span>
+  </span>
+</h2>
+
+<mat-dialog-content>
+  @if (errors()) {
+    <div id="error-list">
+      @for (error of errors(); track $index) {
+        @if ($index > 0) {
+          <mat-divider></mat-divider>
+        }
+
+        <div id="error-{{ $index }}" class="error-item">
+          <div class="error-item-icon">
+            <mat-icon>error_outline</mat-icon>
+          </div>
+          <div class="error-item-content">
+            @if (error.message) {
+              <div class="error-item-content-message">
+                {{ error.message }}
+      
+                @if (error.cause) {
+                  <span class="error-item-content-cause">({{ error.cause }})</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="error-dialog-actions">
+    <span class="spacer"></span>
+
+    <button mat-stroked-button [mat-dialog-close] cdkFocusInitial gemDemisSecondaryButton>Schließen</button>
+  </div>
+</mat-dialog-actions>
