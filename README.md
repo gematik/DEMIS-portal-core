@@ -47,34 +47,49 @@ See [ReleaseNotes](ReleaseNotes.md) for all information regarding the (newest) r
 
 ## Getting Started
 
-### Prerequisites
+### NPM Configuration
 
-Before you can build and run the application, you need to install the following software products:
-
-* [NodeJS](https://nodejs.org) >= 20.0.0
-* [npm](https://docs.npmjs.com/try-the-latest-stable-version-of-npm)
-* A browser for Tests 
-  * Google Chrome
-  * Firefox
-* An IDE
-  * [WebStorm](https://www.jetbrains.com/webstorm)
-  * [IntelliJ](https://www.jetbrains.com/de-de/idea)
-  * [Visual Studio Code](https://code.visualstudio.com)
-
-#### Angular CLI
-
-To use the project, you need the Angular CLI tool and it can be installed and configured as follows:
+The Project requires access to the Nexus Private NPM registry from gematik, therefore the `npm` CLI tool should be configured accordingly:
 
 ```sh
-npm add -g @angular/cli
+# Login to private registry with username/password
+npm login --registry=https://nexus.prod.ccs.gematik.solutions/repository/allNpmRepos/
+# Set npm standard registry
+npm config set registry https://nexus.prod.ccs.gematik.solutions/repository/allNpmRepos/
 ```
+
+### Developing the library
+
+The library can be built for development using the following command:
+
+```sh
+npm run watch
+```
+
+This will build the library and watch for changes. The library can be used in the demo application that ships with this repository.
+There is no need to link the library to the demo application by hand, as the demo application already knows the paths to the dist folder of the library, thanks to `tsconfig.json`.
+Once the library is built, the demo application can be started using the following command:
+
+```sh
+npm run start
+```
+
+To avoid having to start and manage two terminal windows for the commands above, you can simply run the following command to start the watch and serve processes in one terminal window:
+
+```sh
+npm run dev
+```
+
+This will start the library in watch mode and the demo application in serve mode. The demo application will automatically reload when changes are made to the library.
+
+For further information on how to use the library in the demo application, please refer to the [demo application README](./demo/README.md).
 
 ### How to build
 
-The Application can be built using the following commands, if they are installed natively:
+The library can be built using the following commands, if they are installed natively:
 
 ```sh
-npm install
+npm clean-install
 npm run build
 ```
 
@@ -85,7 +100,7 @@ From the IDE, if you are using JetBrains ones, you can run the tests by download
 You can run all unit tests once with the following command:
 
 ```sh
-npm test
+npm run test
 ```
 
 ## Usage
@@ -108,20 +123,14 @@ EUROPEAN UNION PUBLIC LICENCE v. 1.2
 
 EUPL © the European Union 2007, 2016
 
-Following terms apply:
+## Additional Notes and Disclaimer from gematik GmbH
 
 1. Copyright notice: Each published work result is accompanied by an explicit statement of the license conditions for use. These are regularly typical conditions in connection with open source or free software. Programs described/provided/linked here are free software, unless otherwise stated.
-
 2. Permission notice: Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions::
-
-    1. The copyright notice (Item 1) and the permission notice (Item 2) shall be included in all copies or substantial portions of the Software.
-
-    2. The software is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the warranties of fitness for a particular purpose, merchantability, and/or non-infringement. The authors or copyright holders shall not be liable in any manner whatsoever for any damages or other claims arising from, out of or in connection with the software or the use or other dealings with the software, whether in an action of contract, tort, or otherwise.
-
-    3. The software is the result of research and development activities, therefore not necessarily quality assured and without the character of a liable product. For this reason, gematik does not provide any support or other user assistance (unless otherwise stated in individual cases and without justification of a legal obligation). Furthermore, there is no claim to further development and adaptation of the results to a more current state of the art.
-
+  1. The copyright notice (Item 1) and the permission notice (Item 2) shall be included in all copies or substantial portions of the Software.
+  2. The software is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the warranties of fitness for a particular purpose, merchantability, and/or non-infringement. The authors or copyright holders shall not be liable in any manner whatsoever for any damages or other claims arising from, out of or in connection with the software or the use or other dealings with the software, whether in an action of contract, tort, or otherwise.
+  3. The software is the result of research and development activities, therefore not necessarily quality assured and without the character of a liable product. For this reason, gematik does not provide any support or other user assistance (unless otherwise stated in individual cases and without justification of a legal obligation). Furthermore, there is no claim to further development and adaptation of the results to a more current state of the art.
 3. Gematik may remove published results temporarily or permanently from the place of publication at any time without prior notice or justification.
-
 4. Please note: Parts of this code may have been generated using AI-supported technology.’ Please take this into account, especially when troubleshooting, for security analyses and possible adjustments.
 
 See [LICENSE](LICENSE.md).

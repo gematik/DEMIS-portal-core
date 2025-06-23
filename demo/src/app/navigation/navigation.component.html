@@ -1,0 +1,55 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav {{ (isHandset$ | async) ? '' : 'wide-sidenav' }}" fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false">
+    <mat-toolbar color="primary">
+      @if (isHandset$ | async) {
+      <a id="home-button" mat-button routerLink="/" (click)="drawer.toggle();">DEMIS Portal-Core Library</a>
+      }
+      @else {
+      <a id="home-button" mat-button routerLink="/">DEMIS Portal-Core Library</a>
+      }
+    </mat-toolbar>
+
+    <!-- BEGIN NAVIGATION EXPANDERS -->
+
+    <mat-accordion multi displayMode="flat">
+      @for (routeGroup of routeGroups; track routeGroup) {
+        <mat-expansion-panel class="navigation-expander outlined-panel" [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ routeGroup | titlecase }} </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-nav-list>
+            @for (route of getRoutes(routeGroup); track route.path) {
+            @if (isHandset$ | async) {
+            <a mat-list-item routerLink="{{ route.path }}" routerLinkActive="active" [title]="route.title"
+              (click)="drawer.toggle()">
+              {{ route.title }}
+            </a>
+            }
+            @else {
+            <a mat-list-item routerLink="{{ route.path }}" routerLinkActive="active" [title]="route.title">
+              {{ route.title }}
+            </a>
+            }
+            }
+          </mat-nav-list>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+
+    <!-- END NAVIGATION EXPANDERS -->
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      @if (isHandset$ | async) {
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      }
+      <h1>{{ activeComponentTitle() }}</h1>
+    </mat-toolbar>
+    <router-outlet (activate)="onActivateRoute($event)"></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

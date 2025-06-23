@@ -1,0 +1,25 @@
+{
+  "name": "core-schematics",
+  "description": "A set of schematics to simplify the process of creating consumer pages for the DEMIS Portal-Core library",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "test": "npm run build && jasmine src/**/*_spec.js"
+  },
+  "keywords": [
+    "schematics"
+  ],
+  "author": "",
+  "license": "MIT",
+  "schematics": "./src/collection.json",
+  "dependencies": {
+    "@angular-devkit/core": "^19.2.9",
+    "@angular-devkit/schematics": "^19.2.9",
+    "typescript": "~5.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.18.0",
+    "@types/jasmine": "~5.1.0",
+    "jasmine": "^5.0.0"
+  }
+}

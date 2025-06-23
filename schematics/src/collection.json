@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "consumer-page-for": {
+      "description": "A schematic to add a new consumer page to the demo app.",
+      "factory": "./consumer-page-for/index#consumerPageFor",
+      "schema": "./consumer-page-for/schema.json"
+    }
+  }
+}
