@@ -1,56 +1,120 @@
-table {
-  width: 100%;
-  table-layout: auto;
-  border: 1px solid;
-  border-color: #bdbdbd;
-  box-shadow: none;
-  background-color: #ffffff;
-  /* round the corners of the tabel */
-  border-radius: 5px;
-  border-collapse: separate; /* Ensures rounded corners are visible */
-  overflow: hidden;
-
-  th {
-    background-color: #fafafa;
-  }
-
-  caption {
-    text-align: left;
-  }
-
-  td.mat-column-furtherInformation {
-    width: 0px;
-  }
-}
-
-.upload-error-title-icon {
-  color: #f44336;
-  background-color: #ffffff;
-}
-
-.upload-error-cell {
-  padding: 8px 16px;
-}
-
-.knowledge-db-search-icon {
-  color: #000e52;
-}
-
-.upload-error-copy-button {
-  color: #000e52;
-  border-color: #000e52;
-}
-
-.upload-error-close-button {
-  color: #000e52;
-  border: 2px solid #000e52;
-  border-color: #000e52;
-}
-
 ::ng-deep .mat-mdc-dialog-surface {
-  background-color: white;
+  border-radius: 16px;
 }
 
-::ng-deep .mat-mdc-dialog-content {
-  overflow-x: hidden;
+.upload-error-content {
+
+  padding: 30px 30px 0 30px;
+  background-color: var(--color-white);
+
+  .table-header-container,
+  .table-content-container {
+    table {
+      width: 100%;
+      table-layout: auto;
+      border: 1px solid;
+      border-color: var(--color-neutral-light);
+      box-shadow: none;
+      background-color: var(--color-white);
+      border-collapse: separate;
+      /* Ensures rounded corners are visible */
+      overflow: hidden;
+
+      .caption {
+        height: 0;
+        color: transparent;
+        font-size: 0;
+      }
+    }
+  }
+
+  .table-header-container {
+    table {
+      /* round the top corners of the table */
+      border-radius: 5px 5px 0 0;
+
+      th {
+        background-color: var(--color-neutral-lighter);
+        border-bottom: none
+      }
+    }
+  }
+
+  .table-content-container {
+    max-height: 338px;
+    overflow-y: auto;
+
+    table {
+      /* round the bottom corners of the tabel */
+      border-radius: 0 0 5px 5px;
+      border-top: none;
+
+      td {
+        border-bottom: 1px solid var(--color-neutral-light);
+      }
+
+      caption {
+        display: none;
+      }
+
+      td.mat-column-furtherInformation {
+        width: 0;
+        padding: 10px 15px 10px 10px;
+      }
+    }
+  }
+
+  .upload-error-title {
+    padding: 0 0 30px 0;
+    display: flex;
+    align-items: center;
+
+    .upload-error-title-icon {
+      color: var(--color-error-dark);
+      background-color: var(--color-white);
+      padding-right: 10px;
+      font-size: var(--mdc-dialog-subhead-size, var(--mat-app-headline-small-size, 1rem));
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .upload-error-cell {
+    padding: 10px 0 10px 15px;
+    word-break: break-word;
+  }
+
+  .knowledge-db-search-icon {
+    color: var(--color-primary);
+    border-color: var(--color-white);
+  }
+}
+
+.upload-error-button-bar {
+  background-color: var(--color-white);
+  margin-left: auto;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  padding: 0;
+
+  .upload-error-close-button,
+  .upload-error-copy-button {
+
+    &:hover {
+      background-color: var(--color-neutral-lighter);
+    }
+  }
+
+  .upload-error-copy-button {
+    color: var(--color-primary);
+    border: none;
+
+  }
+
+  #close-btn {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    padding: 8px 24px;
+  }
+
 }

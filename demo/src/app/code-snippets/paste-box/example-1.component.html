@@ -1,0 +1,11 @@
+@if (canReadFromClipboard()) {
+<p>You have permission to read from the clipboard with this browser.</p>
+}
+@else {
+<p>
+  You <strong>DO NOT</strong> have permission to read from the clipboard with this browser.
+  Trying to paste data from the clipboard will result in an error.
+</p>
+}
+
+<gem-demis-paste-box (dataPasted)="onDataPasted($event)"></gem-demis-paste-box>

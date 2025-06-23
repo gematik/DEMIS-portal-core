@@ -1,0 +1,26 @@
+mat-form-field {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.datepicker-label{
+  margin-right: 0.25em;
+}
+
+
+//TODO
+// No restriction to :host because otherwise the styling doesnt apply, but this is a risky solution.
+// This could lead to styling being apply to more than our formly custom datepicker. So we should fix this.
+::ng-deep .mat-datepicker-content {
+  min-height: 395px !important;
+  background-color: var(--color-secondary-dark20, #EAF6FF) !important;
+}
+
+::ng-deep .mat-datepicker-toggle-default-icon, {
+  color: var(--color-primary, #003A66);
+}
+
+
+
+

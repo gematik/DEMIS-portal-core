@@ -1,13 +1,18 @@
 {
   "name": "portal-core",
-  "version": "1.1.0",
+  "version": "1.4.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test-local": "ng test --karma-config karma.conf.js",
-    "test": "ng test --karma-config karma.single-run.conf.js"
+    "clean": "rimraf dist",
+    "postinstall": "npm run build:schematics",
+    "build": "ng build @gematik/demis-portal-core-library",
+    "build:dev": "npm run clean && npm run build && npm pack dist/gematik/demis-portal-core-library --pack-destination dist",
+    "build:schematics": "npm run build --prefix schematics",
+    "watch": "ng build @gematik/demis-portal-core-library --watch --configuration production",
+    "start": "wait-on dist/gematik/demis-portal-core-library/public-api.d.ts && ng serve --port 4299",
+    "dev": "npm run clean && npm-run-all --parallel watch start",
+    "test-local": "ng test @gematik/demis-portal-core-library --karma-config karma.conf.js",
+    "test": "ng test @gematik/demis-portal-core-library --karma-config karma.single-run.conf.js"
   },
   "private": true,
   "dependencies": {
@@ -18,9 +23,13 @@
     "@angular/core": "18.2.13",
     "@angular/forms": "18.2.13",
     "@angular/material": "18.2.14",
+    "@angular/material-date-fns-adapter": "18.2.14",
     "@angular/platform-browser": "18.2.13",
     "@angular/platform-browser-dynamic": "18.2.13",
     "@angular/router": "18.2.13",
+    "@ngx-formly/core": "6.3.12",
+    "@ngx-formly/material": "6.3.12",
+    "ngx-highlightjs": "12.0.0",
     "ngx-logger": "5.0.12",
     "rxjs": "7.8.2",
     "tslib": "2.8.1",
@@ -31,6 +40,7 @@
     "@angular/cli": "18.2.14",
     "@angular/compiler-cli": "18.2.13",
     "@types/jasmine": "5.1.7",
+    "core-schematics": "file:schematics",
     "jasmine-core": "5.2.0",
     "karma": "6.4.4",
     "karma-chrome-launcher": "3.2.0",
@@ -41,6 +51,8 @@
     "karma-sonarqube-unit-reporter": "0.0.23",
     "ng-mocks": "14.13.4",
     "ng-packagr": "18.2.1",
-    "typescript": "5.5.4"
+    "npm-run-all": "4.1.5",
+    "typescript": "5.5.4",
+    "wait-on": "8.0.3"
   }
 }

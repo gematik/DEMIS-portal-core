@@ -2,5 +2,80 @@
 
 # Release Notes Portal-Core
 
+## Release 1.4.1
+
+- Datepicker: Fixed a bug with the navigation arrows in the header.
+- Datepicker: Added support for dynamic minimum and maximum dates.
+- Datepicker: Added support for custom styling and validation messages from the consuming application.
+- Datepicker: made it compatible with repeater
+- Datepicker: made it compatible with pastebox
+
+## Release 1.4.0
+
+- Fixed an issue with non compatible dependency versions of ngx-formly and missing peer dependencies.
+- Introduced a FormlyDatepicker component to the library. It is based on Angular Material and designed to be used as a custom Formly type. The component supports three precision levels: day, month, and year.
+
+## Release 1.3.6
+
+- Enhanced the MaxHeightContentContainer component to support an array of CSS-selectors for HTML elements that will be subtracted from the max viewport height. This allows for more flexibility in defining the maximum height of the content container.
+
+
+## Release 1.3.5
+
+- Introduced a schematics project in the workspace and added schematic `consumer-page-for` in order to be used with the `ng generate` command. This schematic can be used to generate a new consumer page for a component from portal-core library in the demo app.
+- Formly Repeater: Updated test selectors to use standard HTML id attributes instead of data-testid.
+
+
+## Release 1.3.4
+
+- Formly Repeater: Improved styling.
+
+
+## Release 1.3.3
+
+- Formly Repeater: Added setFieldCount method to programmatically adjust the number of repeated fields, with optional value reset support.
+
+
+## Release 1.3.2
+
+- Formly Repeater: Enabled the ability for consuming apps to dynamically apply custom classes, giving greater flexibility in styling repeatable form fields.
+
+
+## Release 1.3.1
+
+- Added new example and improved tests for the Formly Repeater
+- Fixed URI decoding issue in the Paste Box component
+
+## Release 1.3.0
+
+- Introduced a Formly Repeater component to the library, which can be used as a Formly custom type for making single input fields repeatable.
+- The Paste-Box now URL-decodes each splitted segment from the URL-encoded data from the clipboard.
+
+## Release 1.2.1
+
+- Adjusted the border radius of the error dialog
+
+## Release 1.2.0
+
+- Introduced Paste Box component to the library. This component comprises of a button that enables Microfrontends to read data from the clipboard in a generic way.
+
+## Release 1.1.3
+
+- Updated ospo-resources for adding additional notes and disclaimer
+- Introduced a demo app to the workspace to showcase the usage of the portal-core library. The demo app is located in the `demo` folder and serves both as a reference for developers to understand how to integrate the library in their own applications and as development platform for the portal-core library with minimum dependencies.
+- The error dialog has been adjusted to meet all micro-frontend requirements. Specifically, it can now be configured to be closable or to include a redirect to the homepage.
+
+## Release 1.1.2
+
+- Edit the style of the error dialog to align with the new style adjustments.
+
+## Release 1.1.1
+
+### Improvements
+
+- The error dialog has been adjusted to meet the design specifications.
+- Scroll behaviour of error dialog improved
+
 ## Release 1.1.0
+
 - First official GitHub-Release

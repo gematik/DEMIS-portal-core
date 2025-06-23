@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <formly-form [form]="form" [model]="model" [fields]="fields"></formly-form>
+  <div>
+    <p>Diese Values werden gehalten: </p>
+    <p>Model: {{ model.firstTimeInSpain}}</p>
+    <p>FormControl: {{ form.get('firstTimeInSpain')?.value }}</p>
+    <p>Status: {{ form.get('firstTimeInSpain')?.valid ? 'valid' : 'not valid' }}</p>
+  </div>
+</form>

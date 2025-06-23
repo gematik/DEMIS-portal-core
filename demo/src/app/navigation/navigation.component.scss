@@ -1,0 +1,47 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0 8px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.mat-sidenav-content {
+  padding: 0 12px;
+}
+
+#home-button {
+  font-size: 1.2rem;
+  padding: 0 16px;
+}
+
+.active {
+  background-color: rgba(19, 56, 218, 0.12);
+  color: rgba(204, 204, 204, 0.12);
+}
+
+.navigation-expander {
+  margin: 0 4px;
+}
+
+.wide-sidenav {
+  min-width: 300px;
+  width: 15vw;
+  max-width: 100vw;
+}
+
+.outlined-panel {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: none !important;
+}

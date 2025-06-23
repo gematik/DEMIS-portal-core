@@ -1,0 +1,59 @@
+.datepicker-navigation-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5em;
+  color: var(--color-neutral-dark, #595959);
+
+  mat-icon {
+    color: inherit;
+  }
+}
+
+.datepicker-header-period-label {
+  flex: 1;
+  height: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.datepicker-precision-toggle-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--color-neutral-light, #d9d9d9);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 0.5rem;
+}
+
+.datepicker-precision-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  button {
+    color: var(--color-neutral-dark, #595959);
+    font-size: small;
+    font-weight: normal;
+    background: transparent;
+    padding: 0.25rem 0.5rem;
+
+    &:disabled {
+      color: #aaa;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+}
+
+.datepicker-precision-underline.selected {
+  background-color: var(--color-primary, #003A66);
+  height: 4px;
+  width: 100%;
+}
+
+
+.hidden {
+  visibility: hidden;
+}

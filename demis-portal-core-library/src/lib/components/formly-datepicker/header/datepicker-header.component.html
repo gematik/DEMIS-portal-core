@@ -1,0 +1,55 @@
+<div class="datepicker-precision-toggle-row">
+  @for (precision of precisionEntries; track precision.key) {
+    <div class="datepicker-precision-button-wrapper">
+      <button
+        mat-button
+        [id]="'datepicker-precision-toggle-' + precision.key"
+        [disabled]="!allowedPrecisions.includes(precision.key)"
+        [class.selected]="currentPrecision === precision.key"
+        (click)="setViewFor(precision.key)">
+        {{ precision.display }}
+      </button>
+      <div class="datepicker-precision-underline" [class.selected]="currentPrecision === precision.key"></div>
+    </div>
+  }
+</div>
+
+<div class="datepicker-navigation-header">
+  @if (activeCalendarView === 'multi-year') {
+    <button mat-icon-button id="prev-years" (click)="previousClicked('multi-year')" [disabled]="!canGoPrevious('multi-year')">
+      <mat-icon>keyboard_double_arrow_left</mat-icon>
+    </button>
+  }
+
+  @if (activeCalendarView === 'month' || activeCalendarView === 'year') {
+    <button mat-icon-button id="prev-year" (click)="previousClicked('year')" [disabled]="!canGoPrevious('year')">
+      <mat-icon>keyboard_double_arrow_left</mat-icon>
+    </button>
+  }
+
+  @if (activeCalendarView === 'month') {
+    <button mat-icon-button id="prev-month" (click)="previousClicked('month')" [disabled]="!canGoPrevious('month')">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+  }
+
+  <span class="datepicker-header-period-label" [class.hidden]="activeCalendarView !== 'month'">{{ periodLabel() }}</span>
+
+  @if (activeCalendarView === 'month') {
+    <button mat-icon-button id="next-month" (click)="nextClicked('month')" [disabled]="!canGoNext('month')">
+      <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+  }
+
+  @if (activeCalendarView === 'month' || activeCalendarView === 'year') {
+    <button mat-icon-button id="next-year" (click)="nextClicked('year')" [disabled]="!canGoNext('year')">
+      <mat-icon>keyboard_double_arrow_right</mat-icon>
+    </button>
+  }
+
+  @if (activeCalendarView === 'multi-year') {
+    <button mat-icon-button id="next-years" (click)="nextClicked('multi-year')" [disabled]="!canGoNext('multi-year')">
+      <mat-icon>keyboard_double_arrow_right</mat-icon>
+    </button>
+  }
+</div>
