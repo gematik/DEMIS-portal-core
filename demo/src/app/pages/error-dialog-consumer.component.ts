@@ -17,20 +17,21 @@
 import { Component } from '@angular/core';
 import { ErrorDialogExample1Component } from '../code-snippets/error-dialog/example-1.component';
 import { CodeExampleBoxComponent, CodeExampleBoxComponentOptions } from '../utils/code-example-box.component';
-import { DocTableComponent } from '../utils/doc-table.component';
+import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
+import { DocTableComponent, DocTableRowData } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 
 @Component({
   selector: 'app-error-dialog',
-  standalone: true,
   imports: [
     OverviewSectionComponent,
     SubsectionTitleComponent,
     DocTableComponent,
     ExpandableSectionsComponent,
     CodeExampleBoxComponent,
+    CodeSnippetBoxComponent,
     ErrorDialogExample1Component,
   ],
   template: `
@@ -44,7 +45,7 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         <p>See the examples below for the different ways to use the message dialog service.</p>
 
         <app-subsection-title>Import</app-subsection-title>
-        <pre><code>{{ 'import { MessageDialogService } from "@gematik/demis-portal-core-library";' }}</code></pre>
+        <app-code-snippet-box language="ts" codeSnippetString='import { MessageDialogService } from "@gematik/demis-portal-core-library";' />
 
         <app-subsection-title>Methods</app-subsection-title>
         <app-doc-table [dataSource]="methodsDocTableDataSource"></app-doc-table>
@@ -69,77 +70,36 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
   `,
 })
 export class ErrorDialogConsumerComponent {
-  methodsDocTableDataSource = [
+  methodsDocTableDataSource: DocTableRowData[] = [
     {
-      name: 'showErrorDialog',
+      name: '`showErrorDialog`',
       description: [
         'Opens an error dialog, that is able to show a list of errors.',
         'Each error can have a search query attached. If so, the error message contains a link button to direct the user to the DEMIS Knowledge Base.',
       ],
-      options: { nameIsCode: true },
     },
   ];
 
-  showErrorDialogDocTableDataSource = [
-    {
-      name: 'data: ErrorsDialogProps',
-      description: 'The data object used to render the error dialog.',
-      options: { nameIsCode: true },
-    },
-    {
-      name: 'style?: ErrorDialogStyle',
-      description: '[optional] Overwrite styles of the message dialog.',
-      options: { nameIsCode: true },
-    },
+  showErrorDialogDocTableDataSource: DocTableRowData[] = [
+    { name: '`data: ErrorsDialogProps`', description: 'The data object used to render the error dialog.' },
+    { name: '`style?: ErrorDialogStyle`', description: '`[optional]` Overwrite styles of the message dialog.' },
   ];
 
-  errorsDialogPropsDocTableDataSource = [
-    {
-      name: 'errors: ErrorMessage[]',
-      description: 'The array of error messages to be displayed in the error dialog.',
-      options: { nameIsCode: true },
-    },
-    {
-      name: 'clipboardContent?: string',
-      description: '[optional]',
-      options: { nameIsCode: true },
-    },
-    {
-      name: 'errorTitle?: string',
-      description: '[optional] Overwrites the default dialog title.',
-      options: { nameIsCode: true },
-    },
+  errorsDialogPropsDocTableDataSource: DocTableRowData[] = [
+    { name: '`errors: ErrorMessage[]`', description: 'The array of error messages to be displayed in the error dialog.' },
+    { name: '`clipboardContent?: string`', description: '`[optional]`' },
+    { name: '`errorTitle?: string`', description: '`[optional]` Overwrites the default dialog title.' },
   ];
 
-  errorMessageDocTableDataSource = [
-    {
-      name: 'text: string',
-      description: 'The error text message to be displayed in the error dialog.',
-      options: { nameIsCode: true },
-    },
-    {
-      name: 'queryString?: string',
-      description: '[optional] A search string that will trigger a button to direct the user to the DEMIS Knowledge Base.',
-      options: { nameIsCode: true },
-    },
+  errorMessageDocTableDataSource: DocTableRowData[] = [
+    { name: '`text: string`', description: 'The error text message to be displayed in the error dialog.' },
+    { name: '`queryString?: string`', description: '`[optional]` A search string that will trigger a button to direct the user to the DEMIS Knowledge Base.' },
   ];
 
-  errorDialogStyleDocTableDataSource = [
-    {
-      name: 'height?: string',
-      description: '[optional] Overwrites the height config values of the Material Dialog used.',
-      options: { nameIsCode: true },
-    },
-    {
-      name: 'width?: string',
-      description: '[optional] Overwrites the width config values of the Material Dialog used.',
-      options: { nameIsCode: true },
-    },
-    {
-      name: 'maxWidth?: string',
-      description: '[optional] Overwrites the maxWidth config values of the Material Dialog used.',
-      options: { nameIsCode: true },
-    },
+  errorDialogStyleDocTableDataSource: DocTableRowData[] = [
+    { name: '`height?: string`', description: '`[optional]` Overwrites the height config values of the Material Dialog used.' },
+    { name: '`width?: string`', description: '`[optional]` Overwrites the width config values of the Material Dialog used.' },
+    { name: '`maxWidth?: string`', description: '`[optional]` Overwrites the maxWidth config values of the Material Dialog used.' },
   ];
 
   examples: CodeExampleBoxComponentOptions[] = [
@@ -158,7 +118,6 @@ export class ErrorDialogConsumerComponent {
           codeSnippetPath: 'code-snippets/error-dialog',
         },
       ],
-      rowHeight: '800px',
     },
   ];
 }

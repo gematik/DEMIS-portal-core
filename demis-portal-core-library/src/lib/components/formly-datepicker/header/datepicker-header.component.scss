@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   padding: 0.5em;
-  color: var(--color-neutral-dark, #595959);
+  color: var(--color-neutral-dark);
 
   mat-icon {
     color: inherit;
@@ -21,7 +21,7 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  background-color: var(--color-neutral-light, #d9d9d9);
+  background-color: var(--color-neutral-light);
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   padding: 0.5rem;
@@ -33,7 +33,7 @@
   align-items: center;
 
   button {
-    color: var(--color-neutral-dark, #595959);
+    color: var(--color-neutral-dark);
     font-size: small;
     font-weight: normal;
     background: transparent;
@@ -48,7 +48,7 @@
 }
 
 .datepicker-precision-underline.selected {
-  background-color: var(--color-primary, #003A66);
+  background-color: var(--color-primary);
   height: 4px;
   width: 100%;
 }

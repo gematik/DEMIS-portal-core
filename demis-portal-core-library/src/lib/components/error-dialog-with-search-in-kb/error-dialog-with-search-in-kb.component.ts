@@ -15,7 +15,7 @@
  */
 
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, inject, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,12 +25,14 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'gem-demis-error-dialog-with-search-in-kb',
-  standalone: true,
   imports: [MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatTableModule, MatIconModule],
   templateUrl: './error-dialog-with-search-in-kb.component.html',
   styleUrl: './error-dialog-with-search-in-kb.component.scss',
 })
 export class ErrorDialogWithSearchInKbComponent {
+  private readonly data = inject<ErrorsDialogProps>(MAT_DIALOG_DATA);
+  private readonly router = inject(Router);
+
   readonly dialogRef = inject(MatDialogRef<ErrorDialogWithSearchInKbComponent>);
   private readonly clipboard = inject(Clipboard);
   dataSource: ErrorMessage[];
@@ -38,14 +40,11 @@ export class ErrorDialogWithSearchInKbComponent {
   errorTitle: string;
   redirectToHome: boolean;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ErrorsDialogProps,
-    private router: Router
-  ) {
-    this.dataSource = data.errors;
-    this.clipboardContent = data.clipboardContent;
-    this.errorTitle = data.errorTitle || 'Aufgetretene Fehler';
-    this.redirectToHome = data.redirectToHome ?? false;
+  constructor() {
+    this.dataSource = this.data.errors;
+    this.clipboardContent = this.data.clipboardContent;
+    this.errorTitle = this.data.errorTitle ?? 'Aufgetretene Fehler';
+    this.redirectToHome = this.data.redirectToHome ?? false;
   }
 
   get closeButtonLabel(): string {

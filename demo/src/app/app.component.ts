@@ -19,7 +19,6 @@ import { NavigationComponent } from './navigation/navigation.component';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [NavigationComponent],
   template: `<app-navigation></app-navigation>`,
 })

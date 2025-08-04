@@ -15,7 +15,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { SectionTitleComponent } from '../section-title/section-title.component';
 
@@ -29,12 +29,11 @@ export declare type Step = {
   selector: 'gem-demis-process-stepper',
   templateUrl: './process-stepper.component.html',
   styleUrl: './process-stepper.component.scss',
-  standalone: true,
   imports: [CommonModule, MatIconModule, SectionTitleComponent],
 })
 export class ProcessStepperComponent {
-  @Input({ required: true }) titleText!: string;
-  @Input() subtitleText?: string;
-  @Input({ required: true }) steps!: Step[];
-  @Input({ required: true }) activeStep!: Step;
+  readonly titleText = input.required<string>();
+  readonly subtitleText = input<string>();
+  readonly steps = input.required<Step[]>();
+  readonly activeStep = input.required<Step>();
 }

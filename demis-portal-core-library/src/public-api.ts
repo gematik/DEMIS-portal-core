@@ -46,6 +46,7 @@ export * from './lib/pipes/file-size.pipe';
  * SERVICES
  **********************************************/
 export * from './lib/services/message-dialog.service';
+export * from './lib/services/markdown.service';
 
 /***********************************************
  * MODULES

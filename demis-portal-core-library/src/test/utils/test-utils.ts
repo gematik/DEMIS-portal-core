@@ -19,9 +19,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
 import { MatFormFieldHarness } from '@angular/material/form-field/testing';
 import { FormlyDatepickerComponent } from '../../lib/components/formly-datepicker/formly-datepicker.component';
+import { MatInputHarness } from '@angular/material/input/testing';
 
 export function getButton(loader: HarnessLoader, selector: string) {
   return loader.getHarness(MatButtonHarness.with({ selector: selector }));
+}
+
+export function getInput(loader: HarnessLoader, selector: string) {
+  return loader.getHarness(MatInputHarness.with({ selector: selector }));
 }
 
 export async function getDatepicker(loader: HarnessLoader, inputId: string): Promise<MatDatepickerInputHarness> {

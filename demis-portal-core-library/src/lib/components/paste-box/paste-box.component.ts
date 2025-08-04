@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -33,13 +33,12 @@ export const DEMIS_PASTE_BOX_CLIPBOARD_ERROR = {
 
 @Component({
   selector: 'gem-demis-paste-box',
-  standalone: true,
   imports: [MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './paste-box.component.html',
   styleUrls: ['./paste-box.component.scss'],
 })
 export class PasteBoxComponent {
-  @Output() readonly dataPasted = new EventEmitter<Map<string, string>>();
+  readonly dataPasted = output<Map<string, string>>();
   private readonly messageDialogService = inject(MessageDialogService);
   private readonly logger = inject(NGXLogger);
 

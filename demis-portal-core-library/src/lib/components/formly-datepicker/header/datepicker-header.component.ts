@@ -27,7 +27,6 @@ import { endOfMonth, endOfYear, startOfMonth, startOfYear } from 'date-fns';
 
 @Component({
   selector: 'gem-demis-datepicker-header',
-  standalone: true,
   imports: [MatIcon, MatIconButton, AsyncPipe, MatButton, NgIf],
   templateUrl: './datepicker-header.component.html',
   styleUrl: './datepicker-header.component.scss',
@@ -103,7 +102,7 @@ export class DatepickerHeaderComponent implements OnInit, OnDestroy {
     if (precision !== this.currentPrecision) {
       this.currentPrecision = precision;
       this.datepickerStateService.setCurrentPrecision(precision);
-      this.calendar.currentView = precisionToView(precision, this.multiYear);
+      this.calendar.currentView = this.multiYear ? 'multi-year' : precisionToView(precision);
     }
   }
 

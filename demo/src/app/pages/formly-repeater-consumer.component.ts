@@ -15,30 +15,27 @@
  */
 
 import { Component } from '@angular/core';
+import { FormlyRepeaterExample1Component } from '../code-snippets/formly-repeater/example-1.component';
+import { FormlyRepeaterExample2Component } from '../code-snippets/formly-repeater/example-2.component';
+import { FormlyRepeaterExample3Component } from '../code-snippets/formly-repeater/example-3.component';
 import { CodeExampleBoxComponent, CodeExampleBoxComponentOptions } from '../utils/code-example-box.component';
 import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
-import { FormlyRepeaterExample1Component } from '../code-snippets/formly-repeater/example-1.component';
-import { FormlyRepeaterExample2Component } from '../code-snippets/formly-repeater/example-2.component';
-import { SectionTitleExample1Component } from '../code-snippets/section-title/example-1.component';
-import { SectionTitleExample2Component } from '../code-snippets/section-title/example-2.component';
-import { FormlyRepeaterExample3Component } from '../code-snippets/formly-repeater/example-3.component';
+import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
 
 @Component({
   selector: 'app-paste-box-consumer',
-  standalone: true,
   imports: [
     SubsectionTitleComponent,
     OverviewSectionComponent,
     ExpandableSectionsComponent,
     DocTableComponent,
     CodeExampleBoxComponent,
+    CodeSnippetBoxComponent,
     FormlyRepeaterExample1Component,
     FormlyRepeaterExample2Component,
-    SectionTitleExample1Component,
-    SectionTitleExample2Component,
     FormlyRepeaterExample3Component,
   ],
   styleUrls: [],
@@ -55,11 +52,13 @@ import { FormlyRepeaterExample3Component } from '../code-snippets/formly-repeate
         <ul>
           <li>
             <p>NgModule-based config:</p>
-            <pre><code class="code-snippet">{{ declareCustomTypeWithModuleBasedConfig }}</code></pre>
+            <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-with-module-based-config.snippet.ts" language="ts" />
           </li>
           <li>
             <p>Standalone config:</p>
-            <pre><code class="code-snippet">{{ declareCustomTypeStandaloneConfig }}</code></pre>
+            <!-- TODO: Uncomment this, once we switched to standalone components and ngx-formly v7 -->
+            <!-- <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-standalone-config.snippet.ts" language="ts" /> -->
+            <p>TBA</p>
           </li>
         </ul>
 
@@ -90,28 +89,25 @@ import { FormlyRepeaterExample3Component } from '../code-snippets/formly-repeate
 export class FormlyRepeaterConsumerComponent {
   propertiesDocTableDataSource = [
     {
-      name: 'addButtonLabel',
-      description: '[optional] The label displayed next to the add icon (default: "Item hinzufügen")',
-      options: { nameIsCode: true },
+      name: '`addButtonLabel`',
+      description: '`[optional]` The label displayed next to the add icon (default: "Item hinzufügen")',
     },
     {
-      name: 'showAddButtonLabel',
-      description: '[optional] If true, the label is displayed next to the add icon, in any case the label is used for screen readers (default: true)',
-      options: { nameIsCode: true },
+      name: '`showAddButtonLabel`',
+      description: '`[optional]` If true, the label is displayed next to the add icon, in any case the label is used for screen readers (default: true)',
     },
     {
-      name: 'isSingleInputField',
-      description: '[optional] Is true if the repeated item is a single input field. It influences the styling. (default: true)',
-      options: { nameIsCode: true },
+      name: '`isSingleInputField`',
+      description: '`[optional]` Is true if the repeated item is a single input field. It influences the styling. (default: true)',
     },
   ];
 
   publicMethodsDocTableDataSource = [
     {
-      name: 'setFieldCount(value: number, resetValues: boolean = false)',
+      name: '`setFieldCount(value: number, resetValues: boolean = false)`',
       description:
-        'Adjusts the number of repeated fields rendered by the repeater and can reset the values. If value is greater than the current count, new empty items are added. If value is less than the current count, extra items are removed from the end. If "resetValues" is true, the values of all entries are set to null after adjusting the count.',
-      options: { nameIsCode: true },
+        'Adjusts the number of repeated fields rendered by the repeater and can reset the values. If value is greater than the current count, new empty items are added. ' +
+        'If value is less than the current count, extra items are removed from the end. If "resetValues" is true, the values of all entries are set to null after adjusting the count.',
     },
   ];
 
@@ -166,38 +162,5 @@ export class FormlyRepeaterConsumerComponent {
     },
   ];
 
-  declareCustomTypeWithModuleBasedConfig = `import { FormlyRepeaterComponent } from "@gematik/demis-portal-core-library";
-
-@NgModule({
-declarations: [...],
-bootstrap: [...],
-imports: [
-    FormlyModule.forRoot({
-      types: [
-        { name: 'repeat', component: FormlyRepeaterComponent },
-      ],
-    }),
-],
-providers: [...],
-})
-export class AppModule {}`;
-
-  declareCustomTypeStandaloneConfig = `import { FormlyRepeaterComponent } from "@gematik/demis-portal-core-library";
-
-const appConfig: ApplicationConfig = {
-providers: [
-  provideFormlyCore([
-      ...withFormlyMaterial(),
-      {
-        types: [
-          {
-            name: 'repeat',
-            component: FormlyRepeaterComponent,
-          },
-        ],
-      },
-    ]),
-  ],
-}`;
-  cssDocTableDataSource = [{ name: '--color-primary', description: 'Color variable used for the buttons', options: { nameIsCode: true } }];
+  cssDocTableDataSource = [{ name: '`--color-primary`', description: 'Color variable used for the buttons' }];
 }

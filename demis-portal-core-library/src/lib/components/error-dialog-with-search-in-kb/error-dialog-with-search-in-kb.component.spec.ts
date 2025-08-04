@@ -22,7 +22,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { MockBuilder, MockProvider, MockRender } from 'ng-mocks';
+import { MockBuilder, MockProvider } from 'ng-mocks';
 import { ErrorMessage } from '../../services/message-dialog.service';
 import { ErrorDialogWithSearchInKbComponent } from './error-dialog-with-search-in-kb.component';
 

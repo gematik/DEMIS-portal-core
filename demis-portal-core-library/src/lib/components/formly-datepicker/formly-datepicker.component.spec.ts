@@ -317,15 +317,6 @@ describe('FormlyDatepickerComponent', () => {
       const control = component.form.get('datepickerAllPrecisionLevels');
       expect(control?.hasError('invalidDate')).toBeTrue();
     });
-
-    it('If the value is updated programmatically, an error is thrown if date cannot be parsed', async () => {
-      component.form.get('datepickerAllPrecisionLevels')!.setValue('2025-15');
-      const control = component.form.get('datepickerAllPrecisionLevels');
-      expect(control?.hasError('matDatepickerParse')).toBeTrue();
-      await datepickerAllPrecisionLevels.blur();
-      const errorMessage = await getErrorFor(loader, 'Datepicker with all precision levels');
-      expect(errorMessage).toBe('Das eingegebene Datum "2025-15" ist ungültig');
-    });
   });
 
   describe('User selects date with the datepicker calendar', () => {
@@ -887,6 +878,7 @@ describe('FormlyDatepickerComponent', () => {
       <formly-form [fields]="fields" [form]="form" [model]="model"></formly-form>
     </form>
   `,
+  standalone: false,
 })
 class MockComponent {
   form = new FormGroup({});

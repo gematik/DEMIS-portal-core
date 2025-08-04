@@ -16,7 +16,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { FieldArrayType, FieldTypeConfig, FormlyModule, FormlyFieldProps } from '@ngx-formly/core';
+import { FieldArrayType, FieldTypeConfig, FormlyFieldConfig, FormlyFieldProps, FormlyModule } from '@ngx-formly/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { NgClass } from '@angular/common';
 
@@ -24,7 +24,6 @@ import { NgClass } from '@angular/common';
   selector: 'gem-demis-repeater',
   templateUrl: './formly-repeater.component.html',
   styleUrls: ['./formly-repeater.component.scss'],
-  standalone: true,
   imports: [FormlyModule, MatIcon, MatButton, MatIconButton, NgClass],
 })
 export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> implements OnInit {
@@ -78,6 +77,32 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
       }
       if (resetValues) this.field.fieldGroup?.forEach(f => f.formControl?.reset(null));
     }
+  }
+
+  setIdNames(formlyField: FormlyFieldConfig, index: number): string {
+    this.setIdNameInChildElements(formlyField, index);
+    return formlyField.parent?.id + '-' + index;
+  }
+
+  /**
+   * Appends a unique index-based suffix to the IDs of child elements in a repeater field.
+   * This ensures uniqueness but does not generate new IDs — it reuses existing ones from the Formly config.
+   * Note: Does not support nested repeater fields.
+   * @param formlyField
+   * @param index
+   * @private
+   */
+  private setIdNameInChildElements(formlyField: FormlyFieldConfig, index: number) {
+    formlyField.fieldGroup!.forEach((field: FormlyFieldConfig) => {
+      field.id = this.createRepeatId(field.id!, index);
+    });
+  }
+
+  createRepeatId(identifier: string, index: number): string {
+    if (/\d/.test(identifier)) {
+      identifier = identifier.substring(0, identifier.length - 2);
+    }
+    return `${identifier}-${index}`;
   }
 }
 

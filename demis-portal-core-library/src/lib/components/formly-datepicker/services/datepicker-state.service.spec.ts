@@ -42,4 +42,10 @@ describe('DatepickerStateService', () => {
       expect(service.getAllowedPrecisions()).toEqual([DEFAULT_PRECISION_LEVEL]);
     });
   });
+
+  describe('not initialized', () => {
+    it('should return DEFAULT_PRECISION_LEVEL as highest available precision', () => {
+      expect(service.getHighestPrecisionAvailable()).toEqual(DEFAULT_PRECISION_LEVEL);
+    });
+  });
 });

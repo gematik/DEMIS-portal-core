@@ -20,7 +20,6 @@ import { ErrorsDialogProps, MessageDialogService } from '@gematik/demis-portal-c
 
 @Component({
   selector: 'app-error-dialog-example-1',
-  standalone: true,
   imports: [MatButtonModule],
   templateUrl: './example-1.component.html',
 })

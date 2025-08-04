@@ -20,7 +20,6 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-formly-repeater-example-2',
-  standalone: true,
   imports: [ReactiveFormsModule, FormlyModule],
   templateUrl: './example-2.component.html',
 })
@@ -29,6 +28,7 @@ export class FormlyRepeaterExample2Component {
   model = {};
   fields: FormlyFieldConfig[] = [
     {
+      id: 'firstName',
       key: 'firstName',
       type: 'input',
       props: {
@@ -37,6 +37,7 @@ export class FormlyRepeaterExample2Component {
       },
     },
     {
+      id: 'lastName',
       key: 'lastName',
       type: 'input',
       props: {
@@ -45,6 +46,7 @@ export class FormlyRepeaterExample2Component {
       },
     },
     {
+      id: 'pets',
       key: 'pets',
       type: 'repeat',
       defaultValue: [],
@@ -56,6 +58,7 @@ export class FormlyRepeaterExample2Component {
         fieldGroupClassName: 'd-flex flex-column',
         fieldGroup: [
           {
+            id: 'petName',
             key: 'petName',
             type: 'input',
             props: {
@@ -64,6 +67,7 @@ export class FormlyRepeaterExample2Component {
             },
           },
           {
+            id: 'petCategory',
             key: 'petCategory',
             type: 'select',
             props: {
@@ -79,6 +83,7 @@ export class FormlyRepeaterExample2Component {
             },
           },
           {
+            id: 'petAge',
             key: 'petAge',
             type: 'input',
             props: {

@@ -63,7 +63,7 @@ export class DatepickerStateService {
   getHighestPrecisionAvailable(): DatePrecision {
     const priority: DatePrecision[] = ['day', 'month', 'year'];
     for (const precision of priority) {
-      if (this.getAllowedPrecisions().includes(precision)) {
+      if (this.getAllowedPrecisions()?.includes(precision)) {
         return precision;
       }
     }

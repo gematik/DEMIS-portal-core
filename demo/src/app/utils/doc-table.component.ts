@@ -14,8 +14,9 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
+import { MarkdownService } from '@gematik/demis-portal-core-library';
 
 export interface DocTableRowOptions {
   nameIsCode?: boolean;
@@ -24,25 +25,18 @@ export interface DocTableRowOptions {
 export interface DocTableRowData {
   name: string;
   description: string | string[];
-  options?: DocTableRowOptions;
 }
 
 @Component({
   selector: 'app-doc-table',
-  standalone: true,
   imports: [MatTableModule],
+  providers: [MarkdownService],
   template: `
     <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          @if (element.options?.nameIsCode) {
-            <pre><code>{{ element.name }}</code></pre>
-          } @else {
-            {{ element.name }}
-          }
-        </mat-cell>
+        <mat-cell *matCellDef="let element" [innerHtml]="markdownService.convertToSanitizedHtml(element.name)"></mat-cell>
       </ng-container>
 
       <!-- Description Column -->
@@ -51,10 +45,10 @@ export interface DocTableRowData {
         <mat-cell *matCellDef="let element">
           @if (isArray(element.description)) {
             @for (desc of element.description; track desc) {
-              <span>{{ desc }}</span>
+              <div [innerHtml]="markdownService.convertToSanitizedHtml(desc)"></div>
             }
           } @else {
-            <span>{{ element.description }}</span>
+            <div [innerHtml]="markdownService.convertToSanitizedHtml(element.description)"></div>
           }
         </mat-cell>
       </ng-container>
@@ -64,6 +58,10 @@ export interface DocTableRowData {
     </mat-table>
   `,
   styles: `
+    :host ::ng-deep .mat-mdc-cell p {
+      margin-top: 12px;
+    }
+
     .mat-mdc-cell.mat-column-description {
       flex-direction: column;
       align-items: start;
@@ -73,6 +71,8 @@ export interface DocTableRowData {
 })
 export class DocTableComponent {
   @Input({ required: true }) dataSource!: DocTableRowData[];
+
+  protected readonly markdownService = inject(MarkdownService);
 
   isArray(value: any): boolean {
     return Array.isArray(value);

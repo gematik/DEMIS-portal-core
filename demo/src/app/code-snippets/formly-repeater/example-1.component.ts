@@ -20,7 +20,6 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-formly-repeater-example-1',
-  standalone: true,
   imports: [ReactiveFormsModule, FormlyModule],
   templateUrl: './example-1.component.html',
 })
@@ -29,6 +28,7 @@ export class FormlyRepeaterExample1Component {
   model = {};
   fields: FormlyFieldConfig[] = [
     {
+      id: 'firstName',
       key: 'firstName',
       type: 'input',
       props: {
@@ -37,6 +37,7 @@ export class FormlyRepeaterExample1Component {
       },
     },
     {
+      id: 'lastName',
       key: 'lastName',
       type: 'input',
       props: {
@@ -45,6 +46,7 @@ export class FormlyRepeaterExample1Component {
       },
     },
     {
+      id: 'canBeDeleted',
       key: 'canBeDeleted',
       type: 'checkbox',
       defaultValue: false,
@@ -53,6 +55,7 @@ export class FormlyRepeaterExample1Component {
       },
     },
     {
+      id: 'emails',
       key: 'emails',
       type: 'repeat',
       props: {
@@ -65,6 +68,7 @@ export class FormlyRepeaterExample1Component {
       fieldArray: {
         fieldGroup: [
           {
+            id: 'email',
             key: 'email',
             type: 'input',
             props: {
@@ -80,6 +84,7 @@ export class FormlyRepeaterExample1Component {
       template: `<p>Bitte geben Sie mindestens eine Tel-Nr. an.</p>`,
     },
     {
+      id: 'phoneNumbers',
       key: 'phoneNumbers',
       type: 'repeat',
       props: {
@@ -88,6 +93,7 @@ export class FormlyRepeaterExample1Component {
       fieldArray: {
         fieldGroup: [
           {
+            id: 'phone',
             key: 'phone',
             type: 'input',
             props: {

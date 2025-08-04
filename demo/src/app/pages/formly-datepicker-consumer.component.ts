@@ -15,16 +15,15 @@
  */
 
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { FormlyDatepickerExample1Component } from '../code-snippets/formly-datepicker/example-1.component';
+import { FormlyDatepickerExample2Component } from '../code-snippets/formly-datepicker/example-2.component';
+import { FormlyDatepickerExample3Component } from '../code-snippets/formly-datepicker/example-3.component';
 import { CodeExampleBoxComponent, CodeExampleBoxComponentOptions } from '../utils/code-example-box.component';
 import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
-import { FormlyDatepickerExample1Component } from '../code-snippets/formly-datepicker/example-1.component';
-import { RouterLink } from '@angular/router';
-import { FormlyDatepickerExample2Component } from '../code-snippets/formly-datepicker/example-2.component';
-import { FormlyRepeaterExample2Component } from '../code-snippets/formly-repeater/example-2.component';
-import { FormlyDatepickerExample3Component } from '../code-snippets/formly-datepicker/example-3.component';
 
 @Component({
   selector: 'app-formly-datepicker-consumer',
@@ -38,7 +37,6 @@ import { FormlyDatepickerExample3Component } from '../code-snippets/formly-datep
     CodeExampleBoxComponent,
     RouterLink,
     FormlyDatepickerExample2Component,
-    FormlyRepeaterExample2Component,
     FormlyDatepickerExample3Component,
   ],
 
@@ -76,35 +74,40 @@ import { FormlyDatepickerExample3Component } from '../code-snippets/formly-datep
 export class FormlyDatepickerConsumerComponent {
   propertiesDocTableDataSource = [
     {
-      name: 'allowedPrecisions',
-      description:
-        '[optional] Specifies which date precisions the datepicker supports. Allowed values are: "day" (e.g. 25.12.2023), "month" (e.g. 12.2023), "year" (e.g. 2023). Defaults to ["day"] if not provided.',
-      options: { nameIsCode: true },
+      name: '`allowedPrecisions`',
+      description: [
+        '`[optional]` Specifies which date precisions the datepicker supports.',
+        'Allowed values are: "day" (e.g. 25.12.2023), "month" (e.g. 12.2023), "year" (e.g. 2023). Defaults to ["day"] if not provided.',
+      ],
     },
     {
-      name: 'minDate',
-      description:
-        "[optional] The minimum valid date (as a Date object, e.g., `new Date('2020-01-01')`). The standard validation message can be overridden in the Formly config by providing a custom message in `validation: { messages: { minDate: 'your custom message' } }`.",
-      options: { nameIsCode: true },
+      name: '`minDate`',
+      description: [
+        "`[optional]` The minimum valid date (as a Date object, e.g., `new Date('2020-01-01')`).",
+        "The standard validation message can be overridden in the Formly config by providing a custom message in `validation: { messages: { minDate: 'your custom message' } }`.",
+      ],
     },
     {
-      name: 'maxDate',
-      description:
-        "[optional] The maximum valid date (as a Date object, e.g., `new Date('2020-01-01')`). The standard validation message can be overridden in the Formly config by providing a custom message in `validation: { messages: { maxDate: 'your custom message' } }`.",
-      options: { nameIsCode: true },
+      name: '`maxDate`',
+      description: [
+        "`[optional]` The maximum valid date (as a Date object, e.g., `new Date('2020-01-01')`).",
+        "The standard validation message can be overridden in the Formly config by providing a custom message in `validation: { messages: { maxDate: 'your custom message' } }`.",
+      ],
     },
     {
-      name: 'multiYear',
-      description:
-        '[optional] If true, the datepicker will opens in a multi-year view for both day and month precision. This is mostly useful for fields where you expected the user to navigate through multiple years, like a birth date. This significantly improves the user experience for such fields. On the contrary, not very useful if you expect the user to select a date near to the present. Defaults to false.',
-      options: { nameIsCode: true },
+      name: '`multiYear`',
+      description: [
+        '`[optional]` Defaults to false. If true, the datepicker will open in a multi-year view for both day and month precision.',
+        'This is mostly useful for fields where you expect the user to navigate through multiple years, like a birth date. This significantly improves the user experience for such fields.',
+        'On the contrary, not very useful if you expect the user to select a date near to the present.',
+      ],
     },
   ];
   cssVariablesDocTableDataSource = [
-    { name: '--color-primary', description: 'Color variable used for the toggle icon and in the header', options: { nameIsCode: true } },
-    { name: '--color-secondary-dark20', description: 'Color variable used as background', options: { nameIsCode: true } },
-    { name: '--color-neutral-dark', description: 'Color variable used in the header', options: { nameIsCode: true } },
-    { name: '--color-neutral-light', description: 'Color variable used in the header', options: { nameIsCode: true } },
+    { name: '`--color-primary`', description: 'Color variable used for the toggle icon and in the header' },
+    { name: '`--color-secondary-dark20`', description: 'Color variable used as background' },
+    { name: '`--color-neutral-dark`', description: 'Color variable used in the header' },
+    { name: '`--color-neutral-light`', description: 'Color variable used in the header' },
   ];
 
   examples: CodeExampleBoxComponentOptions[] = [
@@ -157,12 +160,4 @@ export class FormlyDatepickerConsumerComponent {
       ],
     },
   ];
-  declareDateImplementation = `import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { de } from 'date-fns/locale';
-
-providers: [
-    provideDateFnsAdapter(),
-    { provide: MAT_DATE_LOCALE, useValue: de },
-]`;
 }

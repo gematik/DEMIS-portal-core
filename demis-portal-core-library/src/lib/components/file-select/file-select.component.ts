@@ -14,34 +14,40 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, inject, Input, Output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject } from 'rxjs';
+
+// Exportierte Standardwerte für Tests und Produktivcode
+export const FILE_SELECT_DEFAULTS = {
+  displayText: 'Wählen Sie eine Datei aus',
+  acceptedFileTypes: '*/*',
+  multipleFilesSelectable: false,
+} as const;
 
 @Component({
   selector: 'gem-demis-file-select',
   templateUrl: './file-select.component.html',
   styleUrl: './file-select.component.scss',
-  standalone: true,
   imports: [MatIconModule],
 })
 export class FileSelectComponent {
-  @Input() displayText: string = 'Wählen Sie eine Datei aus';
-  @Input() acceptedFileTypes: string = '*/*';
-  @Input() multipleFilesSelectable: boolean = false;
-  private readonly fileSelectionChanged = new BehaviorSubject<FileList | null>(null);
-  @Output() onFileSelected = this.fileSelectionChanged.asObservable();
+  readonly displayText = input<string>(FILE_SELECT_DEFAULTS.displayText);
+  readonly acceptedFileTypes = input<string>(FILE_SELECT_DEFAULTS.acceptedFileTypes);
+  readonly multipleFilesSelectable = input<boolean>(FILE_SELECT_DEFAULTS.multipleFilesSelectable);
+
+  readonly onFileSelected = output<FileList | null>();
   private readonly logger = inject(NGXLogger);
 
   onChange(event: Event) {
     const input = event?.target;
     if (!(!!input && input instanceof HTMLInputElement && !!input.files)) {
       this.logger.error('no file selected');
+      this.onFileSelected.emit(null);
       return;
     }
     this.logger.debug('got a FileList', input.files);
-    this.fileSelectionChanged.next(input.files);
+    this.onFileSelected.emit(input.files);
     input.value = '';
   }
 }

@@ -14,13 +14,11 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Highlight } from 'ngx-highlightjs';
-import { HighlightLineNumbers } from 'ngx-highlightjs/line-numbers';
+import { CodeSnippetBoxComponent } from './code-snippet-box.component';
 
 export interface CodeSnippet {
   fileName: string;
@@ -32,13 +30,12 @@ export interface CodeExampleBoxComponentOptions {
   expanderTitle: string;
   expanderDescription: string;
   codeSnippets: CodeSnippet[];
-  rowHeight?: string;
 }
 
 @Component({
   selector: 'app-code-example-box',
   standalone: true,
-  imports: [Highlight, HighlightLineNumbers, MatExpansionModule, MatGridListModule, MatTabsModule],
+  imports: [MatExpansionModule, MatGridListModule, MatTabsModule, CodeSnippetBoxComponent],
   template: `
     <mat-expansion-panel [expanded]="true" class="outlined-panel">
       <mat-expansion-panel-header>
@@ -57,7 +54,7 @@ export interface CodeExampleBoxComponentOptions {
           <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" [dynamicHeight]="false" animationDuration="0ms" [disableRipple]="true">
             @for (codeSnippet of options.codeSnippets; track codeSnippet.fileName) {
               <mat-tab [label]="codeSnippet.fileName">
-                <pre><code [highlight]="getCodeSnippetString(codeSnippet.fileName)" [language]="codeSnippet.language" lineNumbers></code></pre>
+                <app-code-snippet-box [codeSnippetPath]="codeSnippet.codeSnippetPath + '/' + codeSnippet.fileName" [language]="codeSnippet.language" />
               </mat-tab>
             }
           </mat-tab-group>
@@ -110,21 +107,6 @@ export interface CodeExampleBoxComponentOptions {
     `,
   ],
 })
-export class CodeExampleBoxComponent implements OnInit {
+export class CodeExampleBoxComponent {
   @Input({ required: true }) options!: CodeExampleBoxComponentOptions;
-  private readonly http = inject(HttpClient);
-  private readonly codeSnippetStrings = new Map<string, string>();
-
-  ngOnInit(): void {
-    for (const codeSnippet of this.options.codeSnippets) {
-      this.codeSnippetStrings.set(codeSnippet.fileName, '');
-      this.http.get(`${codeSnippet.codeSnippetPath}/${codeSnippet.fileName}`, { responseType: 'text' }).subscribe(data => {
-        this.codeSnippetStrings.set(codeSnippet.fileName, data);
-      });
-    }
-  }
-
-  getCodeSnippetString(title: string): string {
-    return this.codeSnippetStrings.get(title) ?? '';
-  }
 }

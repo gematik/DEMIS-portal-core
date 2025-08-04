@@ -15,58 +15,67 @@
  */
 
 import { ProcessStepperComponent, Step } from './process-stepper.component';
-import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from 'ng-mocks';
+import { MockBuilder, MockRender } from 'ng-mocks';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { SectionTitleComponent } from '../section-title/section-title.component';
 
 describe('ProcessStepperComponent', () => {
-  let component: ProcessStepperComponent;
-  let fixture: MockedComponentFixture<ProcessStepperComponent, ProcessStepperComponent>;
-
-  beforeEach(() => MockBuilder([ProcessStepperComponent, SectionTitleComponent]).mock(CommonModule).mock(MatIconModule));
+  beforeEach(() => MockBuilder(ProcessStepperComponent).keep(SectionTitleComponent).mock(CommonModule).mock(MatIconModule));
 
   it('should create the component', () => {
-    fixture = MockRender(ProcessStepperComponent);
-    component = fixture.point.componentInstance;
-    fixture.detectChanges();
+    const steps: Step[] = [{ number: 1, title: 'Step 1', description: 'Description 1' }];
+    const fixture = MockRender(ProcessStepperComponent, {
+      titleText: 'Test Title',
+      steps: steps,
+      activeStep: steps[0],
+    });
+    const component = fixture.point.componentInstance;
     expect(component).toBeTruthy();
   });
 
   it('should have the correct title text', () => {
-    fixture = MockRender(ProcessStepperComponent);
-    component = fixture.point.componentInstance;
+    const steps: Step[] = [{ number: 1, title: 'Step 1', description: 'Description 1' }];
     const titleText = 'Test Title';
-    component.titleText = titleText;
+    const fixture = MockRender(ProcessStepperComponent, {
+      titleText: titleText,
+      steps: steps,
+      activeStep: steps[0],
+    });
     fixture.detectChanges();
-    const titleElement = fixture.nativeElement.querySelector('#section-title');
+    const titleElement = fixture.point.nativeElement.querySelector('#section-title');
     expect(titleElement.textContent).toContain(titleText);
   });
 
   it('should have the correct subtitle text', () => {
-    fixture = MockRender(ProcessStepperComponent);
-    component = fixture.point.componentInstance;
+    const steps: Step[] = [{ number: 1, title: 'Step 1', description: 'Description 1' }];
     const subtitleText = 'Test Subtitle';
-    component.subtitleText = subtitleText;
+    const fixture = MockRender(ProcessStepperComponent, {
+      titleText: 'Test Title',
+      subtitleText: subtitleText,
+      steps: steps,
+      activeStep: steps[0],
+    });
     fixture.detectChanges();
-    const subtitleElement = fixture.nativeElement.querySelector('#section-subtitle');
+    const subtitleElement = fixture.point.nativeElement.querySelector('#section-subtitle');
     expect(subtitleElement.textContent).toContain(subtitleText);
   });
 
-  it('should have the correct number of steps and  active step', () => {
+  it('should have the correct number of steps and active step', () => {
     const steps: Step[] = [
       { number: 1, title: 'Step 1', description: 'Description 1' },
       { number: 2, title: 'Step 2', description: 'Description 2' },
       { number: 3, title: 'Step 3', description: 'Description 3' },
     ];
-    fixture = MockRender(ProcessStepperComponent);
-    fixture.componentInstance.steps = steps;
-    fixture.componentInstance.activeStep = steps[1];
-    component = fixture.point.componentInstance;
+    const fixture = MockRender(ProcessStepperComponent, {
+      titleText: 'Test Title',
+      steps: steps,
+      activeStep: steps[1],
+    });
     fixture.detectChanges();
-    const stepElements = ngMocks.findAll('.process-step');
+    const stepElements = fixture.point.nativeElement.querySelectorAll('.process-step');
     expect(stepElements.length).toBe(steps.length);
-    const activeStepElement = fixture.nativeElement.querySelector('.active-step');
+    const activeStepElement = fixture.point.nativeElement.querySelector('.active-step');
     expect(activeStepElement.textContent).toContain(steps[1].title);
   });
 });

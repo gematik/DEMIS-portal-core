@@ -32,7 +32,6 @@ import { routes as appRoutes } from '../app.routes';
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss',
-  standalone: true,
   imports: [
     MatToolbarModule,
     MatButtonModule,

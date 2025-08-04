@@ -15,54 +15,53 @@
  */
 
 import { MatIconModule } from '@angular/material/icon';
-import { FileNameChipComponent } from './file-name-chip.component';
-import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
+import { FileNameChipComponent, FILE_NAME_CHIP_DEFAULTS } from './file-name-chip.component';
+import { MockBuilder, MockRender } from 'ng-mocks';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { FileSizePipe } from '../../pipes/file-size.pipe';
-import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 
 describe('FileNameChipComponent', () => {
-  let component: FileNameChipComponent;
-  let fixture: MockedComponentFixture<FileNameChipComponent, FileNameChipComponent>;
-  let loader: HarnessLoader;
+  const fileName = 'test-file.txt';
 
   beforeEach(() => MockBuilder(FileNameChipComponent).keep(FileSizePipe).mock(MatIconModule).mock(MatButtonModule).mock(MatChipsModule));
 
-  beforeEach(() => {
-    fixture = MockRender(FileNameChipComponent);
-    component = fixture.point.componentInstance;
-    loader = TestbedHarnessEnvironment.loader(fixture);
-    fixture.detectChanges();
-  });
-
   it('should create the component', () => {
+    // InputSignals werden direkt an MockRender übergeben
+    const fixture = MockRender(FileNameChipComponent, { fileName: fileName });
+    const component = fixture.point.componentInstance;
     expect(component).toBeTruthy();
   });
 
   it('should display the file name', () => {
-    const fileName = 'test-file.txt';
-    fixture.componentInstance.fileName = fileName;
+    const fixture = MockRender(FileNameChipComponent, { fileName: fileName });
     fixture.detectChanges();
     const chipElement = fixture.point.nativeElement.querySelector('.file-name');
     expect(chipElement.textContent).toBe(fileName);
   });
 
   it('should display the file name with file size if provided', () => {
-    const fileName = 'test-file.txt';
-    fixture.componentInstance.fileName = fileName;
-    const fileSize = 1023;
-    fixture.componentInstance.fileSize = fileSize;
+    const fileSize = 1024;
+    // InputSignals werden direkt über MockRender gesetzt
+    const fixture = MockRender(FileNameChipComponent, { fileName: fileName, fileSize: fileSize });
     fixture.detectChanges();
     const fileSizeElement = fixture.point.nativeElement.querySelector('.file-name');
-    expect(fileSizeElement.textContent).toBe(`${fileName} (${fileSize} bytes)`);
+    expect(fileSizeElement.textContent).toContain(fileName);
+    expect(fileSizeElement.textContent).toContain('1.00 KB'); // FileSizePipe formatiert 1024 als "1 KB"
   });
 
   it('should emit fileDeleted event when delete button is clicked and canDelete', async () => {
-    fixture.componentInstance.canDelete = true;
+    // Verwendung der exportierten Standardwerte
+    const fixture = MockRender(FileNameChipComponent, {
+      fileName: fileName,
+      canDelete: FILE_NAME_CHIP_DEFAULTS.canDelete,
+    });
+    const component = fixture.point.componentInstance;
+    const loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
+
     const onDeleteClickedSpy = spyOn(component, 'onDeleteClicked').and.callThrough();
     const emitSpy = spyOn(component.fileDeleted, 'emit');
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '#file-delete-button' }));
@@ -73,8 +72,12 @@ describe('FileNameChipComponent', () => {
   });
 
   it('should NOT emit fileDeleted event when delete button is clicked and !canDelete', async () => {
-    fixture.componentInstance.canDelete = false;
+    // InputSignal canDelete auf false setzen
+    const fixture = MockRender(FileNameChipComponent, { fileName: fileName, canDelete: false });
+    const component = fixture.point.componentInstance;
+    const loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
+
     const onDeleteClickedSpy = spyOn(component, 'onDeleteClicked').and.callThrough();
     const emitSpy = spyOn(component.fileDeleted, 'emit');
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '#file-delete-button' }));

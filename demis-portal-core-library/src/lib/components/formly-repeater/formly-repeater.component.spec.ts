@@ -27,6 +27,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormlyFieldInput } from '@ngx-formly/material/input';
+import { getButton, getInput } from '../../../test/utils/test-utils';
+import { MatInputHarness } from '@angular/material/input/testing';
 
 describe('RepeaterComponent', () => {
   let component: FormlyRepeaterComponent;
@@ -61,7 +63,7 @@ describe('RepeaterComponent', () => {
 
   describe('test default behavior', () => {
     it('should display the default label "Item hinzufügen"', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '#emails-add-button' }));
+      const addButton = await getButton(loader, '#emails-add-button');
       const buttonText = await addButton.getText();
       expect(buttonText).toContain('Item hinzufügen');
     });
@@ -71,18 +73,31 @@ describe('RepeaterComponent', () => {
     });
 
     it('should add an item when the user clicks on add button', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '#emails-add-button' }));
+      const addButton = await getButton(loader, '#emails-add-button');
       await addButton.click();
       fixture.detectChanges();
       expect(component.field.fieldGroup?.length).toBe(1);
     });
 
+    it('the id of each repeated element is made unique with its index ', async () => {
+      const addButton = await getButton(loader, '#emails-add-button');
+      await addButton.click();
+      await addButton.click();
+      await addButton.click();
+      fixture.detectChanges();
+      expect(component.field.fieldGroup?.length).toBe(3);
+      await loader.getAllHarnesses(MatInputHarness).then(inputs => expect(inputs.length).toBe(3));
+      await getInput(loader, '#email-0').then(input => expect(input).toBeTruthy());
+      await getInput(loader, '#email-1').then(input => expect(input).toBeTruthy());
+      await getInput(loader, '#email-2').then(input => expect(input).toBeTruthy());
+    });
+
     it('should allow deleting an item when user clicks on delete', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '#emails-add-button' }));
+      const addButton = await getButton(loader, '#emails-add-button');
       await addButton.click();
       fixture.detectChanges();
 
-      const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '#emails-delete-button-0' }));
+      const deleteButton = await getButton(loader, '#emails-delete-button-0');
       await deleteButton.click();
       fixture.detectChanges();
       expect(component.field.fieldGroup?.length).toBe(0);
@@ -96,7 +111,7 @@ describe('RepeaterComponent', () => {
     });
 
     it('should display the label passed as prop', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '#emails-add-button' }));
+      const addButton = await getButton(loader, '#emails-add-button');
       const buttonText = await addButton.getText();
       expect(buttonText.trim()).toContain('E-Mail hinzufügen');
     });
@@ -166,14 +181,15 @@ describe('RepeaterComponent', () => {
       <formly-form [fields]="fields" [form]="form" [model]="model"></formly-form>
     </form>
   `,
+  standalone: false,
 })
 class MockComponent {
   form = new FormGroup({});
   model = {};
   fields: FormlyFieldConfig[] = [
     {
-      key: 'canBeDeleted',
       id: 'canBeDeleted',
+      key: 'canBeDeleted',
       type: 'checkbox',
       defaultValue: false,
       props: {
@@ -181,12 +197,14 @@ class MockComponent {
       },
     },
     {
+      id: 'emails',
       key: 'emails',
       type: 'repeat',
       props: {},
       fieldArray: {
         fieldGroup: [
           {
+            id: 'email',
             key: 'email',
             type: 'input',
             props: {
