@@ -64,5 +64,12 @@ describe('datepicker-shared', () => {
       expect(detectPrecisionFromIso('')).toBeNull();
       expect(detectPrecisionFromIso('15.05.2025')).toBeNull();
     });
+
+    it('should return null for invalid dates', () => {
+      expect(detectPrecisionFromIso('2025-02-31')).toBeNull();
+      expect(detectPrecisionFromIso('2025-13')).toBeNull();
+      expect(detectPrecisionFromIso('9999-00')).toBeNull();
+      expect(detectPrecisionFromIso('foo')).toBeNull();
+    });
   });
 });

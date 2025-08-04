@@ -14,50 +14,50 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { SectionTitleComponent } from './section-title.component';
-import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
+import { SectionTitleComponent, SECTION_TITLE_DEFAULTS } from './section-title.component';
+import { MockBuilder, MockRender } from 'ng-mocks';
 
 describe('SectionTitleComponent', () => {
-  let component: SectionTitleComponent;
-  let fixture: MockedComponentFixture<SectionTitleComponent, SectionTitleComponent>;
-
   beforeEach(() => MockBuilder(SectionTitleComponent));
 
-  beforeEach(() => {
-    fixture = MockRender(SectionTitleComponent);
-    component = fixture.point.componentInstance;
-    fixture.componentInstance.titleText = 'Test Title';
-    fixture.componentInstance.level = 1;
-    fixture.detectChanges();
-  });
-
   it('should create the component', () => {
+    const fixture = MockRender(SectionTitleComponent, { titleText: 'Test Title' });
+    const component = fixture.point.componentInstance;
     expect(component).toBeTruthy();
   });
 
   it('should display the title text', () => {
     const titleText = 'Test Title';
-    component.titleText = titleText;
+    const fixture = MockRender(SectionTitleComponent, { titleText: titleText });
     fixture.detectChanges();
-    const titleElement = fixture.nativeElement.querySelector('h2 span');
+    const titleElement = fixture.point.nativeElement.querySelector('h2 span');
     expect(titleElement.textContent).toContain(titleText);
   });
 
   it('should have default level 1', () => {
-    expect(component.level).toBe(1);
+    // Verwendung der exportierten Standardwerte
+    const fixture = MockRender(SectionTitleComponent, {
+      titleText: 'Test Title',
+      level: SECTION_TITLE_DEFAULTS.level,
+    });
+    const component = fixture.point.componentInstance;
+    expect(component.level()).toBe(SECTION_TITLE_DEFAULTS.level);
   });
 
   it('should apply level 1 styles', () => {
-    component.level = 1;
+    const fixture = MockRender(SectionTitleComponent, {
+      titleText: 'Test Title',
+      level: SECTION_TITLE_DEFAULTS.level,
+    });
     fixture.detectChanges();
-    const sectionElement = fixture.nativeElement.querySelector('.gem-demis-section');
-    expect(sectionElement.classList).toContain('gem-demis-section-level-1');
+    const sectionElement = fixture.point.nativeElement.querySelector('.gem-demis-section');
+    expect(sectionElement.classList).toContain(`gem-demis-section-level-${SECTION_TITLE_DEFAULTS.level}`);
   });
 
   it('should apply level 2 styles', () => {
-    component.level = 2;
+    const fixture = MockRender(SectionTitleComponent, { titleText: 'Test Title', level: 2 });
     fixture.detectChanges();
-    const sectionElement = fixture.nativeElement.querySelector('.gem-demis-section');
+    const sectionElement = fixture.point.nativeElement.querySelector('.gem-demis-section');
     expect(sectionElement.classList).toContain('gem-demis-section-level-2');
   });
 });

@@ -15,15 +15,13 @@
  */
 
 import { Component } from '@angular/core';
-import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
+import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 
 @Component({
   selector: 'app-formly-datepicker-example-1',
-  standalone: true,
   templateUrl: './example-1.component.html',
-  imports: [FormlyModule, FormsModule, ReactiveFormsModule, JsonPipe],
+  imports: [FormlyModule, FormsModule, ReactiveFormsModule],
 })
 export class FormlyDatepickerExample1Component {
   form = new FormGroup({});

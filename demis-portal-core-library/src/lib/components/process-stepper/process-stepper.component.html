@@ -1,21 +1,21 @@
 <div class="process-stepper-wrapper">
-  <gem-demis-section-title [titleText]="titleText" [level]="1">
-    @if (subtitleText) {
-      <p>{{ subtitleText }}</p>
+  <gem-demis-section-title [titleText]="titleText()" [level]="1">
+    @if (subtitleText()) {
+      <p>{{ subtitleText() }}</p>
     }
   </gem-demis-section-title>
   
   <div class="gem-demis-process-steps">
-    @for(step of steps; track $index) {
+    @for(step of steps(); track $index) {
       <div class="process-step-wrapper">
         <div id="process-step-{{ $index }}" [ngClass]="{
           'process-step': true,
-          'active-step': step.number === activeStep.number,
-          'completed-step': step.number < activeStep.number
+          'active-step': step.number === activeStep().number,
+          'completed-step': step.number < activeStep().number
         }">
           <div class="step-decoration">
             <div class="step-icon">
-              @if(step.number < activeStep.number) {
+              @if(step.number < activeStep().number) {
                 <mat-icon>check</mat-icon>
               }
               @else {
@@ -30,7 +30,7 @@
           </div>
         </div>
   
-        @if (steps.length && $index < steps.length - 1) {
+        @if (steps().length && $index < steps().length - 1) {
           <div class="process-step-divider"></div>
         }
       </div>

@@ -16,6 +16,7 @@
 
 import { FormlyFieldProps } from '@ngx-formly/core';
 import { MatCalendarView } from '@angular/material/datepicker';
+import { isValid, parseISO } from 'date-fns';
 
 export type DatePrecision = 'day' | 'month' | 'year';
 export const DEFAULT_PRECISION_LEVEL: DatePrecision = 'day';
@@ -46,18 +47,14 @@ export const VALID_FORMATS: Map<DatePrecision, Formats> = new Map([
 
 export const YEARS_PER_PAGE = 24;
 
-export function precisionToView(precision: DatePrecision, multiYearMode: boolean): MatCalendarView {
-  if (multiYearMode) {
-    return 'multi-year';
-  } else {
-    switch (precision) {
-      case 'day':
-        return 'month';
-      case 'month':
-        return 'year';
-      case 'year':
-        return 'multi-year';
-    }
+export function precisionToView(precision: DatePrecision): MatCalendarView {
+  switch (precision) {
+    case 'day':
+      return 'month';
+    case 'month':
+      return 'year';
+    case 'year':
+      return 'multi-year';
   }
 }
 
@@ -79,6 +76,10 @@ export function detectPrecisionFromDateGermanFormat(input: string): DatePrecisio
 }
 
 export function detectPrecisionFromIso(isoString: string): DatePrecision | null {
+  if (!isValid(parseISO(isoString))) {
+    return null;
+  }
+
   // Matches only year: e.g. "2025"
   if (/^\d{4}$/.test(isoString)) {
     return 'year';

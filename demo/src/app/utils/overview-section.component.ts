@@ -19,7 +19,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-overview-section',
-  standalone: true,
   imports: [MatExpansionModule],
   template: `
     <mat-expansion-panel [expanded]="true" class="outlined-panel">

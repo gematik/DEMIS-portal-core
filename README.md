@@ -17,8 +17,14 @@
     </li>
     <li>
       <a href="#usage">Usage</a>
+    </li>
+    <li>
+      <a href="#development-scripts">Development Scripts</a>
       <ul>
-        <li><a href="#endpoints">Endpoints</a></li>
+        <li><a href="#builddev">build:dev</a></li>
+        <li><a href="#deploy-local-dev-package">deploy-local-dev-package</a></li>
+        <li><a href="#restore-to-registry-package">restore-to-registry-package</a></li>
+        <li><a href="#typical-development-workflow">Typical development workflow</a></li>
       </ul>
     </li>
     <li><a href="#security-policy">Security Policy</a></li>
@@ -34,6 +40,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 It contains central components for DEMIS-Frontends.
 
 ### Quality Gate
+
 [![Quality Gate Status](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=demis-portal-core&metric=alert_status&token=sqb_886f9ee9c95470795a4384e48ea1370d2116f46b)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=demis-portal-core)
 [![Vulnerabilities](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=demis-portal-core&metric=vulnerabilities&token=sqb_886f9ee9c95470795a4384e48ea1370d2116f46b)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=demis-portal-core)
 [![Bugs](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=demis-portal-core&metric=bugs&token=sqb_886f9ee9c95470795a4384e48ea1370d2116f46b)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=demis-portal-core)
@@ -41,8 +48,8 @@ It contains central components for DEMIS-Frontends.
 [![Lines of Code](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=demis-portal-core&metric=ncloc&token=sqb_886f9ee9c95470795a4384e48ea1370d2116f46b)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=demis-portal-core)
 [![Coverage](https://sonar.prod.ccs.gematik.solutions/api/project_badges/measure?project=demis-portal-core&metric=coverage&token=sqb_886f9ee9c95470795a4384e48ea1370d2116f46b)](https://sonar.prod.ccs.gematik.solutions/dashboard?id=demis-portal-core)
 
-
 ### Release Notes
+
 See [ReleaseNotes](ReleaseNotes.md) for all information regarding the (newest) releases.
 
 ## Getting Started
@@ -106,34 +113,105 @@ npm run test
 ## Usage
 
 To use this library in your project, this project have to be build. Then run following command in **your** project:
+
 ```
 npm install <path_to_this_project>/dist/gematik/demis-portal-core-library
 ```
 
 After this the library should be implemented as local path to your project.
 
+## Development Scripts
+
+There are several scripts available for local development that simplify the workflow between local TGZ builds and registry installations:
+
+### build:dev
+
+Builds the library and packs it into a TGZ file in the `dist/` directory.
+This is useful for local development and testing before deploying to a registry.
+
+**Usage:**
+
+```bash
+# Build the library and create a TGZ file in dist/
+npm run build:dev
+```
+
+### deploy-local-dev-package
+
+Installs the locally built TGZ version of the Portal-Core-Library into a target project.
+
+**Usage:**
+
+```bash
+# Installs the latest TGZ file from dist/
+npm run deploy-local-dev-package ../portal-shell
+
+# Or directly:
+node .local-scripts/deploy-local-dev-package.js ../portal-shell
+```
+
+**Features:**
+
+- Automatically finds the latest TGZ file in the `dist/` directory
+- Installs the local version as `file:` dependency
+- Clears caches and reinstalls all dependencies
+- Automatically validates target directory and library project
+
+### restore-to-registry-package
+
+Restores registry versions of the Portal-Core-Library and checks for available updates.
+
+**Usage:**
+
+```bash
+# Automatic update to latest stable version
+npm run restore-to-registry-package ../portal-shell
+
+# Installation of a specific version
+npm run restore-to-registry-package ../portal-shell 2.0.1
+
+# Or directly:
+node .local-scripts/restore-to-registry-package.js ../portal-shell [version]
+```
+
+As can be seen, the script can also be used to install a specific version of the library.
+Typically, this is not necessary, as the latest version is always installed by default.
+
+### Typical Development Workflow
+
+1. **Local development**: Make changes to Portal-Core
+2. **Build**: Run `npm run build`
+3. **Deployment**: `npm run deploy-local-dev-package ../portal-shell` for testing
+4. **Restoration**: `npm run restore-to-registry-package ../portal-shell` for production
+
 ## Security Policy
+
 If you want to see the security policy, please check our [SECURITY.md](.github/SECURITY.md).
 
 ## Contributing
+
 If you want to contribute, please check our [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## License
+
+Copyright 2023-2025 gematik GmbH
+
 EUROPEAN UNION PUBLIC LICENCE v. 1.2
 
 EUPL © the European Union 2007, 2016
 
+See the [LICENSE](./LICENSE.md) for the specific language governing permissions and limitations under the License
+
 ## Additional Notes and Disclaimer from gematik GmbH
 
 1. Copyright notice: Each published work result is accompanied by an explicit statement of the license conditions for use. These are regularly typical conditions in connection with open source or free software. Programs described/provided/linked here are free software, unless otherwise stated.
-2. Permission notice: Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions::
-  1. The copyright notice (Item 1) and the permission notice (Item 2) shall be included in all copies or substantial portions of the Software.
-  2. The software is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the warranties of fitness for a particular purpose, merchantability, and/or non-infringement. The authors or copyright holders shall not be liable in any manner whatsoever for any damages or other claims arising from, out of or in connection with the software or the use or other dealings with the software, whether in an action of contract, tort, or otherwise.
-  3. The software is the result of research and development activities, therefore not necessarily quality assured and without the character of a liable product. For this reason, gematik does not provide any support or other user assistance (unless otherwise stated in individual cases and without justification of a legal obligation). Furthermore, there is no claim to further development and adaptation of the results to a more current state of the art.
-3. Gematik may remove published results temporarily or permanently from the place of publication at any time without prior notice or justification.
-4. Please note: Parts of this code may have been generated using AI-supported technology.’ Please take this into account, especially when troubleshooting, for security analyses and possible adjustments.
+2. Permission notice: Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    1. The copyright notice (Item 1) and the permission notice (Item 2) shall be included in all copies or substantial portions of the Software.
+    2. The software is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the warranties of fitness for a particular purpose, merchantability, and/or non-infringement. The authors or copyright holders shall not be liable in any manner whatsoever for any damages or other claims arising from, out of or in connection with the software or the use or other dealings with the software, whether in an action of contract, tort, or otherwise.
+    3. We take open source license compliance very seriously. We are always striving to achieve compliance at all times and to improve our processes. If you find any issues or have any suggestions or comments, or if you see any other ways in which we can improve, please reach out to: ospo@gematik.de
+3. Please note: Parts of this code may have been generated using AI-supported technology. Please take this into account, especially when troubleshooting, for security analyses and possible adjustments.
 
-See [LICENSE](LICENSE.md).
 
 ## Contact
+
 E-Mail to [DEMIS Entwicklung](mailto:demis-entwicklung@gematik.de?subject=[GitHub]%20Portal-core)

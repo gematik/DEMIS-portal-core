@@ -14,13 +14,9 @@ mat-form-field {
 // This could lead to styling being apply to more than our formly custom datepicker. So we should fix this.
 ::ng-deep .mat-datepicker-content {
   min-height: 395px !important;
-  background-color: var(--color-secondary-dark20, #EAF6FF) !important;
+  background-color: var(--color-secondary-dark20) !important;
 }
 
-::ng-deep .mat-datepicker-toggle-default-icon, {
-  color: var(--color-primary, #003A66);
+::ng-deep .mat-datepicker-toggle-default-icon {
+  color: var(--color-primary);
 }
-
-
-
-

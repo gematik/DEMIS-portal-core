@@ -15,7 +15,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, inject, signal } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnChanges, OnDestroy, OnInit, SimpleChanges, inject, signal, input } from '@angular/core';
 import { MaxContainerHeightService } from '../../services/max-container-height.service';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 
@@ -35,11 +35,10 @@ import { debounceTime, Subject, takeUntil } from 'rxjs';
       }
     `,
   ],
-  standalone: true,
   imports: [CommonModule],
 })
 export class MaxHeightContentContainerComponent implements OnInit, OnChanges, AfterViewChecked, OnDestroy {
-  @Input({ required: true }) elementSelectorsToSubtract!: string[];
+  readonly elementSelectorsToSubtract = input.required<string[]>();
   protected containerHeight = signal('100vh');
 
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
@@ -76,7 +75,7 @@ export class MaxHeightContentContainerComponent implements OnInit, OnChanges, Af
       resizeObserver.disconnect();
     }
     this.elementsToSubtract = [];
-    for (const selector of this.elementSelectorsToSubtract) {
+    for (const selector of this.elementSelectorsToSubtract()) {
       const elements = document.querySelectorAll(selector);
       this.elementsToSubtract = this.elementsToSubtract.concat(Array.from(elements));
     }

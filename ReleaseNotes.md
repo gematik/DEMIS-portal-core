@@ -2,6 +2,29 @@
 
 # Release Notes Portal-Core
 
+## Release 2.0.3
+
+- Simplified consumer pages by introducing Markdown support
+- Added scripts to deploy locally built library tgz files to microfrontends and restore from these to a registry version
+- Added demis-portal-theme-library to the Demo App in order to reflect the DEMIS visual style
+
+## Release 2.0.2
+
+- Fixed style bug in Datepicker
+
+## Release 2.0.1
+
+- Upgraded dependencies to most recent versions ensuring best compatibility
+
+## Release 2.0.0
+
+- **Breaking Change**: Switched to Angular 19 and updated all dependencies accordingly.
+
+## Release 1.4.2
+
+- Datepicker: Handled incorrect default values and edge cases related to the pastebox.
+- Repeater: Provided unique ID for each repeated element.
+
 ## Release 1.4.1
 
 - Datepicker: Fixed a bug with the navigation arrows in the header.

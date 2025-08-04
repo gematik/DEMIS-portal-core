@@ -22,10 +22,10 @@ import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
+import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
 
 @Component({
   selector: 'app-section-title-consumer',
-  standalone: true,
   imports: [
     SectionTitleExample1Component,
     SectionTitleExample2Component,
@@ -34,8 +34,8 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
     DocTableComponent,
     ExpandableSectionsComponent,
     CodeExampleBoxComponent,
+    CodeSnippetBoxComponent,
   ],
-
   template: `
     <app-expandable-sections>
       <app-overview-section>
@@ -47,10 +47,10 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         <p>See the examples below for the different ways to use the section title component.</p>
 
         <app-subsection-title>Import</app-subsection-title>
-        <pre><code>{{ 'import { SectionTitleComponent } from "@gematik/demis-portal-core-library";' }}</code></pre>
+        <app-code-snippet-box language="ts" codeSnippetString='import { SectionTitleComponent } from "@gematik/demis-portal-core-library";' />
 
         <app-subsection-title>Selector</app-subsection-title>
-        <pre><code>gem-demis-section-title</code></pre>
+        <app-code-snippet-box language="html" codeSnippetString="gem-demis-section-title" />
 
         <app-subsection-title>Properties</app-subsection-title>
         <app-doc-table [dataSource]="propertiesDocTableDataSource"></app-doc-table>
@@ -74,12 +74,12 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 })
 export class SectionTitleConsumerComponent {
   propertiesDocTableDataSource = [
-    { name: 'titleText', description: '[required] The title text of the section title', options: { nameIsCode: true } },
-    { name: 'level', description: '[optional] The level of the section title. 1 or 2. Default is 1', options: { nameIsCode: true } },
+    { name: '`titleText`', description: '`[required]` The title text of the section title' },
+    { name: '`level`', description: '`[optional]` The level of the section title. 1 or 2. Default is 1' },
   ];
   cssVariablesDocTableDataSource = [
-    { name: '--gem-demis-primary-color', description: 'Used as text color for the title text', options: { nameIsCode: true } },
-    { name: '--gem-demis-border-color', description: 'Used as text color for the subtitle text', options: { nameIsCode: true } },
+    { name: '`--gem-demis-primary-color`', description: 'Used as text color for the title text' },
+    { name: '`--gem-demis-border-color`', description: 'Used as text color for the subtitle text' },
   ];
 
   examples: CodeExampleBoxComponentOptions[] = [
@@ -93,7 +93,6 @@ export class SectionTitleConsumerComponent {
           codeSnippetPath: 'code-snippets/section-title',
         },
       ],
-      rowHeight: '300px',
     },
     {
       expanderTitle: 'Example 2',
@@ -105,7 +104,6 @@ export class SectionTitleConsumerComponent {
           codeSnippetPath: 'code-snippets/section-title',
         },
       ],
-      rowHeight: '300px',
     },
   ];
 }

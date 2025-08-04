@@ -26,7 +26,7 @@ export class MaxContainerHeightService {
     }
 
     const totalHeightToSubtract = elementsToSubtract
-      .filter(e => e && e.clientHeight)
+      .filter(e => e?.clientHeight)
       .map(e => ({ height: e.clientHeight }))
       .map(e => e.height)
       .reduce((acc, height) => acc + height, 0);

@@ -18,7 +18,6 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-subsection-title',
-  standalone: true,
   imports: [],
   template: ` <h2><ng-content></ng-content></h2> `,
   styles: `

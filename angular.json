@@ -76,8 +76,9 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "demo/src/styles.scss",
-              "node_modules/highlight.js/styles/stackoverflow-dark.min.css"
+              "node_modules/highlight.js/styles/foundation.min.css",
+              "node_modules/@gematik/demis-portal-theme-library/demis-theme.css",
+              "demo/src/styles.scss"
             ],
             "scripts": []
           },

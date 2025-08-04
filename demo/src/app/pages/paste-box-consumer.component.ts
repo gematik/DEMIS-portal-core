@@ -17,6 +17,7 @@
 import { Component } from '@angular/core';
 import { PasteBoxExample1Component } from '../code-snippets/paste-box/example-1.component';
 import { CodeExampleBoxComponent, CodeExampleBoxComponentOptions } from '../utils/code-example-box.component';
+import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
 import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
@@ -24,13 +25,13 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 
 @Component({
   selector: 'app-paste-box-consumer',
-  standalone: true,
   imports: [
     SubsectionTitleComponent,
     OverviewSectionComponent,
     ExpandableSectionsComponent,
     DocTableComponent,
     CodeExampleBoxComponent,
+    CodeSnippetBoxComponent,
     PasteBoxExample1Component,
   ],
   template: `
@@ -47,10 +48,10 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         </p>
 
         <app-subsection-title>Import</app-subsection-title>
-        <pre><code>{{ 'import { PasteBoxComponent } from "@gematik/demis-portal-core-library";' }}</code></pre>
+        <app-code-snippet-box language="ts" codeSnippetString='import { PasteBoxComponent } from "@gematik/demis-portal-core-library";' />
 
         <app-subsection-title>Selector</app-subsection-title>
-        <pre><code>gem-demis-paste-box</code></pre>
+        <app-code-snippet-box language="html" codeSnippetString="gem-demis-paste-box" />
 
         <app-subsection-title>Events</app-subsection-title>
         <app-doc-table [dataSource]="eventsDocTableDataSource"></app-doc-table>
@@ -74,29 +75,24 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 export class PasteBoxConsumerComponent {
   eventsDocTableDataSource = [
     {
-      name: 'dataPasted: EventEmitter<Map<string, string>>()',
+      name: '`dataPasted: EventEmitter<Map<string, string>>()`',
       description: 'Emits the parsed value read from the clipboard as Map<string, string>',
-      options: { nameIsCode: true },
     },
   ];
 
-  cssDocTableDataSource = [
-    { name: '--color-primary', description: 'Color variable used as text color for the title of the paste box', options: { nameIsCode: true } },
-  ];
+  cssDocTableDataSource = [{ name: '`--color-primary`', description: 'Color variable used as text color for the title of the paste box' }];
 
   exampleClipboardContentsDocTableDataSource = [
     {
-      name: 'URL P.family=Schulz&P.given=Klaus',
+      name: '`URL P.family=Schulz&P.given=Klaus`',
       description: 'Can be parsed an will set the given name and family name for a person',
-      options: { nameIsCode: true },
     },
-    { name: 'P.family=Schulz&P.given=Klaus', description: 'Cannot be parsed, because of the missing prefix', options: { nameIsCode: true } },
+    { name: '`P.family=Schulz&P.given=Klaus`', description: 'Cannot be parsed, because of the missing prefix' },
     {
-      name: 'JSON {"P.family":"Schulz","P.given":"Klaus"}',
+      name: '`JSON {"P.family":"Schulz","P.given":"Klaus"}`',
       description: 'Cannot be parsed, because the parser only understands URL format',
-      options: { nameIsCode: true },
     },
-    { name: 'Klaus Schulz', description: 'Cannot be parsed, because this is no structured data at all', options: { nameIsCode: true } },
+    { name: '`Klaus Schulz`', description: 'Cannot be parsed, because this is no structured data at all' },
   ];
 
   examples: CodeExampleBoxComponentOptions[] = [

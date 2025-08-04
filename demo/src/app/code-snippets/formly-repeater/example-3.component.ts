@@ -20,7 +20,6 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-formly-repeater-example-3',
-  standalone: true,
   imports: [ReactiveFormsModule, FormlyModule],
   templateUrl: './example-3.component.html',
 })
@@ -29,6 +28,7 @@ export class FormlyRepeaterExample3Component {
   model = {};
   fields: FormlyFieldConfig[] = [
     {
+      id: 'emails',
       key: 'emails',
       type: 'repeat',
       props: {
@@ -41,6 +41,7 @@ export class FormlyRepeaterExample3Component {
       fieldArray: {
         fieldGroup: [
           {
+            id: 'email',
             key: 'email',
             type: 'input',
             props: {
@@ -56,6 +57,7 @@ export class FormlyRepeaterExample3Component {
       template: `<p>Bitte geben Sie mindestens eine Tel-Nr. an.</p>`,
     },
     {
+      id: 'phoneNumbers',
       key: 'phoneNumbers',
       type: 'repeat',
       props: {
@@ -68,6 +70,7 @@ export class FormlyRepeaterExample3Component {
       fieldArray: {
         fieldGroup: [
           {
+            id: 'phone',
             key: 'phone',
             type: 'input',
             props: {

@@ -21,6 +21,7 @@ import { MockBuilder, MockRender } from 'ng-mocks';
 
 @Component({
   template: ` <button mat-stroked-button color="secondary" appSecondaryButton></button> `,
+  standalone: false,
 })
 class TestComponent {}
 

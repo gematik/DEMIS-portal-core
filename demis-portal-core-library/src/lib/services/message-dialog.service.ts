@@ -49,7 +49,7 @@ export const ErrorDialogInsertDataFromClipboard: ErrorsDialogProps = {
 
 @Injectable({ providedIn: 'root' })
 export class MessageDialogService {
-  private matDialog = inject(MatDialog);
+  private readonly matDialog = inject(MatDialog);
 
   /**
    * @deprecated Use `showErrorDialog` instead.
@@ -61,9 +61,9 @@ export class MessageDialogService {
   showErrorDialog(data: ErrorsDialogProps, style?: ErrorDialogStyle): void {
     this.matDialog.open(ErrorDialogWithSearchInKbComponent, {
       data: data,
-      height: style?.height || '600px',
-      width: style?.width || '800px',
-      maxWidth: style?.maxWidth || '800px',
+      height: style?.height ?? '600px',
+      width: style?.width ?? '800px',
+      maxWidth: style?.maxWidth ?? '800px',
       disableClose: data.redirectToHome ?? false,
     });
   }

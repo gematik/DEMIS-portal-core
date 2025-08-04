@@ -1,10 +1,10 @@
 <div [class.single-input-field]="isSingleInputField">
   @for (currentField of field.fieldGroup; let i = $index; track i) {
     <div class="repeated-item-with-delete-icon" [ngClass]="currentField.className">
-      <formly-field [field]="currentField" [id]="field.key + '-' + i"> </formly-field>
+      <formly-field [field]="currentField" [id]="setIdNames(currentField, i)"> </formly-field>
 
       @if (deletable) {
-        <button mat-icon-button type="button" class="remove-button" [id]="field.key + '-delete-button-' + i" (click)="remove(i)">
+        <button mat-icon-button type="button" class="remove-button" [id]="field.id + '-delete-button-' + i" (click)="remove(i)">
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       }

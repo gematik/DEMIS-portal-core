@@ -29,14 +29,13 @@ export type ErrorDialogData = {
   selector: 'gem-demis-error-dialog',
   templateUrl: './error-dialog.component.html',
   styleUrl: './error-dialog.component.scss',
-  standalone: true,
   imports: [MatIconModule, MatDialogModule, MatDividerModule, MatButtonModule],
 })
 export class ErrorDialogComponent {
   readonly data = inject<ErrorDialogData>(MAT_DIALOG_DATA);
 
   get errors() {
-    if (!!this.data) {
+    if (this.data) {
       return this.data.errors;
     }
 
@@ -44,7 +43,7 @@ export class ErrorDialogComponent {
   }
 
   get errorTitle() {
-    if (!!this.data) {
+    if (this.data) {
       return this.data.errorTitle;
     }
 

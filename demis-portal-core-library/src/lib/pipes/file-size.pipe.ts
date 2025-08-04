@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { inject, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'fileSize',

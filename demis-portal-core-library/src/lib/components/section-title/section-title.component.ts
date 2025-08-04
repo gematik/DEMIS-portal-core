@@ -14,14 +14,19 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
+
+// Exportierte Standardwerte für Tests und Produktivcode
+export const SECTION_TITLE_DEFAULTS = {
+  level: 1 as 1 | 2,
+} as const;
 
 @Component({
   selector: 'gem-demis-section-title',
   template: `
     <div [attr.class]="levelClass">
       <h2 id="section-title">
-        <span>{{ titleText }}</span>
+        <span>{{ titleText() }}</span>
       </h2>
       <div id="section-subtitle" class="subtitle-texts">
         <ng-content></ng-content>
@@ -70,10 +75,10 @@ import { Component, Input } from '@angular/core';
   standalone: true,
 })
 export class SectionTitleComponent {
-  @Input({ required: true }) titleText!: string;
-  @Input() level: 1 | 2 = 1;
+  readonly titleText = input.required<string>();
+  readonly level = input<1 | 2>(SECTION_TITLE_DEFAULTS.level);
 
   get levelClass() {
-    return `gem-demis-section gem-demis-section-level-${this.level}`;
+    return `gem-demis-section gem-demis-section-level-${this.level()}`;
   }
 }

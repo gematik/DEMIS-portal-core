@@ -14,28 +14,32 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { FileSizePipe } from '../../pipes/file-size.pipe';
 import { MatButtonModule } from '@angular/material/button';
 
+// Exportierte Standardwerte für Tests und Produktivcode
+export const FILE_NAME_CHIP_DEFAULTS = {
+  canDelete: true,
+} as const;
+
 @Component({
   selector: 'gem-demis-file-name-chip',
   templateUrl: './file-name-chip.component.html',
   styleUrl: './file-name-chip.component.scss',
-  standalone: true,
   imports: [MatChipsModule, MatIconModule, MatButtonModule, FileSizePipe],
 })
 export class FileNameChipComponent {
-  @Input({ required: true }) fileName!: string;
-  @Input() fileSize?: number;
-  @Input() canDelete: boolean = true;
-  @Output() fileDeleted = new EventEmitter<void>();
+  readonly fileName = input.required<string>();
+  readonly fileSize = input<number>();
+  canDelete = input<boolean>(FILE_NAME_CHIP_DEFAULTS.canDelete);
+  readonly fileDeleted = output<void>();
 
   onDeleteClicked() {
-    if (this.canDelete) {
-      this.fileDeleted.emit();
+    if (this.canDelete()) {
+      this.fileDeleted.emit(undefined);
     }
   }
 }

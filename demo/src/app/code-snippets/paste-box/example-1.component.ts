@@ -19,7 +19,6 @@ import { PasteBoxComponent } from '@gematik/demis-portal-core-library';
 
 @Component({
   selector: 'app-paste-box-example-1',
-  standalone: true,
   imports: [PasteBoxComponent],
   templateUrl: './example-1.component.html',
 })

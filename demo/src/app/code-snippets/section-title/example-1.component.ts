@@ -19,7 +19,6 @@ import { SectionTitleComponent } from '@gematik/demis-portal-core-library';
 
 @Component({
   selector: 'app-section-title-example-1',
-  standalone: true,
   imports: [SectionTitleComponent],
   templateUrl: './example-1.component.html',
 })

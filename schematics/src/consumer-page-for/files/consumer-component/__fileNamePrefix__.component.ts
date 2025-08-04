@@ -21,6 +21,7 @@
 
 import { Component } from '@angular/core';
 import { CodeExampleBoxComponent, CodeExampleBoxComponentOptions } from '../utils/code-example-box.component';
+import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
 import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
@@ -37,6 +38,7 @@ import { <%= classNamePrefix %>Example1Component } from '../code-snippets/<%= se
     DocTableComponent,
     ExpandableSectionsComponent,
     CodeExampleBoxComponent,
+    CodeSnippetBoxComponent,
   ],
 
   template: `
@@ -47,10 +49,10 @@ import { <%= classNamePrefix %>Example1Component } from '../code-snippets/<%= se
         </p>
 
         <app-subsection-title>Import</app-subsection-title>
-        <pre><code>{{ 'import { <%= classNamePrefix %>Component } from "@gematik/demis-portal-core-library";' }}</code></pre>
+        <app-code-snippet-box language="ts" codeSnippetString='import { <%= classNamePrefix %>Component } from "@gematik/demis-portal-core-library";' />
 
         <app-subsection-title>Selector</app-subsection-title>
-        <pre><code>gem-demis-<%= selectorSuffix %></code></pre>
+        <app-code-snippet-box language="html" codeSnippetString="gem-demis-<%= selectorSuffix %>" />
 
         <app-subsection-title>Properties</app-subsection-title>
         <app-doc-table [dataSource]="propertiesDocTableDataSource"></app-doc-table>
@@ -70,11 +72,11 @@ import { <%= classNamePrefix %>Example1Component } from '../code-snippets/<%= se
 })
 export class <%= consumerComponentName %>Component {
   propertiesDocTableDataSource = [
-    { name: 'property', description: 'Tell something about the property', options: { nameIsCode: true } },
+    { name: '`property`', description: 'Tell something about the property' },
   ];
 
   cssVariablesDocTableDataSource = [
-    { name: 'css variable', description: 'Tell something about this css variable, especially for what it is used', options: { nameIsCode: true } },
+    { name: '`css variable`', description: 'Tell something about this css variable, especially for what it is used' },
   ];
 
   examples: CodeExampleBoxComponentOptions[] = [

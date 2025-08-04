@@ -23,7 +23,6 @@ import { MaxContainerHeightService } from '../../services/max-container-height.s
   selector: 'gem-demis-tiled-content',
   templateUrl: './tiled-content.component.html',
   styleUrl: './tiled-content.component.scss',
-  standalone: true,
   imports: [CommonModule, MatSidenavModule],
 })
 export class TiledContentComponent implements AfterViewInit, OnChanges {
