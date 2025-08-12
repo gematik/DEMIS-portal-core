@@ -17,7 +17,7 @@
 import { Routes } from '@angular/router';
 import { SectionTitleConsumerComponent } from './pages/section-title-consumer.component';
 import { HomeComponent } from './pages/home.component';
-import { ErrorDialogConsumerComponent } from './pages/error-dialog-consumer.component';
+import { MessageDialogConsumerComponent } from './pages/message-dialog-consumer.component';
 import { FormlyDatepickerConsumerComponent } from './pages/formly-datepicker-consumer.component';
 import { PasteBoxConsumerComponent } from './pages/paste-box-consumer.component';
 import { FormlyRepeaterConsumerComponent } from './pages/formly-repeater-consumer.component';
@@ -57,10 +57,10 @@ const componentConsumerRoutes: Routes = [
 // Routes for the services
 const serviceConsumerRoutes: Routes = [
   {
-    path: 'error-dialog',
+    path: 'message-dialog',
     title: 'Message Dialog Service',
     pathMatch: 'full',
-    component: ErrorDialogConsumerComponent,
+    component: MessageDialogConsumerComponent,
   },
 ];
 

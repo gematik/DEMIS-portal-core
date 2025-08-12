@@ -1,0 +1,51 @@
+$icon-size: 34px;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 30px;
+}
+
+#success-title {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 28px;
+  padding: 0;
+  margin-bottom: 40px;
+  color: black;
+}
+
+#icon-success {
+  color: #00766E;
+  margin-right: 10px;
+  font-size: $icon-size;
+  height: $icon-size;
+  width: $icon-size;
+}
+
+span.highlight {
+  font-weight: bold;
+}
+
+mat-dialog-content {
+  color: black !important;
+  padding: 0 !important;
+}
+
+#success-timestamp {
+  margin-bottom: 40px;
+}
+
+#success-result {
+  padding-bottom: 21px;
+  margin-bottom: 0;
+}
+
+.button-container {
+  justify-content: flex-end;
+  padding: 40px 0 0;
+  margin-top: 0;
+}

@@ -16,25 +16,24 @@
 
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ErrorsDialogProps, MessageDialogService } from '@gematik/demis-portal-core-library';
+import { ErrorsDialogProps, MessageDialogService, SubmitDialogProps } from '@gematik/demis-portal-core-library';
 
 @Component({
-  selector: 'app-error-dialog-example-1',
+  selector: 'app-message-dialog-example-2',
   imports: [MatButtonModule],
-  templateUrl: './example-1.component.html',
+  templateUrl: './example-2.component.html',
 })
-export class ErrorDialogExample1Component {
+export class MessageDialogExample2Component {
   private readonly messageDialogService = inject(MessageDialogService);
 
-  showError() {
-    const errorsDialogProps: ErrorsDialogProps = {
-      errorTitle: 'Critical Error',
-      errors: [
-        {
-          text: 'Something went terribly wrong. Hopefully, there is a backup disc somewhere.',
-        },
-      ],
+  showSubmit() {
+    const submitDialogProps: SubmitDialogProps = {
+      notificationId: '73d38849-fcb7-4d65-bce0-a7c36eb1b9e8',
+      timestamp: '06.08.2025 16:05:26',
+      fileName: '250806160616 Power, Max 250806',
+      href: '',
+      authorEmail: 'demis-support@rki.de',
     };
-    this.messageDialogService.showErrorDialog(errorsDialogProps);
+    this.messageDialogService.showSubmitDialog(submitDialogProps);
   }
 }

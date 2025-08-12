@@ -45,7 +45,6 @@ export class FormlyDatepickerExample1Component {
   ];
 
   onSend(value: string) {
-    this.model.lastTimeAtDentist = value;
     const control = this.form.get<string>('lastTimeAtDentist') as FormControl<string>;
     if (control) {
       control.setValue(value);

@@ -16,13 +16,14 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { ErrorDialogInsertDataFromClipboard, ErrorDialogStyle, ErrorsDialogProps, MessageDialogService } from './message-dialog.service';
+import { ErrorDialogInsertDataFromClipboard, DialogStyle, ErrorsDialogProps, MessageDialogService, SubmitDialogProps } from './message-dialog.service';
 import { ErrorDialogComponent, ErrorDialogData } from '../components/error-dialog/error-dialog.component';
 import { MockComponent, MockModule } from 'ng-mocks';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { signal } from '@angular/core';
 import { ErrorDialogWithSearchInKbComponent } from '../components/error-dialog-with-search-in-kb/error-dialog-with-search-in-kb.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SubmitDialogComponent } from '../components/submit-dialog/submit-dialog.component';
 
 describe('MessageDialogService', () => {
   let service: MessageDialogService;
@@ -33,11 +34,17 @@ describe('MessageDialogService', () => {
     width: '800px',
     maxWidth: '800px',
     disableClose: false,
-  } as ErrorDialogStyle;
+  } as DialogStyle;
+
+  const defaultSubmitStyle = {
+    height: '385px',
+    width: '610px',
+    disableClose: true,
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MockComponent(ErrorDialogComponent), MockModule(MatDialogModule)],
+      imports: [MockComponent(ErrorDialogComponent), MockComponent(SubmitDialogComponent), MockModule(MatDialogModule)],
     });
     service = TestBed.inject(MessageDialogService);
     matDialog = TestBed.inject(MatDialog);
@@ -160,6 +167,61 @@ describe('MessageDialogService', () => {
     it('should return default message for null or undefined', () => {
       expect(service.extractMessageFromError(null)).toBe('Unbekannter Fehler');
       expect(service.extractMessageFromError(undefined)).toBe('Unbekannter Fehler');
+    });
+  });
+
+  describe('showSubmitDialog', () => {
+    const submitData = {
+      notificationId: '123-456-789',
+      timestamp: '12.12.2024 12:00:00',
+      fileName: 'test-file.pdf',
+      href: 'blob:test-url',
+      authorEmail: 'test@example.com',
+    } as SubmitDialogProps;
+
+    it('should open the MatDialog with SubmitDialogComponent and default style', () => {
+      const openSpy = spyOn(matDialog, 'open');
+      service.showSubmitDialog(submitData);
+      expect(openSpy).toHaveBeenCalledWith(SubmitDialogComponent, {
+        data: submitData,
+        ...defaultSubmitStyle,
+      });
+    });
+
+    it('should open the MatDialog with custom style when provided', () => {
+      const customStyle = {
+        height: '500px',
+        width: '700px',
+      } as DialogStyle;
+      const expectedConfig = {
+        data: submitData,
+        height: '500px',
+        width: '700px',
+        disableClose: true,
+      };
+      const openSpy = spyOn(matDialog, 'open');
+      service.showSubmitDialog(submitData, customStyle);
+      expect(openSpy).toHaveBeenCalledWith(SubmitDialogComponent, expectedConfig);
+    });
+
+    it('should always set disableClose to true to prevent closing the dialog', () => {
+      const openSpy = spyOn(matDialog, 'open');
+      service.showSubmitDialog(submitData);
+
+      const calledConfig = openSpy.calls.mostRecent().args[1];
+      expect(calledConfig!.disableClose).toBe(true);
+    });
+
+    it('should maintain disableClose as true even with custom style', () => {
+      const customStyle = {
+        height: '500px',
+        width: '700px',
+      } as DialogStyle;
+      const openSpy = spyOn(matDialog, 'open');
+      service.showSubmitDialog(submitData, customStyle);
+
+      const calledConfig = openSpy.calls.mostRecent().args[1];
+      expect(calledConfig!.disableClose).toBe(true);
     });
   });
 });

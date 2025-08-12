@@ -14,30 +14,32 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
+import { NgClass } from '@angular/common';
 import { AfterViewInit, Component, DoCheck, effect, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
+import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FieldTypeConfig, FormlyModule } from '@ngx-formly/core';
 import { FieldType } from '@ngx-formly/material';
-import { ReactiveFormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
 import { format, isValid, parse } from 'date-fns';
-import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { Subject } from 'rxjs';
-import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { de } from 'date-fns/locale';
-import { DatepickerHeaderComponent } from './header/datepicker-header.component';
-import { DatepickerStateService } from './services/datepicker-state.service';
+import { Subject } from 'rxjs';
 import {
+  convertNonIsoFormats,
   DatepickerCustomProps,
   DatePrecision,
   DEFAULT_PRECISION_LEVEL,
-  detectPrecisionFromDateGermanFormat,
-  detectPrecisionFromIso,
+  detectPrecisionFromDateInGermanFormat,
+  determinePrecisionAndFormat,
   precisionToView,
+  SupportedDateFormat,
   VALID_FORMATS,
 } from './datepicker-shared';
+import { DatepickerHeaderComponent } from './header/datepicker-header.component';
+import { DatepickerStateService } from './services/datepicker-state.service';
 
 const DYNAMIC_DATE_FNS_FORMATS = {
   parse: {
@@ -97,6 +99,11 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
    */
   private currentPrecision!: DatePrecision | null;
 
+  /**
+   * Flag to prevent recursive calls to detectAndApplyPrecisionOnProgrammaticValue
+   */
+  private isProcessingProgrammaticValue = false;
+
   private get datepickerProps(): DatepickerCustomProps {
     return this.props as DatepickerCustomProps;
   }
@@ -117,7 +124,7 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
     this.setDefaultValues();
     this.useIsoStringInModel();
 
-    // Needed if the model is set programmatically after the component is initialized.
+    // Needed if the value of the FormControl is set programmatically after the component is initialized.
     // This happens when data are copied from clipboard.
     this.formControl.valueChanges.subscribe(() => {
       this.detectAndApplyPrecisionOnProgrammaticValue();
@@ -153,24 +160,63 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
   }
 
   private detectAndApplyPrecisionOnProgrammaticValue(): void {
+    if (this.isProcessingProgrammaticValue) {
+      return; // Prevent recursive calls
+    }
+
     const value = this.formControl.value;
 
     if (typeof value === 'string') {
-      const precision = detectPrecisionFromIso(value);
-      if (precision) {
-        this.setCurrentPrecision(precision);
-        this.datepickerStateService.setCurrentPrecision(precision);
-        this.triggerRendering();
-        if (!this.allowedPrecisions.includes(precision)) {
-          this.formControl.setErrors({ formatMismatch: true });
+      this.isProcessingProgrammaticValue = true;
+
+      try {
+        const { precision, format } = determinePrecisionAndFormat(value);
+
+        if (precision) {
+          this.processPrecisionValue(value, precision, format);
+        } else {
+          this.formControl.setErrors({ invalidDate: true });
         }
-      } else {
-        this.formControl.setErrors({ invalidDate: true });
+
+        this.markAsTouchedIfNotEmpty(value);
+      } finally {
+        this.isProcessingProgrammaticValue = false;
       }
-      //We want to trigger the validation only when a non-empty value is set programmatically.
-      if (value?.trim()) {
-        this.formControl.markAsTouched();
-      }
+    }
+  }
+
+  private processPrecisionValue(value: string, precision: DatePrecision, format: SupportedDateFormat): void {
+    convertNonIsoFormats(this.formControl, value, precision, format);
+
+    if (this.isGermanFormatInvalid(value, precision, format)) {
+      this.formControl.setErrors({ invalidDate: true });
+      return;
+    }
+
+    this.applyPrecisionSettings(precision);
+  }
+
+  private isGermanFormatInvalid(value: string, precision: DatePrecision, format: SupportedDateFormat): boolean {
+    if (format === 'GERMAN') {
+      const parsed = this.inputStringToDate(value, precision);
+      return !parsed || !isValid(parsed);
+    }
+    return false;
+  }
+
+  private applyPrecisionSettings(precision: DatePrecision): void {
+    this.setCurrentPrecision(precision);
+    this.datepickerStateService.setCurrentPrecision(precision);
+    this.triggerRendering();
+
+    if (!this.allowedPrecisions.includes(precision)) {
+      this.formControl.setErrors({ formatMismatch: true });
+    }
+  }
+
+  private markAsTouchedIfNotEmpty(value: string): void {
+    if (value?.trim?.()) {
+      this.formControl.markAsTouched();
     }
   }
 
@@ -187,7 +233,7 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
     this.field.parsers = [
       (value: unknown) => {
         if (typeof value === 'string') {
-          value = value.trim();
+          value = value?.trim?.();
         }
         if (this.currentPrecision && value instanceof Date && isValid(value)) {
           return this.dateToIsoString(value);
@@ -234,7 +280,7 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
 
   onRawInput(event: Event) {
     const inputElement = event.target as HTMLInputElement;
-    const input = inputElement.value.trim();
+    const input = inputElement.value?.trim?.();
     const normalizedInput = this.normalizeInput(input);
     // Update the visible value
     inputElement.value = normalizedInput;
@@ -244,7 +290,7 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
       return;
     }
 
-    this.setCurrentPrecision(detectPrecisionFromDateGermanFormat(normalizedInput));
+    this.setCurrentPrecision(detectPrecisionFromDateInGermanFormat(normalizedInput));
     if (this.currentPrecision) {
       this.datepickerStateService.setCurrentPrecision(this.currentPrecision);
     }

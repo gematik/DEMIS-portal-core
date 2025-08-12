@@ -54,17 +54,6 @@ See [ReleaseNotes](ReleaseNotes.md) for all information regarding the (newest) r
 
 ## Getting Started
 
-### NPM Configuration
-
-The Project requires access to the Nexus Private NPM registry from gematik, therefore the `npm` CLI tool should be configured accordingly:
-
-```sh
-# Login to private registry with username/password
-npm login --registry=https://nexus.prod.ccs.gematik.solutions/repository/allNpmRepos/
-# Set npm standard registry
-npm config set registry https://nexus.prod.ccs.gematik.solutions/repository/allNpmRepos/
-```
-
 ### Developing the library
 
 The library can be built for development using the following command:
@@ -112,13 +101,16 @@ npm run test
 
 ## Usage
 
-To use this library in your project, this project have to be build. Then run following command in **your** project:
+To use this library in your project, install it via npm, if you have access to a registry, where this library is pushed to:
 
-```
-npm install <path_to_this_project>/dist/gematik/demis-portal-core-library
+```bash
+npm install @gematik/demis-portal-core-library
 ```
 
-After this the library should be implemented as local path to your project.
+If you do not have access to a registry that has this library available, you first need to build it yourself (see: <a href="#builddev">build:dev</a>).
+Afterwards, you can deploy this local build to any desired Angular project by utilizing the convenience script <a href="#deploy-local-dev-package">deploy-local-dev-package</a>.
+
+**BEWARE!** This will most likely always affect the dependency tree of the target Angular project!
 
 ## Development Scripts
 
@@ -134,6 +126,14 @@ This is useful for local development and testing before deploying to a registry.
 ```bash
 # Build the library and create a TGZ file in dist/
 npm run build:dev
+```
+
+### Creating a new component
+
+To create a new component in the library, you can use the Angular CLI command:
+
+```bash
+ng g c components/component-name --project @gematik/demis-portal-core-library
 ```
 
 ### deploy-local-dev-package

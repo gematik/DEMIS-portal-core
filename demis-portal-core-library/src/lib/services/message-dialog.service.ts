@@ -18,6 +18,7 @@ import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent, ErrorDialogData } from '../components/error-dialog/error-dialog.component';
 import { ErrorDialogWithSearchInKbComponent } from '../components/error-dialog-with-search-in-kb/error-dialog-with-search-in-kb.component';
+import { SubmitDialogComponent } from '../components/submit-dialog/submit-dialog.component';
 
 export interface ErrorsDialogProps {
   errors: ErrorMessage[];
@@ -31,10 +32,18 @@ export interface ErrorMessage {
   queryString?: string;
 }
 
-export interface ErrorDialogStyle {
+export interface DialogStyle {
   height?: string;
   width?: string;
   maxWidth?: string;
+}
+
+export interface SubmitDialogProps {
+  notificationId: string;
+  timestamp: string;
+  fileName: string;
+  href: string;
+  authorEmail: string;
 }
 
 export const ErrorDialogInsertDataFromClipboard: ErrorsDialogProps = {
@@ -58,13 +67,22 @@ export class MessageDialogService {
     this.matDialog.open<ErrorDialogComponent, ErrorDialogData>(ErrorDialogComponent, { data });
   }
 
-  showErrorDialog(data: ErrorsDialogProps, style?: ErrorDialogStyle): void {
+  showErrorDialog(data: ErrorsDialogProps, style?: DialogStyle): void {
     this.matDialog.open(ErrorDialogWithSearchInKbComponent, {
       data: data,
       height: style?.height ?? '600px',
       width: style?.width ?? '800px',
       maxWidth: style?.maxWidth ?? '800px',
       disableClose: data.redirectToHome ?? false,
+    });
+  }
+
+  showSubmitDialog(data: SubmitDialogProps, style?: DialogStyle): void {
+    this.matDialog.open(SubmitDialogComponent, {
+      data: data,
+      height: style?.height ?? '385px',
+      width: style?.width ?? '610px',
+      disableClose: true,
     });
   }
 
