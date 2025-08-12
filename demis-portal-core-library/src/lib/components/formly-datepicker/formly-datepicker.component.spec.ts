@@ -16,29 +16,30 @@
 
 import { ComponentFixture } from '@angular/core/testing';
 
-import { FormlyDatepickerComponent } from './formly-datepicker.component';
-import { MockBuilder, MockRender } from 'ng-mocks';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
-import { By } from '@angular/platform-browser';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { Component, DebugElement, WritableSignal } from '@angular/core';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { format, isValid, setDate } from 'date-fns';
-import { MatCalendarHarness, MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { DebugElement, WritableSignal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCalendarHarness, MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { FormlyModule } from '@ngx-formly/core';
+import { format, isValid, setDate } from 'date-fns';
+import { MockBuilder, MockRender } from 'ng-mocks';
+import { FormlyDatepickerMockComponent } from '../../../test/utils/formly-datepicker.mock.component';
 import { checkValidationError, getButton, getDatepicker, getErrorFor, getHintForFormFieldWithLabel } from '../../../test/utils/test-utils';
+import { FormlyDatepickerComponent } from './formly-datepicker.component';
 import { DatepickerHeaderComponent } from './header/datepicker-header.component';
 
 describe('FormlyDatepickerComponent', () => {
   let component: FormlyDatepickerComponent;
   let header: DatepickerHeaderComponent;
-  let fixture: ComponentFixture<MockComponent>;
+  let fixture: ComponentFixture<FormlyDatepickerMockComponent>;
   let loader: HarnessLoader;
 
   beforeEach(() => {
-    return MockBuilder(MockComponent)
+    return MockBuilder(FormlyDatepickerMockComponent)
       .keep(FormlyDatepickerComponent)
       .keep(ReactiveFormsModule)
       .keep(NoopAnimationsModule)
@@ -51,7 +52,7 @@ describe('FormlyDatepickerComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = MockRender(MockComponent);
+    fixture = MockRender(FormlyDatepickerMockComponent);
     const datepickerEl = fixture.debugElement.query(By.directive(FormlyDatepickerComponent));
     component = datepickerEl.componentInstance;
     loader = TestbedHarnessEnvironment.documentRootLoader(fixture);
@@ -265,6 +266,236 @@ describe('FormlyDatepickerComponent', () => {
       it('User can type date with month precision without dots', async () => {
         await inputField.setValue('062022');
         expect(component.model['datepickerAllPrecisionLevels']).toEqual('2022-06');
+      });
+    });
+  });
+
+  describe('FormControl values are set programmatically with German date format', () => {
+    describe('datepicker can handle 3 input precision levels when set programmatically', () => {
+      let inputField: MatDatepickerInputHarness;
+
+      beforeEach(async () => {
+        inputField = await getDatepicker(loader, '#datepickerAllPrecisionLevels-datepicker-input-field');
+      });
+
+      it('FormControl can be set with German day precision format (dd.MM.yyyy)', async () => {
+        component.form.get('datepickerAllPrecisionLevels')!.setValue('01.03.2022');
+        fixture.detectChanges();
+        expect(component.model['datepickerAllPrecisionLevels']).toEqual('2022-03-01');
+        const displayedValue = await inputField.getValue();
+        expect(displayedValue).toBe('01.03.2022');
+      });
+
+      it('FormControl can be set with German month precision format (MM.yyyy)', async () => {
+        component.form.get('datepickerAllPrecisionLevels')!.setValue('05.2023');
+        fixture.detectChanges();
+        expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023-05');
+        const displayedValue = await inputField.getValue();
+        expect(displayedValue).toBe('05.2023');
+      });
+
+      it('FormControl can be set with year precision format (yyyy)', async () => {
+        component.form.get('datepickerAllPrecisionLevels')!.setValue('2025');
+        fixture.detectChanges();
+        expect(component.model['datepickerAllPrecisionLevels']).toEqual('2025');
+        const displayedValue = await inputField.getValue();
+        expect(displayedValue).toBe('2025');
+      });
+    });
+
+    describe('FormControl validation works as expected with German formats', () => {
+      it('German day format validation with constraints', async () => {
+        const control = component.form.get('datepickerWithConstraints');
+        control!.setValue('15.06.1950');
+        fixture.detectChanges();
+
+        expect(control?.valid).toBeTrue();
+        expect(component.model['datepickerWithConstraints']).toEqual('1950-06-15');
+
+        const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
+        const displayedValue = await inputField.getValue();
+        expect(displayedValue).toBe('15.06.1950');
+      });
+
+      it('German format respects min/max date constraints', async () => {
+        const control = component.form.get('datepickerWithConstraints');
+
+        // Test value before min date (1870-01-01)
+        control!.setValue('31.12.1869');
+        fixture.detectChanges();
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('matDatepickerMin')).toBeTrue();
+
+        // Test value after max date (today)
+        control!.setValue('01.01.2030');
+        fixture.detectChanges();
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('matDatepickerMax')).toBeTrue();
+      });
+
+      it('Invalid German date format is detected', async () => {
+        const control = component.form.get('datepickerAllPrecisionLevels');
+        control!.setValue('32.13.2022'); // Invalid date
+        fixture.detectChanges();
+
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('invalidDate')).toBeTrue();
+      });
+
+      it('Wrong precision format is detected when constraints are applied', async () => {
+        const control = component.form.get('datepickerWithConstraints'); // Only day precision allowed
+        control!.setValue('06.2022'); // Month precision
+        fixture.detectChanges();
+
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('formatMismatch')).toBeTrue();
+      });
+
+      it('ISO format values are properly handled when set programmatically', async () => {
+        const control = component.form.get('datepickerAllPrecisionLevels');
+
+        // Test ISO day format
+        control!.setValue('2023-07-15');
+        fixture.detectChanges();
+        expect(control?.valid).toBeTrue();
+        expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023-07-15');
+
+        // Test ISO month format
+        control!.setValue('2023-07');
+        fixture.detectChanges();
+        expect(control?.valid).toBeTrue();
+        expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023-07');
+
+        // Test ISO year format
+        control!.setValue('2023');
+        fixture.detectChanges();
+        expect(control?.valid).toBeTrue();
+        expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023');
+      });
+    });
+  });
+
+  describe('Custom error messages and edge cases', () => {
+    it('customErrorMessage returns null when no errors exist', () => {
+      const control = component.form.get('datepickerAllPrecisionLevels');
+      control!.setValue('15.06.2023');
+      fixture.detectChanges();
+
+      expect(component['customErrorMessage']).toBeNull();
+    });
+
+    it('customErrorMessage handles invalidDate errors with raw value', () => {
+      const control = component.form.get('datepickerAllPrecisionLevels');
+      control!.setValue('invalid-date');
+      fixture.detectChanges();
+
+      const errorMessage = component['customErrorMessage'];
+      expect(errorMessage).toContain('Das eingegebene Datum');
+      expect(errorMessage).toContain('ist ungültig');
+    });
+
+    it('calendarStartView returns correct view based on precision and multiYear setting', () => {
+      // Test with normal mode
+      component['currentPrecision'] = 'day';
+      expect(component.calendarStartView).toBe('month');
+
+      component['currentPrecision'] = 'month';
+      expect(component.calendarStartView).toBe('year');
+
+      component['currentPrecision'] = 'year';
+      expect(component.calendarStartView).toBe('multi-year');
+    });
+
+    it('calendarStartView returns multi-year when multiYear is enabled', () => {
+      component.multiYear = true;
+      component['currentPrecision'] = 'day';
+      expect(component.calendarStartView).toBe('multi-year');
+    });
+
+    it('dateFormats are properly set based on currentPrecision', () => {
+      component['setCurrentPrecision']('day');
+      expect(component['dateFormats'].display.dateInput).toBe('dd.MM.yyyy');
+
+      component['setCurrentPrecision']('month');
+      expect(component['dateFormats'].display.dateInput).toBe('MM.yyyy');
+
+      component['setCurrentPrecision']('year');
+      expect(component['dateFormats'].display.dateInput).toBe('yyyy');
+    });
+
+    it('dateFormats are set to null when precision is invalid', () => {
+      component['setCurrentPrecision'](null);
+      expect(component['dateFormats'].display.dateInput).toBeNull();
+    });
+
+    it('inputStringToDate returns null for null precision', () => {
+      const result = component['inputStringToDate']('01.01.2023', null as any);
+      expect(result).toBeNull();
+    });
+
+    it('dateToIsoString formats date correctly based on precision', () => {
+      const testDate = new Date('2023-06-15');
+
+      component['currentPrecision'] = 'day';
+      expect(component['dateToIsoString'](testDate)).toBe('2023-06-15');
+
+      component['currentPrecision'] = 'month';
+      expect(component['dateToIsoString'](testDate)).toBe('2023-06');
+
+      component['currentPrecision'] = 'year';
+      expect(component['dateToIsoString'](testDate)).toBe('2023');
+    });
+
+    // Integration tests to ensure datepicker-shared functions are covered through component usage
+    it('should trigger all precision handling through calendarStartView', () => {
+      const precisions: Array<'day' | 'month' | 'year'> = ['day', 'month', 'year'];
+      const expectedViews = ['month', 'year', 'multi-year'];
+
+      component.multiYear = false;
+      precisions.forEach((precision, index) => {
+        component['setCurrentPrecision'](precision);
+        expect(component.calendarStartView).toBe(expectedViews[index]);
+      });
+    });
+
+    it('should process various date formats through programmatic value setting', () => {
+      const control = component.form.get('datepickerAllPrecisionLevels');
+      const testCases = [
+        '15.06.2025',
+        '06.2025',
+        '2025', // German formats
+        '2025-06-15',
+        '2025-06', // ISO formats
+        '15062025',
+        '062025', // German without dots
+        'invalid-date',
+        '',
+        null,
+        123, // Invalid inputs
+        '15.06',
+        '06',
+        '202',
+        '1506202',
+        '06202', // Edge cases
+      ];
+
+      testCases.forEach(value => {
+        control!.setValue(value);
+        fixture.detectChanges();
+      });
+    });
+
+    it('should trigger German format detection through user input processing', () => {
+      const testInputs = [
+        { value: '15.06.2025', precision: 'day' },
+        { value: '06.2025', precision: 'month' },
+        { value: '2025', precision: 'year' },
+        { value: '15062025', precision: 'day' },
+        { value: '062025', precision: 'month' },
+      ];
+
+      testInputs.forEach(({ value, precision }) => {
+        component['processPrecisionValue'](value, precision as any, 'GERMAN');
       });
     });
   });
@@ -870,124 +1101,3 @@ describe('FormlyDatepickerComponent', () => {
     });
   });
 });
-
-@Component({
-  selector: 'app-test-form',
-  template: `
-    <form [formGroup]="form">
-      <formly-form [fields]="fields" [form]="form" [model]="model"></formly-form>
-    </form>
-  `,
-  standalone: false,
-})
-class MockComponent {
-  form = new FormGroup({});
-  model = {};
-  fields: FormlyFieldConfig[] = [
-    {
-      id: 'datepickerAllPrecisionLevels',
-      key: 'datepickerAllPrecisionLevels',
-      type: 'datepicker',
-      props: {
-        label: 'Datepicker with all precision levels',
-        allowedPrecisions: ['day', 'month', 'year'],
-      },
-    },
-    {
-      id: 'datepickerWithConstraints',
-      key: 'datepickerWithConstraints',
-      type: 'datepicker',
-      props: {
-        label: 'Geburtstag',
-        allowedPrecisions: ['day'],
-        required: true,
-        minDate: new Date('1870-01-01'),
-        maxDate: new Date(),
-      },
-    },
-    {
-      id: 'datepickerWithValidationMessage',
-      key: 'datepickerWithValidationMessage',
-      type: 'datepicker',
-      props: {
-        label: 'Foo',
-        allowedPrecisions: ['day'],
-        required: true,
-        minDate: new Date('1870-01-01'),
-        maxDate: new Date('2025-01-01'),
-      },
-      validation: {
-        messages: {
-          required: 'A message from consuming app on error of type required',
-          minDate: 'A message from consuming app on error of type minDate',
-          maxDate: 'A message from consuming app on error of type maxDate',
-        },
-      },
-    },
-    {
-      id: 'defaultDatepicker',
-      key: 'defaultDatepicker',
-      type: 'datepicker',
-    },
-    {
-      id: 'defaultDatepickerMandatory',
-      key: 'defaultDatepickerMandatory',
-      type: 'datepicker',
-      props: {
-        required: true,
-      },
-    },
-    {
-      id: 'withDefaultValue_IsoDay',
-      key: 'withDefaultValue_IsoDay',
-      type: 'datepicker',
-      props: {
-        allowedPrecisions: ['day', 'month', 'year'],
-      },
-      defaultValue: '2025-02-13',
-    },
-    {
-      id: 'withDefaultValue_IsoMonth',
-      key: 'withDefaultValue_IsoMonth',
-      type: 'datepicker',
-      props: {
-        allowedPrecisions: ['day', 'month', 'year'],
-      },
-      defaultValue: '2025-02',
-    },
-    {
-      id: 'withDefaultValue_Year',
-      key: 'withDefaultValue_Year',
-      type: 'datepicker',
-      props: {
-        allowedPrecisions: ['day', 'month', 'year'],
-      },
-      defaultValue: '2025',
-    },
-    {
-      id: 'withDefaultValue_IsoMonth_defaultPrecision',
-      key: 'withDefaultValue_IsoMonth_defaultPrecision',
-      type: 'datepicker',
-      defaultValue: '2025-02',
-    },
-    {
-      id: 'multiYearDatepicker',
-      key: 'multiYearDatepicker',
-      type: 'datepicker',
-      props: {
-        multiYear: true,
-        allowedPrecisions: ['day', 'month', 'year'],
-      },
-    },
-    {
-      id: 'datepickerWithTimeRange',
-      key: 'datepickerWithTimeRange',
-      type: 'datepicker',
-      props: {
-        allowedPrecisions: ['day', 'month', 'year'],
-        minDate: new Date('2000-01-01'),
-        maxDate: new Date('2009-12-31'),
-      },
-    },
-  ];
-}

@@ -17,8 +17,10 @@
 import { FormlyFieldProps } from '@ngx-formly/core';
 import { MatCalendarView } from '@angular/material/datepicker';
 import { isValid, parseISO } from 'date-fns';
+import { FormControl } from '@angular/forms';
 
 export type DatePrecision = 'day' | 'month' | 'year';
+export type SupportedDateFormat = 'ISO' | 'GERMAN';
 export const DEFAULT_PRECISION_LEVEL: DatePrecision = 'day';
 
 export interface DatepickerCustomProps extends FormlyFieldProps {
@@ -58,8 +60,8 @@ export function precisionToView(precision: DatePrecision): MatCalendarView {
   }
 }
 
-export function detectPrecisionFromDateGermanFormat(input: string): DatePrecision | null {
-  const trimmed = input.trim();
+export function detectPrecisionFromDateInGermanFormat(input: string): DatePrecision | null {
+  const trimmed = input?.trim?.();
   // Matches only year: e.g. "2025"
   if (/^\d{4}$/.test(trimmed)) {
     return 'year';
@@ -93,4 +95,86 @@ export function detectPrecisionFromIso(isoString: string): DatePrecision | null 
     return 'day';
   }
   return null;
+}
+
+function parseGermanDate(input: any, precision: DatePrecision): string[] | null {
+  if (!input || typeof input !== 'string') {
+    return null;
+  }
+
+  // Remove whitespace and check for dot-separated format
+  const cleaned = input.trim();
+  let parts: string[] = [];
+
+  if (cleaned.includes('.')) {
+    // Split by dots if present
+    parts = cleaned.split('.').filter(Boolean);
+  } else {
+    // If no dots: try to parse based on expected length
+    switch (precision) {
+      case 'day':
+        if (cleaned.length === 8) {
+          parts = [cleaned.slice(0, 2), cleaned.slice(2, 4), cleaned.slice(4)];
+        }
+        break;
+      case 'month':
+        if (cleaned.length === 6) {
+          parts = [cleaned.slice(0, 2), cleaned.slice(2)];
+        }
+        break;
+    }
+  }
+
+  return parts;
+}
+
+function convertGermanDateToISOWithPrecision(value: any, precision: DatePrecision): string | null {
+  const dateParts = parseGermanDate(value, precision);
+
+  if (!dateParts) {
+    return null;
+  }
+
+  switch (precision) {
+    case 'day':
+      if (dateParts.length === 3) {
+        const [day, month, year] = dateParts;
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+      break;
+
+    case 'month':
+      if (dateParts.length === 2) {
+        const [month, year] = dateParts;
+        return `${year}-${month.padStart(2, '0')}`;
+      }
+      break;
+  }
+
+  return null; // Invalid format
+}
+
+export function determinePrecisionAndFormat(value: string): { precision: DatePrecision | null; format: SupportedDateFormat } {
+  let precision: DatePrecision | null = null;
+
+  precision = detectPrecisionFromDateInGermanFormat(value);
+
+  if (precision) {
+    return { precision, format: 'GERMAN' };
+  }
+
+  return { precision: detectPrecisionFromIso(value), format: 'ISO' };
+}
+
+export function convertNonIsoFormats(formControl: FormControl, newValue: string, precision: DatePrecision, format: SupportedDateFormat) {
+  if (precision === 'year') {
+    return;
+  }
+
+  if (format === 'GERMAN') {
+    const converted = convertGermanDateToISOWithPrecision(newValue, precision);
+    if (converted !== newValue) {
+      formControl.setValue(converted);
+    }
+  }
 }

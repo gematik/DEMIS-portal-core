@@ -1,17 +1,24 @@
-<mat-form-field [id]="field.id + '-datepicker-form-field'" [ngClass]="field.className" [appearance]="field.props?.['appearance']?? 'outline'" [floatLabel]="field.props?.['floatLabel']?? 'always'" color="primary">
+<mat-form-field
+  [id]="field.id + '-datepicker-form-field'"
+  [ngClass]="field.className"
+  [appearance]="field.props['appearance'] ?? 'outline'"
+  [floatLabel]="field.props['floatLabel'] ?? 'always'"
+  color="primary"
+>
   <mat-label class="datepicker-label">{{ label }}</mat-label>
   <input
     [id]="field.id + '-datepicker-input-field'"
     class="datepicker-input"
     matInput
     [required]="!!props.required"
-    [placeholder]="field.props?.['placeholder']?? 'Bitte eingeben'"
+    [placeholder]="field.props['placeholder'] ?? 'Bitte eingeben'"
     [matDatepicker]="picker"
     [formControl]="formControl"
     [formlyAttributes]="field"
     [min]="minDate()"
     [max]="maxDate()"
-    (input)="onRawInput($event)"/>
+    (input)="onRawInput($event)"
+  />
 
   <mat-hint class="datepicker-hint">
     {{ hint }}
@@ -25,7 +32,12 @@
       }
     </mat-error>
 
-  <mat-datepicker-toggle matIconSuffix [for]="picker" (click)="onDatepickerToggleClick()"></mat-datepicker-toggle>
+  <mat-datepicker-toggle
+    matIconSuffix
+    [for]="picker"
+    (click)="onDatepickerToggleClick()"
+    (keydown)="onDatepickerToggleClick()"
+  ></mat-datepicker-toggle>
 
   <mat-datepicker
     #picker
@@ -33,7 +45,8 @@
     [calendarHeaderComponent]="datepickerHeader"
     class="datepicker-content"
     (monthSelected)="onMonthSelected($event)"
-    (yearSelected)="onYearSelected($event)">
+    (yearSelected)="onYearSelected($event)"
+  >
   </mat-datepicker>
 </mat-form-field>
 

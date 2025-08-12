@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 2.1.0
+
+- Enabled the datepicker to accept German date formats, even when set programmatically
+- Added submit-dialog to library
+
 ## Release 2.0.3
 
 - Simplified consumer pages by introducing Markdown support
