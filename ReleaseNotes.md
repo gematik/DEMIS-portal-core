@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 2.1.1
+
+- Fixed release pipeline
+
 ## Release 2.1.0
 
 - Enabled the datepicker to accept German date formats, even when set programmatically
