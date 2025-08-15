@@ -112,6 +112,14 @@ Afterwards, you can deploy this local build to any desired Angular project by ut
 
 **BEWARE!** This will most likely always affect the dependency tree of the target Angular project!
 
+### Creating a new component
+
+To create a new component in the library, you can use the Angular CLI command:
+
+```bash
+ng g c components/component-name --project @gematik/demis-portal-core-library
+```
+
 ## Development Scripts
 
 There are several scripts available for local development that simplify the workflow between local TGZ builds and registry installations:
@@ -126,14 +134,6 @@ This is useful for local development and testing before deploying to a registry.
 ```bash
 # Build the library and create a TGZ file in dist/
 npm run build:dev
-```
-
-### Creating a new component
-
-To create a new component in the library, you can use the Angular CLI command:
-
-```bash
-ng g c components/component-name --project @gematik/demis-portal-core-library
 ```
 
 ### deploy-local-dev-package

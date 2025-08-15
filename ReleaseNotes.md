@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 2.2.0
+
+- Added spinner-dialog to library
+- Fixed dependency issues
+
 ## Release 2.1.1
 
 - Fixed release pipeline

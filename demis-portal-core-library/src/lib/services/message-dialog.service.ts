@@ -19,6 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent, ErrorDialogData } from '../components/error-dialog/error-dialog.component';
 import { ErrorDialogWithSearchInKbComponent } from '../components/error-dialog-with-search-in-kb/error-dialog-with-search-in-kb.component';
 import { SubmitDialogComponent } from '../components/submit-dialog/submit-dialog.component';
+import { SpinnerDialogComponent } from '../components/spinner-dialog/spinner-dialog.component';
 
 export interface ErrorsDialogProps {
   errors: ErrorMessage[];
@@ -46,6 +47,10 @@ export interface SubmitDialogProps {
   authorEmail: string;
 }
 
+export interface SpinnerDialogProps {
+  message: string;
+}
+
 export const ErrorDialogInsertDataFromClipboard: ErrorsDialogProps = {
   errorTitle: 'Fehler bei der Datenübernahme',
   errors: [
@@ -59,6 +64,7 @@ export const ErrorDialogInsertDataFromClipboard: ErrorsDialogProps = {
 @Injectable({ providedIn: 'root' })
 export class MessageDialogService {
   private readonly matDialog = inject(MatDialog);
+  private spinnerDialogRef: any = null;
 
   /**
    * @deprecated Use `showErrorDialog` instead.
@@ -84,6 +90,22 @@ export class MessageDialogService {
       width: style?.width ?? '610px',
       disableClose: true,
     });
+  }
+
+  showSpinnerDialog(data: SpinnerDialogProps, style?: DialogStyle): void {
+    this.spinnerDialogRef = this.matDialog.open(SpinnerDialogComponent, {
+      data: data,
+      height: style?.height ?? '300px',
+      width: style?.width ?? '350px',
+      disableClose: true,
+    });
+  }
+
+  closeSpinnerDialog(): void {
+    if (this.spinnerDialogRef) {
+      this.spinnerDialogRef.close();
+      this.spinnerDialogRef = null;
+    }
   }
 
   extractMessageFromError(error: any): string {

@@ -16,14 +16,22 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { ErrorDialogInsertDataFromClipboard, DialogStyle, ErrorsDialogProps, MessageDialogService, SubmitDialogProps } from './message-dialog.service';
+import {
+  ErrorDialogInsertDataFromClipboard,
+  DialogStyle,
+  ErrorsDialogProps,
+  MessageDialogService,
+  SubmitDialogProps,
+  SpinnerDialogProps,
+} from './message-dialog.service';
 import { ErrorDialogComponent, ErrorDialogData } from '../components/error-dialog/error-dialog.component';
 import { MockComponent, MockModule } from 'ng-mocks';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { signal } from '@angular/core';
 import { ErrorDialogWithSearchInKbComponent } from '../components/error-dialog-with-search-in-kb/error-dialog-with-search-in-kb.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SubmitDialogComponent } from '../components/submit-dialog/submit-dialog.component';
+import { SpinnerDialogComponent } from '../components/spinner-dialog/spinner-dialog.component';
 
 describe('MessageDialogService', () => {
   let service: MessageDialogService;
@@ -42,9 +50,15 @@ describe('MessageDialogService', () => {
     disableClose: true,
   };
 
+  const defaultSpinnerStyle = {
+    height: '300px',
+    width: '350px',
+    disableClose: true,
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MockComponent(ErrorDialogComponent), MockComponent(SubmitDialogComponent), MockModule(MatDialogModule)],
+      imports: [MockComponent(ErrorDialogComponent), MockComponent(SubmitDialogComponent), MockComponent(SpinnerDialogComponent), MockModule(MatDialogModule)],
     });
     service = TestBed.inject(MessageDialogService);
     matDialog = TestBed.inject(MatDialog);
@@ -222,6 +236,67 @@ describe('MessageDialogService', () => {
 
       const calledConfig = openSpy.calls.mostRecent().args[1];
       expect(calledConfig!.disableClose).toBe(true);
+    });
+  });
+
+  describe('showSpinnerDialog', () => {
+    const spinnerData = {
+      message: 'Meldung wird verarbeitet',
+    } as SpinnerDialogProps;
+
+    let mockDialogRef: jasmine.SpyObj<MatDialogRef<SpinnerDialogComponent>>;
+
+    beforeEach(() => {
+      mockDialogRef = jasmine.createSpyObj('MatDialogRef', ['close']);
+    });
+
+    it('should open the MatDialog with SpinnerDialogComponent and default style', () => {
+      const openSpy = spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      service.showSpinnerDialog(spinnerData);
+
+      expect(openSpy).toHaveBeenCalledWith(SpinnerDialogComponent, {
+        data: spinnerData,
+        ...defaultSpinnerStyle,
+      });
+    });
+
+    it('should open the MatDialog with custom style when provided', () => {
+      const customStyle = {
+        height: '400px',
+        width: '500px',
+      } as DialogStyle;
+
+      const expectedConfig = {
+        data: spinnerData,
+        height: '400px',
+        width: '500px',
+        disableClose: true,
+      };
+
+      const openSpy = spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      service.showSpinnerDialog(spinnerData, customStyle);
+
+      expect(openSpy).toHaveBeenCalledWith(SpinnerDialogComponent, expectedConfig);
+    });
+
+    it('should always set disableClose to true for spinner dialog', () => {
+      const openSpy = spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      service.showSpinnerDialog(spinnerData);
+
+      const calledConfig = openSpy.calls.mostRecent().args[1];
+      expect(calledConfig!.disableClose).toBe(true);
+    });
+
+    it('should store the dialog reference for later closing', () => {
+      spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      service.showSpinnerDialog(spinnerData);
+
+      service.closeSpinnerDialog();
+      expect(mockDialogRef.close).toHaveBeenCalled();
+    });
+
+    it('should not error when closing a non-existent spinner dialog', () => {
+      expect(() => service.closeSpinnerDialog()).not.toThrow();
     });
   });
 });

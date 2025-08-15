@@ -15,12 +15,12 @@
  */
 
 import { Component, inject, SecurityContext } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { SubmitDialogProps } from '../../services/message-dialog.service';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'gem-demis-submit-dialog',
