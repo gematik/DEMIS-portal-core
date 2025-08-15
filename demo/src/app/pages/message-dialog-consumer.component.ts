@@ -23,6 +23,7 @@ import { ExpandableSectionsComponent } from '../utils/expandable-sections.compon
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 import { MessageDialogExample2Component } from '../code-snippets/message-dialog-service/example-2.component';
+import { MessageDialogExample3Component } from '../code-snippets/message-dialog-service/example-3.component';
 
 @Component({
   selector: 'app-message-dialog',
@@ -35,7 +36,7 @@ import { MessageDialogExample2Component } from '../code-snippets/message-dialog-
     CodeSnippetBoxComponent,
     MessageDialogExample1Component,
     MessageDialogExample2Component,
-    MessageDialogExample2Component,
+    MessageDialogExample3Component,
   ],
   template: `
     <app-expandable-sections>
@@ -59,11 +60,17 @@ import { MessageDialogExample2Component } from '../code-snippets/message-dialog-
         <app-subsection-title>showSubmitDialog - Parameters</app-subsection-title>
         <app-doc-table [dataSource]="showSubmitDialogDocTableDataSource"></app-doc-table>
 
+        <app-subsection-title>showSpinnerDialog - Parameters</app-subsection-title>
+        <app-doc-table [dataSource]="showSpinnerDialogDocTableDataSource"></app-doc-table>
+
         <app-subsection-title>Interface ErrorsDialogProps - Properties</app-subsection-title>
         <app-doc-table [dataSource]="errorsDialogPropsDocTableDataSource"></app-doc-table>
 
         <app-subsection-title>Interface SubmitDialogProps - Properties</app-subsection-title>
         <app-doc-table [dataSource]="submitDialogPropsDocTableDataSource"></app-doc-table>
+
+        <app-subsection-title>Interface SpinnerDialogProps - Properties</app-subsection-title>
+        <app-doc-table [dataSource]="spinnerDialogPropsDocTableDataSource"></app-doc-table>
 
         <app-subsection-title>Interface ErrorMessage - Properties</app-subsection-title>
         <app-doc-table [dataSource]="errorMessageDocTableDataSource"></app-doc-table>
@@ -77,6 +84,9 @@ import { MessageDialogExample2Component } from '../code-snippets/message-dialog-
       </app-code-example-box>
       <app-code-example-box [options]="examples[1]">
         <app-message-dialog-example-2></app-message-dialog-example-2>
+      </app-code-example-box>
+      <app-code-example-box [options]="examples[2]">
+        <app-message-dialog-example-3></app-message-dialog-example-3>
       </app-code-example-box>
     </app-expandable-sections>
   `,
@@ -99,6 +109,18 @@ export class MessageDialogConsumerComponent {
         'The dialog cannot be closed by clicking outside or pressing ESC (disableClose: true).',
       ],
     },
+    {
+      name: '`showSpinnerDialog`',
+      description: [
+        'Opens a spinner dialog to indicate loading or processing state.',
+        'The dialog cannot be closed by clicking outside or pressing ESC (disableClose: true).',
+        'Must be closed programmatically using closeSpinnerDialog() method.',
+      ],
+    },
+    {
+      name: '`closeSpinnerDialog`',
+      description: ['Closes the currently opened spinner dialog.', 'Safe to call even when no spinner dialog is currently open.'],
+    },
   ];
 
   showErrorDialogDocTableDataSource: DocTableRowData[] = [
@@ -108,6 +130,14 @@ export class MessageDialogConsumerComponent {
 
   showSubmitDialogDocTableDataSource: DocTableRowData[] = [
     { name: '`data: SubmitDialogProps`', description: 'The data object used to render the submit success dialog.' },
+    {
+      name: '`style?: DialogStyle`',
+      description: '`[optional]` Overwrite styles of the message dialog. Note: disableClose is always set to true.',
+    },
+  ];
+
+  showSpinnerDialogDocTableDataSource: DocTableRowData[] = [
+    { name: '`data: SpinnerDialogProps`', description: 'The data object used to render the spinner dialog.' },
     {
       name: '`style?: DialogStyle`',
       description: '`[optional]` Overwrite styles of the message dialog. Note: disableClose is always set to true.',
@@ -129,6 +159,13 @@ export class MessageDialogConsumerComponent {
     { name: '`fileName: string`', description: 'The name of the PDF file to be downloaded.' },
     { name: '`href: string`', description: 'The download URL for the PDF confirmation file.' },
     { name: '`authorEmail: string`', description: 'The email address for support contact.' },
+  ];
+
+  spinnerDialogPropsDocTableDataSource: DocTableRowData[] = [
+    {
+      name: '`message: string`',
+      description: 'The message to display alongside the spinner.',
+    },
   ];
 
   errorMessageDocTableDataSource: DocTableRowData[] = [
@@ -182,6 +219,22 @@ export class MessageDialogConsumerComponent {
         },
         {
           fileName: 'example-2.component.ts',
+          language: 'ts',
+          codeSnippetPath: 'code-snippets/message-dialog-service',
+        },
+      ],
+    },
+    {
+      expanderTitle: 'Example 3',
+      expanderDescription: 'A simple spinner dialog',
+      codeSnippets: [
+        {
+          fileName: 'example-3.component.html',
+          language: 'html',
+          codeSnippetPath: 'code-snippets/message-dialog-service',
+        },
+        {
+          fileName: 'example-3.component.ts',
           language: 'ts',
           codeSnippetPath: 'code-snippets/message-dialog-service',
         },

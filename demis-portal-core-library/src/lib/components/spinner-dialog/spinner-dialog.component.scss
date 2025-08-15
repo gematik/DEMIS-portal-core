@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+mat-progress-spinner {
+  position: relative;
+  left: calc(50% - 50px);
+}
