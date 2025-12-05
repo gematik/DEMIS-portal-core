@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.6
+
+- Updated Angular dependencies to version 19.2.17
+
 ## Release 2.3.5
 
 - Updated Angular dependencies to version 19.2.16
