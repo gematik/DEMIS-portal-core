@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.3
+
+- Added notifiedPersonNotByName config to library
+
 ## Release 2.3.2
 
 - Add FollowUp Notification Service & Dialog

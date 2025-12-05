@@ -11,10 +11,11 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { SubmitDialogComponent } from './submit-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -132,11 +133,16 @@ describe('SubmitDialogComponent', () => {
     expect(mockAnchorElement.click).toHaveBeenCalled();
   });
 
-  it('should navigate to home on button click', () => {
+  it('should navigate to home on button click', fakeAsync(() => {
+    (router.navigate as jasmine.Spy).and.returnValue(Promise.resolve(true));
+
     const homeButton = fixture.debugElement.query(By.css('#btn-back-to-homepage')).nativeElement;
     homeButton.click();
 
+    tick(); // Resolve the first navigation promise
+
     expect(router.navigate).toHaveBeenCalledWith(['']);
+    expect(router.navigate).toHaveBeenCalledWith(['/welcome']);
     expect(dialogRef.close).toHaveBeenCalled();
-  });
+  }));
 });

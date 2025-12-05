@@ -16,9 +16,17 @@
  */
 
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { FormlyConstants, formlyInputField, formlyRow, GERMANY_COUNTRY_CODE, selectOption } from './commons';
+import {
+  FormlyConstants,
+  formlyInputField,
+  formlyRow,
+  GERMANY_COUNTRY_CODE,
+  RESIDENCE_ADDRESS_TYPE_OPTION_LIST,
+  selectOption,
+  TEXT_MAX_LENGTH,
+} from './commons';
 
-export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOption[], genderOptionList: selectOption[]): FormlyFieldConfig[] => {
+export const notifiedPersonNotByNameConfigFields = (countryOptionList: selectOption[], genderOptionList: selectOption[]): FormlyFieldConfig[] => {
   return [
     formlyRow([
       {
@@ -35,6 +43,28 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
         className: '',
         template: '<h2>Allgemein</h2>',
       },
+      formlyInputField({
+        id: 'firstname',
+        key: 'info.firstname',
+        className: FormlyConstants.COLMD5,
+        props: {
+          label: 'Vorname',
+          maxLength: TEXT_MAX_LENGTH,
+          required: true,
+        },
+        validators: ['nameValidator'],
+      }),
+      formlyInputField({
+        id: 'lastname',
+        key: 'info.lastname',
+        className: FormlyConstants.COLMD5,
+        props: {
+          label: 'Nachname',
+          maxLength: TEXT_MAX_LENGTH,
+          required: true,
+        },
+        validators: ['nameValidator'],
+      }),
       {
         id: 'gender',
         key: 'info.gender',
@@ -54,7 +84,7 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
         wrappers: [],
         props: {
           label: 'Geburtsdatum',
-          allowedPrecisions: ['month', 'year'],
+          allowedPrecisions: ['day'],
           required: false,
           minDate: new Date('1870-01-01'),
           maxDate: new Date(),
@@ -64,6 +94,23 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
       {
         className: '',
         template: '<h2>Wohnsitz</h2>',
+      },
+      {
+        className: FormlyConstants.COLMD10,
+        template:
+          '<p>Die Hauptwohnung bezeichnet den Ort, an dem die betroffene Person gemeldet ist. Der gewöhnliche Aufenthaltsort bezeichnet den Ort, ' +
+          'an dem die betroffene Person sich dauerhaft aufhält und ist anzugeben, wenn es sich nicht um die Hauptwohnung handelt.</p>',
+      },
+      {
+        id: 'residenceAddressType',
+        key: 'residenceAddressType',
+        className: FormlyConstants.COLMD10,
+        type: 'radio',
+        defaultValue: RESIDENCE_ADDRESS_TYPE_OPTION_LIST[0].value,
+        props: {
+          required: true,
+          options: RESIDENCE_ADDRESS_TYPE_OPTION_LIST,
+        },
       },
       {
         id: 'residence-address-country',
