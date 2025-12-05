@@ -2,12 +2,20 @@
 
 # Release Notes Portal-Core
 
+## Release 2.2.4
+
+- Improvements to the section header component
+
 ## Release 2.2.3
 - Fix routing issue in submit dialog
 
 ## Release 2.2.2
 
 - Fixed pastebox bug when pasting content with newline characters
+
+## Release 2.2.1
+
+- Renaming and adaption of sectionTitle to sectionHeading
 
 ## Release 2.2.1
 

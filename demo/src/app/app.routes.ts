@@ -15,7 +15,7 @@
  */
 
 import { Routes } from '@angular/router';
-import { SectionTitleConsumerComponent } from './pages/section-title-consumer.component';
+import { SectionHeaderConsumerComponent } from './pages/section-header-consumer.component';
 import { HomeComponent } from './pages/home.component';
 import { MessageDialogConsumerComponent } from './pages/message-dialog-consumer.component';
 import { FormlyDatepickerConsumerComponent } from './pages/formly-datepicker-consumer.component';
@@ -30,10 +30,10 @@ function prefixRoutes(prefix: string, routes: Routes): Routes {
 // Routes for the components
 const componentConsumerRoutes: Routes = [
   {
-    path: 'section-title',
-    title: 'Section Title',
+    path: 'section-header',
+    title: 'Section Header',
     pathMatch: 'full',
-    component: SectionTitleConsumerComponent,
+    component: SectionHeaderConsumerComponent,
   },
   {
     path: 'paste-box',

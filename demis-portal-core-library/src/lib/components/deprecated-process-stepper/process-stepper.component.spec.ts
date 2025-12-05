@@ -18,10 +18,10 @@ import { ProcessStepperComponent, Step } from './process-stepper.component';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { SectionTitleComponent } from '../section-title/section-title.component';
+import { SectionHeaderComponent } from '../section-header/section-header.component';
 
 describe('ProcessStepperComponent', () => {
-  beforeEach(() => MockBuilder(ProcessStepperComponent).keep(SectionTitleComponent).mock(CommonModule).mock(MatIconModule));
+  beforeEach(() => MockBuilder(ProcessStepperComponent).keep(SectionHeaderComponent).mock(CommonModule).mock(MatIconModule));
 
   it('should create the component', () => {
     const steps: Step[] = [{ number: 1, title: 'Step 1', description: 'Description 1' }];
@@ -43,7 +43,7 @@ describe('ProcessStepperComponent', () => {
       activeStep: steps[0],
     });
     fixture.detectChanges();
-    const titleElement = fixture.point.nativeElement.querySelector('#section-title');
+    const titleElement = fixture.point.nativeElement.querySelector('#igs-process-step-header .section-header-title');
     expect(titleElement.textContent).toContain(titleText);
   });
 
@@ -57,7 +57,7 @@ describe('ProcessStepperComponent', () => {
       activeStep: steps[0],
     });
     fixture.detectChanges();
-    const subtitleElement = fixture.point.nativeElement.querySelector('#section-subtitle');
+    const subtitleElement = fixture.point.nativeElement.querySelector('#igs-process-step-header .section-header-subtitle p');
     expect(subtitleElement.textContent).toContain(subtitleText);
   });
 
