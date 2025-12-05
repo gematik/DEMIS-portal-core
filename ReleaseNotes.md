@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 2.2.1
+
+- Fixed a styling issue in the submit-dialog
+
 ## Release 2.2.0
 
 - Added spinner-dialog to library
