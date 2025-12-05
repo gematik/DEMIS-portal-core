@@ -33,6 +33,7 @@ export * from './lib/components/tiled-content/tiled-content.component';
 export * from './lib/components/formly-repeater/formly-repeater.component';
 export * from './lib/components/formly-datepicker/formly-datepicker.component';
 export * from './lib/components/process-stepper/process-stepper.component';
+export * from './lib/components/forms-footer/forms-footer.component';
 
 /***********************************************
  * DIRECTIVES

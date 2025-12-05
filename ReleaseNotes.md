@@ -2,6 +2,12 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.4
+
+- Add forms footer to library
+- Improved color contrast in follow-up notification dialog
+- Rename npmAudit jsl function
+
 ## Release 2.3.3
 
 - Added notifiedPersonNotByName config to library

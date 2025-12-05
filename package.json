@@ -1,6 +1,6 @@
 {
   "name": "portal-core",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "scripts": {
     "ng": "ng",
     "clean": "rimraf dist",
