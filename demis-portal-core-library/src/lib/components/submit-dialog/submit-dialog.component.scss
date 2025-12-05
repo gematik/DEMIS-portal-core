@@ -26,6 +26,10 @@ $icon-size: 34px;
   width: $icon-size;
 }
 
+#success-id {
+  margin-bottom: 12px;
+}
+
 span.highlight {
   font-weight: bold;
 }
@@ -36,12 +40,18 @@ mat-dialog-content {
 }
 
 #success-timestamp {
+  margin-top: 0;
   margin-bottom: 40px;
 }
 
 #success-result {
   padding-bottom: 21px;
+  margin-top: 0;
   margin-bottom: 0;
+}
+
+#success-info {
+  margin-top: 0;
 }
 
 .button-container {
