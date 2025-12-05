@@ -23,6 +23,7 @@ import { FormlyDatepickerConsumerComponent } from './pages/formly-datepicker-con
 import { PasteBoxConsumerComponent } from './pages/paste-box-consumer.component';
 import { FormlyRepeaterConsumerComponent } from './pages/formly-repeater-consumer.component';
 import { StepperConsumerComponent } from './pages/sidebar-navigation-consumer.component';
+import { FormsFooterConsumerComponent } from './pages/forms-footer-consumer.component';
 import { FollowUpNotificationIdConsumerComponent } from './pages/follow-up-notification-id-consumer.component';
 
 function prefixRoutes(prefix: string, routes: Routes): Routes {
@@ -60,6 +61,12 @@ const componentConsumerRoutes: Routes = [
     title: 'Process Stepper',
     pathMatch: 'full',
     component: StepperConsumerComponent,
+  },
+  {
+    path: 'forms-footer',
+    title: 'Forms Footer ',
+    pathMatch: 'full',
+    component: FormsFooterConsumerComponent,
   },
 ];
 

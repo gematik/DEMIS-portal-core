@@ -1,4 +1,3 @@
-$color-success: #008075;
 button {
   font-weight: 700;
   font-style: normal;
@@ -59,26 +58,47 @@ form, .form-container {
 
 /** Input Field Styles **/
 ::ng-deep .initial-notification-id-input-field-valid {
-  --mdc-outlined-text-field-outline-color: #{$color-success};
-  --mdc-outlined-text-field-focus-outline-color: #{$color-success};
-  --mdc-outlined-text-field-hover-outline-color: #{$color-success};
-  --mdc-outlined-text-field-label-text-color: #{$color-success};
-  --mdc-outlined-text-field-hover-label-text-color: #{$color-success};
-  --mdc-outlined-text-field-focus-label-text-color: #{$color-success};
+  --mdc-outlined-text-field-outline-color: var(--color-success-dark);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-success-dark);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-success-dark);
+  --mdc-outlined-text-field-label-text-color: var(--color-success-dark);
+  --mdc-outlined-text-field-hover-label-text-color: var(--color-success-dark);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-success-dark);
 }
 
 ::ng-deep .initial-notification-id-input-field-valid .mat-mdc-input-element {
-  color: $color-success !important;
+  color: var(--color-success-dark) !important;
+}
+
+/** Input Field Styles **/
+::ng-deep .initial-notification-id-input-field-invalid,
+::ng-deep .initial-notification-id-input-field-notvalidated {
+  --mdc-outlined-text-field-error-outline-color: var(--color-error-dark);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--color-error-dark);
+  --mdc-outlined-text-field-error-hover-outline-color: var(--color-error-dark);
+  --mdc-outlined-text-field-error-label-text-color: var(--color-error-dark);
+  --mdc-outlined-text-field-error-hover-label-text-color: var(--color-error-dark);
+  --mdc-outlined-text-field-error-focus-label-text-color: var(--color-error-dark);
+}
+
+::ng-deep .initial-notification-id-input-field-invalid .mat-mdc-form-field-error,
+::ng-deep .initial-notification-id-input-field-notvalidated .mat-mdc-form-field-error {
+  color: var(--color-error-dark) !important;
+}
+
+::ng-deep .initial-notification-id-input-field-invalid .mat-mdc-form-field-error-wrapper,
+::ng-deep .initial-notification-id-input-field-notvalidated .mat-mdc-form-field-error-wrapper {
+  padding-left: 0
 }
 
 ::ng-deep .initial-notification-id-input-field-invalid .mat-mdc-input-element {
-  color: red !important;
+  color: var(--color-error-dark) !important;
 }
 
 .icon-valid {
-  color: $color-success
+  color: var(--color-success-dark);
 }
 
 .icon-invalid {
-  color: red;
+  color: var(--color-error-dark);
 }
