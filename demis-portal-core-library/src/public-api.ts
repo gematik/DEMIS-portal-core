@@ -11,7 +11,8 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
 /*
@@ -47,6 +48,7 @@ export * from './lib/pipes/file-size.pipe';
  * FORMLY
  **********************************************/
 export * from './lib/formly/notified-person-anonymous.config';
+export * from './lib/formly/notified-person-not-by-name.config';
 export * from './lib/formly/commons';
 
 /***********************************************

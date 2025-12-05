@@ -11,7 +11,8 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
 import { FormlyFieldConfig, FormlyFieldProps } from '@ngx-formly/core';
@@ -67,3 +68,10 @@ export enum FormlyConstants {
 export type selectOption = { label: string; value: any };
 
 export const GERMANY_COUNTRY_CODE: string = 'DE';
+export const TEXT_MAX_LENGTH: number = 100;
+
+//TODO use the open api generated types when possible
+export const RESIDENCE_ADDRESS_TYPE_OPTION_LIST = [
+  { value: 'primary', label: 'Hauptwohnung' },
+  { value: 'ordinary', label: 'Gewöhnlicher Aufenthaltsort' },
+];
