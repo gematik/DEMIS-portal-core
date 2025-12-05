@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.7
+
+- Made gender optional in notified-person-anonymous
+
 ## Release 2.3.6
 
 - Updated Angular dependencies to version 19.2.17
@@ -12,7 +16,7 @@
 
 ## Release 2.3.4
 
-- Add forms footer to library
+- Added forms footer to library
 - Improved color contrast in follow-up notification dialog
 - Rename npmAudit jsl function
 
@@ -22,12 +26,12 @@
 
 ## Release 2.3.2
 
-- Add FollowUp Notification Service & Dialog
-- Add FhirCoreNotificationService for backend calls
+- Added FollowUp Notification Service & Dialog
+- Added FhirCoreNotificationService for backend calls
 
 ## Release 2.3.1
 
-- Make repeater component standalone
+- Made repeater component standalone
 - Added notifiedPersonAnonymous config to library
 
 ## Release 2.3.0

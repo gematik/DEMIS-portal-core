@@ -43,7 +43,6 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
         props: {
           label: 'Geschlecht',
           options: genderOptionList,
-          required: true,
         },
       },
       {
