@@ -1,0 +1,130 @@
+:host ::ng-deep {
+  @mixin word-wrap {
+    white-space: break-spaces;
+  }
+
+  .process-stepper-wrapper {
+    padding: 16px;
+  }
+
+  --active-step-title-font-weight: 700;
+  --active-step-description-font-weight: 500;
+
+  .process-step-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+
+    .process-step-divider{
+      display: flex;
+      flex-direction: row;
+      border-left-color: #d9d9d9;
+      border-left-style: solid;
+      border-left-width: 2px;
+      position: absolute;
+      top: 2rem;
+      left: 0.75rem;
+      bottom: 0.4rem;
+    }
+
+    .process-step {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 2rem;
+      gap: 8px;
+      width: 100%;
+
+      .step-decoration {
+        display: flex;
+        flex-direction: column;
+
+        .step-icon {
+          --icon-radius: 1.6rem;
+          display: flex;
+          width: var(--icon-radius);
+          height: var(--icon-radius);
+          border-radius: 50%;
+          border-style: dashed;
+          border-width: 1px;
+          border-color: var(--gem-demis-primary-color);
+          padding-top: 2px;
+
+          .icon-content {
+            font-weight: 400;
+            color: var(--gem-demis-primary-color);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+
+      .step-label {
+        .title {
+          --gem-demis-title-size: 1.1rem;
+          font-size: var(--gem-demis-title-size);
+          line-height: calc(
+            var(--gem-demis-title-size) + var(--gem-demis-line-height-offset)
+          );
+          color: var(--gem-demis-primary-color) !important;
+          margin-top: 0.25rem;
+          margin-bottom: 0.5rem;
+          @include word-wrap();
+        }
+
+        .description {
+          --gem-demis-description-font-size: 0.85rem;
+          font-size: var(--gem-demis-description-font-size);
+          line-height: calc(
+            var(--gem-demis-description-font-size) +
+              var(--gem-demis-line-height-offset)
+          );
+          font-weight: 300;
+          color: var(--gem-demis-primary-color) !important;
+          @include word-wrap();
+        }
+      }
+
+      &.active-step {
+        .step-decoration {
+          .step-icon {
+            border-style: solid;
+
+            .icon-content {
+              font-weight: var(--active-step-title-font-weight);
+            }
+          }
+        }
+
+        .step-label {
+          .title {
+            font-weight: var(--active-step-title-font-weight);
+          }
+
+          .description {
+            font-weight: var(--active-step-description-font-weight);
+          }
+        }
+      }
+
+      &.completed-step {
+        .step-decoration {
+          .step-icon {
+            border-style: solid;
+            background-color: var(--gem-demis-primary-color);
+
+            .mat-icon {
+              color: white;
+              position: relative;
+              top: -2px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+}

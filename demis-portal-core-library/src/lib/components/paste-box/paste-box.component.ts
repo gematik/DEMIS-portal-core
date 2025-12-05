@@ -69,7 +69,7 @@ export class PasteBoxComponent {
         if (kvp.includes('=')) {
           const [key, value] = kvp.split('=');
           if (key && value) {
-            clipboardMap.set(key, value);
+            clipboardMap.set(key.trim(), value.trim());
           }
         }
       });

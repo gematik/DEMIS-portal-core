@@ -1,130 +1,81 @@
-:host ::ng-deep {
-  @mixin word-wrap {
-    white-space: break-spaces;
-  }
+@use '@angular/material' as mat;
 
-  .process-stepper-wrapper {
-    padding: 16px;
-  }
+.gem-demis-stepper {
+  @include mat.stepper-overrides((
+    header-label-text-size: 14px,
+    header-label-text-color: var(--color-primary),
+    line-color: var(--color-neutral-light),
+    header-icon-foreground-color: var(--color-primary),
+    header-icon-background-color: var(--color-white),
+    header-selected-state-icon-background-color: var(--color-white),
+    header-selected-state-icon-foreground-color: var(--color-primary),
+    header-error-state-icon-foreground-color: var(--color-primary),
+    header-error-state-label-text-color: var(--color-primary),
+    header-error-state-label-text-size: 14px,
+    header-selected-state-label-text-weight: bold,
+  ));
 
-  --active-step-title-font-weight: 700;
-  --active-step-description-font-weight: 500;
-
-  .process-step-wrapper {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    width: 100%;
-
-    .process-step-divider{
-      display: flex;
-      flex-direction: row;
-      border-left-color: #d9d9d9;
-      border-left-style: solid;
-      border-left-width: 2px;
-      position: absolute;
-      top: 2rem;
-      left: 0.75rem;
-      bottom: 0.4rem;
-    }
-
-    .process-step {
-      display: flex;
-      flex-direction: row;
-      margin-bottom: 2rem;
-      gap: 8px;
-      width: 100%;
-
-      .step-decoration {
-        display: flex;
-        flex-direction: column;
-
-        .step-icon {
-          --icon-radius: 1.6rem;
-          display: flex;
-          width: var(--icon-radius);
-          height: var(--icon-radius);
-          border-radius: 50%;
-          border-style: dashed;
-          border-width: 1px;
-          border-color: var(--gem-demis-primary-color);
-          padding-top: 2px;
-
-          .icon-content {
-            font-weight: 400;
-            color: var(--gem-demis-primary-color);
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            align-items: center;
-            justify-content: center;
-          }
-        }
-      }
-
-      .step-label {
-        .title {
-          --gem-demis-title-size: 1.1rem;
-          font-size: var(--gem-demis-title-size);
-          line-height: calc(
-            var(--gem-demis-title-size) + var(--gem-demis-line-height-offset)
-          );
-          color: var(--gem-demis-primary-color) !important;
-          margin-top: 0.25rem;
-          margin-bottom: 0.5rem;
-          @include word-wrap();
-        }
-
-        .description {
-          --gem-demis-description-font-size: 0.85rem;
-          font-size: var(--gem-demis-description-font-size);
-          line-height: calc(
-            var(--gem-demis-description-font-size) +
-              var(--gem-demis-line-height-offset)
-          );
-          font-weight: 300;
-          color: var(--gem-demis-primary-color) !important;
-          @include word-wrap();
-        }
-      }
-
-      &.active-step {
-        .step-decoration {
-          .step-icon {
-            border-style: solid;
-
-            .icon-content {
-              font-weight: var(--active-step-title-font-weight);
-            }
-          }
-        }
-
-        .step-label {
-          .title {
-            font-weight: var(--active-step-title-font-weight);
-          }
-
-          .description {
-            font-weight: var(--active-step-description-font-weight);
-          }
-        }
-      }
-
-      &.completed-step {
-        .step-decoration {
-          .step-icon {
-            border-style: solid;
-            background-color: var(--gem-demis-primary-color);
-
-            .mat-icon {
-              color: white;
-              position: relative;
-              top: -2px;
-            }
-          }
-        }
-      }
+  .step-disabled .mat-step-header {
+    pointer-events: none;
+    
+    * {
+      pointer-events: none;
+      color: var(--color-neutral-light);
+      border-color: var(--color-neutral-light);
     }
   }
 
+  .mat-step-header {
+    height: fit-content;
+  }
+
+  .mat-stepper-vertical-line::before {
+    border-left-width: 4px;
+    border-radius: 16px;
+    margin-left: -1px;
+  }
+
+  .mat-step-icon {
+    border-width: 1px;
+    border-style: dashed;
+    border-color: var(--color-primary);
+
+    &.mat-step-icon-state-edit {
+      background-color: var(--color-white);
+      color: inherit;
+      border-style: solid;
+    }
+
+    &-selected.mat-step-icon-state-number, &.mat-step-icon-state-error {
+      border-style: solid;
+    }
+
+    .mat-icon {
+      font-size: 24px;
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  .step-number {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: bold;
+  }
+
+  .step-label {
+    color: var(--color-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .step-description {
+    color: var(--color-primary);
+    font-size: 11px;
+    white-space: normal;
+  }
+
+  .mat-vertical-content-container {
+    height: 0;
+  }
 }

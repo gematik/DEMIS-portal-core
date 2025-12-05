@@ -14,14 +14,14 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-overview-section',
   imports: [MatExpansionModule],
   template: `
-    <mat-expansion-panel [expanded]="true" class="outlined-panel">
+    <mat-expansion-panel [(expanded)]="expanded" class="outlined-panel" (opened)="onExpanded()" (closed)="onCollapsed()">
       <mat-expansion-panel-header>
         <mat-panel-title>Overview</mat-panel-title>
       </mat-expansion-panel-header>
@@ -42,4 +42,21 @@ import { MatExpansionModule } from '@angular/material/expansion';
     }
   `,
 })
-export class OverviewSectionComponent {}
+export class OverviewSectionComponent implements OnInit {
+  expanded = true;
+
+  private readonly overviewSectionCollapsedKey = 'OVERVIEW_SECTION_COLLAPSED';
+
+  ngOnInit(): void {
+    const isCollapsed = sessionStorage.getItem(this.overviewSectionCollapsedKey);
+    this.expanded = !isCollapsed;
+  }
+
+  onExpanded(): void {
+    sessionStorage.removeItem(this.overviewSectionCollapsedKey);
+  }
+
+  onCollapsed(): void {
+    sessionStorage.setItem(this.overviewSectionCollapsedKey, '1');
+  }
+}

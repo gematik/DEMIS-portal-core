@@ -2,9 +2,15 @@
 
 # Release Notes Portal-Core
 
+## Release 2.2.2
+
+- Fixed pastebox bug when pasting content with newline characters
+
 ## Release 2.2.1
 
 - Fixed a styling issue in the submit-dialog
+- Added a new process stepper implementation and made the old one deprecated
+- Update @angular-devkit/build-angular to 19.2.17
 
 ## Release 2.2.0
 

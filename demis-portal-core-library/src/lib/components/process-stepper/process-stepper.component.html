@@ -1,39 +1,78 @@
-<div class="process-stepper-wrapper">
-  <gem-demis-section-title [titleText]="titleText()" [level]="1">
-    @if (subtitleText()) {
-      <p>{{ subtitleText() }}</p>
+<!-- ################################################################################
+ Reusable templates for step state icons
+ ################################################################################ -->
+
+<!-- Done State -->
+<ng-template #doneState let-stepNumber="index + 1" let-index="index">
+  <mat-icon id="step-bullet-point-{{ stepNumber }}" class="step-valid" aria-hidden="true">done</mat-icon>
+</ng-template>
+
+<!-- Error State -->
+<ng-template #errorState let-stepNumber="index + 1" let-index="index">
+  <mat-icon id="step-bullet-point-{{ stepNumber }}" class="step-invalid" aria-hidden="true">close</mat-icon>
+</ng-template>
+
+<!-- Number State -->
+<ng-template #numberState let-stepNumber="index + 1" let-index="index">
+  <span id="step-bullet-point-{{ stepNumber }}" class="step-number" aria-hidden="true">{{ stepNumber }}</span>
+</ng-template>
+
+<!-- Control Sensitive State -->
+<ng-template #controlSensitiveState let-stepNumber="index + 1" let-index="index">
+  @if (currentStepIndex() === index) {
+    @if (currentStep()?.control?.untouched) {
+      <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
     }
-  </gem-demis-section-title>
-  
-  <div class="gem-demis-process-steps">
-    @for(step of steps(); track $index) {
-      <div class="process-step-wrapper">
-        <div id="process-step-{{ $index }}" [ngClass]="{
-          'process-step': true,
-          'active-step': step.number === activeStep().number,
-          'completed-step': step.number < activeStep().number
-        }">
-          <div class="step-decoration">
-            <div class="step-icon">
-              @if(step.number < activeStep().number) {
-                <mat-icon>check</mat-icon>
-              }
-              @else {
-                <span class="icon-content">{{ step.number }}</span>
-              }
-            </div>
-          </div>
-  
-          <div class="step-label">
-            <div class="title">{{ step.title }}</div>
-            <div class="description">{{ step.description }}</div>
-          </div>
-        </div>
-  
-        @if (steps().length && $index < steps().length - 1) {
-          <div class="process-step-divider"></div>
+    @else if (currentStep()?.control?.valid) {
+      <ng-content *ngTemplateOutlet="doneState; context: { index }"></ng-content>
+    } @else {
+      <ng-content *ngTemplateOutlet="errorState; context: { index }"></ng-content>
+    }
+  }
+  @else {
+    <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+  }
+</ng-template>
+
+<!-- ################################################################################
+ Main Stepper Template
+ ################################################################################ -->
+<mat-stepper class="gem-demis-stepper" orientation="vertical" (selectionChange)="onSelectionChange($event)" #stepper>
+  @for (step of steps(); track step.key; let index = $index) {
+    <mat-step [completed]="isCompleted(step)" [hasError]="hasError(step)" [stepControl]="step.control">
+      <!-- Completed -->
+      <ng-template matStepperIcon="done" let-index="index">
+        <ng-content *ngTemplateOutlet="doneState; context: { index }"></ng-content>
+      </ng-template>
+      
+      <!-- Error -->
+      <ng-template matStepperIcon="error" let-index="index">
+        <ng-content *ngTemplateOutlet="errorState; context: { index }"></ng-content>
+      </ng-template>
+      
+      <!-- Number -->
+      <ng-template matStepperIcon="number" let-index="index">
+        <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }"></ng-content>
+      </ng-template>
+
+      <!-- Edit -->
+      <ng-template matStepperIcon="edit" let-index="index">
+        <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }"></ng-content>
+      </ng-template>
+      
+      <!-- Disabled -->
+      <ng-template matStepperIcon="disabled" let-index="index">
+        <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+      </ng-template>
+
+      <!-- Enable multi line step labels with title and description -->
+      @let stepNumber = index + 1;
+      <ng-template matStepLabel>
+        <div id="step-label-{{ stepNumber }}" class="step-label">{{ step.label }}</div>
+        @if (step.description) {
+          <div id="step-description-{{ stepNumber }}" class="step-description">{{ step.description }}</div>
         }
-      </div>
-    }
-  </div>
-</div>
+      </ng-template>
+    </mat-step>
+  }
+</mat-stepper>

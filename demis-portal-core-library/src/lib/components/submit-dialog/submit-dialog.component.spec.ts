@@ -93,9 +93,43 @@ describe('SubmitDialogComponent', () => {
     expect(emailElement.getAttribute('href')).toBe(`mailto:${authorEmail}`);
   });
 
-  xit('should trigger download on initialization', () => {
-    //TODO implement
-    expect(true).toBe(true);
+  it('should trigger download on initialization', () => {
+    // Spy on the triggerDownload method to test if it's called during initialization
+    spyOn(SubmitDialogComponent.prototype, 'triggerDownload' as any);
+
+    // Create a new component instance to test the constructor behavior
+    const newFixture = TestBed.createComponent(SubmitDialogComponent);
+    const newComponent = newFixture.componentInstance;
+    newFixture.detectChanges();
+
+    // Verify that triggerDownload was called with correct parameters
+    expect((newComponent as any).triggerDownload).toHaveBeenCalledWith(href, fileName);
+  });
+
+  it('should create download link correctly', () => {
+    // Mock document.createElement and the created anchor element
+    const mockAnchorElement = {
+      href: '',
+      download: '',
+      click: jasmine.createSpy('click'),
+      setAttribute: jasmine.createSpy('setAttribute'),
+      getAttribute: jasmine.createSpy('getAttribute'),
+    } as any;
+
+    spyOn(document, 'createElement').and.returnValue(mockAnchorElement);
+
+    // Call the private triggerDownload method directly
+    (component as any).triggerDownload(href, fileName);
+
+    // Verify that document.createElement was called with 'a'
+    expect(document.createElement).toHaveBeenCalledWith('a');
+
+    // Verify that the anchor element was configured correctly
+    expect(mockAnchorElement.href).toBe(href);
+    expect(mockAnchorElement.download).toBe(fileName);
+
+    // Verify that click was called to trigger the download
+    expect(mockAnchorElement.click).toHaveBeenCalled();
   });
 
   it('should navigate to home on button click', () => {
