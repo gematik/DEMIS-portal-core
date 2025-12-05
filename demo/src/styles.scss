@@ -6,3 +6,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .hljs-ln-line.hljs-ln-code {
   padding-left: 16px;
 }
+
+.mat-toolbar {
+  z-index: 9 !important;
+}

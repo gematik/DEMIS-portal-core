@@ -14,9 +14,12 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, Input } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Component, input, signal } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIcon } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CodeSnippetBoxComponent } from './code-snippet-box.component';
 
@@ -34,30 +37,49 @@ export interface CodeExampleBoxComponentOptions {
 
 @Component({
   selector: 'app-code-example-box',
-  standalone: true,
-  imports: [MatExpansionModule, MatGridListModule, MatTabsModule, CodeSnippetBoxComponent],
+  imports: [MatExpansionModule, MatGridListModule, MatTabsModule, MatButton, MatIcon, CodeSnippetBoxComponent, NgClass],
   template: `
     <mat-expansion-panel [expanded]="true" class="outlined-panel">
       <mat-expansion-panel-header>
-        <mat-panel-title>{{ options.expanderTitle }}</mat-panel-title>
-        <mat-panel-description>{{ options.expanderDescription }}</mat-panel-description>
+        <mat-panel-title>{{ options().expanderTitle }}</mat-panel-title>
+        <mat-panel-description>{{ options().expanderDescription }}</mat-panel-description>
       </mat-expansion-panel-header>
 
       <div class="row">
-        <div class="col col-render">
-          <div class="col-header">Rendered</div>
-          <ng-content></ng-content>
+        <div class="col col-render" [ngClass]="{ shrunk: isRenderedSectionCollapsed() }">
+          <div class="col-header toggle-header">
+            <button
+              mat-stroked-button
+              (click)="isRenderedSectionCollapsed.set(!isRenderedSectionCollapsed())"
+              [title]="isRenderedSectionCollapsed() ? 'Expand rendered section' : 'Shrink rendered section'">
+              <mat-icon>{{ isRenderedSectionCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+            </button>
+            <span>Rendered</span>
+          </div>
+          @if (!isRenderedSectionCollapsed()) {
+            <ng-content></ng-content>
+          }
         </div>
 
-        <div class="col col-code">
-          <div class="col-header">Code</div>
-          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" [dynamicHeight]="false" animationDuration="0ms" [disableRipple]="true">
-            @for (codeSnippet of options.codeSnippets; track codeSnippet.fileName) {
-              <mat-tab [label]="codeSnippet.fileName">
-                <app-code-snippet-box [codeSnippetPath]="codeSnippet.codeSnippetPath + '/' + codeSnippet.fileName" [language]="codeSnippet.language" />
-              </mat-tab>
-            }
-          </mat-tab-group>
+        <div class="col col-code" [ngClass]="{ shrunk: isCodeSectionCollapsed() }">
+          <div class="col-header toggle-header">
+            <button
+              mat-stroked-button
+              (click)="isCodeSectionCollapsed.set(!isCodeSectionCollapsed())"
+              [title]="isCodeSectionCollapsed() ? 'Expand code section' : 'Shrink code section'">
+              <mat-icon>{{ isCodeSectionCollapsed() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+            </button>
+            <span>Code</span>
+          </div>
+          @if (!isCodeSectionCollapsed()) {
+            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" [dynamicHeight]="false" animationDuration="0ms" [disableRipple]="true">
+              @for (codeSnippet of options().codeSnippets; track codeSnippet.fileName) {
+                <mat-tab [label]="codeSnippet.fileName">
+                  <app-code-snippet-box [codeSnippetPath]="codeSnippet.codeSnippetPath + '/' + codeSnippet.fileName" [language]="codeSnippet.language" />
+                </mat-tab>
+              }
+            </mat-tab-group>
+          }
         </div>
       </div>
     </mat-expansion-panel>
@@ -87,7 +109,7 @@ export interface CodeExampleBoxComponentOptions {
       }
 
       .col {
-        width: calc(50% - 8px);
+        width: calc(100% - 8px);
         display: flex;
         flex-direction: column;
 
@@ -104,9 +126,29 @@ export interface CodeExampleBoxComponentOptions {
         background: rgba(0, 0, 0, 0.38);
         padding: 8px;
       }
+
+      .toggle-header {
+        button {
+          min-width: 42px;
+
+          .mat-icon {
+            margin: 0;
+          }
+        }
+
+        span {
+          margin-left: 8px;
+        }
+      }
+
+      .shrunk {
+        width: 170px !important;
+      }
     `,
   ],
 })
 export class CodeExampleBoxComponent {
-  @Input({ required: true }) options!: CodeExampleBoxComponentOptions;
+  readonly options = input.required<CodeExampleBoxComponentOptions>();
+  readonly isRenderedSectionCollapsed = signal(false);
+  readonly isCodeSectionCollapsed = signal(false);
 }

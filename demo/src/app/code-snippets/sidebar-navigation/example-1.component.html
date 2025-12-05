@@ -1,0 +1,41 @@
+<div style="display: flex; gap: 24px; width: 100%;">
+  <div style="min-width: 320px; max-width: 50%; width: 100%;">
+    <gem-demis-process-stepper #stepper [steps]="steps"
+      (stepChange)="onStepChange($event)"></gem-demis-process-stepper>
+  </div>
+
+  <div style="width: 100%;">
+    <h3>Demo Controls</h3>
+    @for (step of steps; track step.key; let index = $index) {
+      @let stepNumber = index + 1;
+      <button mat-stroked-button type="button" (click)="resetStep(step)">
+        Reset {{ stepNumber }}
+      </button>
+      <button mat-stroked-button type="button" [disabled]="step.control.invalid"
+        (click)="changeStepValidity(step, false)">
+        {{ stepNumber }} -> invalid
+      </button>
+      <button mat-stroked-button type="button" [disabled]="step.control.valid" (click)="changeStepValidity(step, true)">
+        {{ stepNumber }} -> valid
+      </button>
+      <button mat-stroked-button type="button" [disabled]="step.control.disabled" (click)="step.control.disable()">
+        disable {{ stepNumber }}
+      </button>
+      <button mat-stroked-button type="button" [disabled]="step.control.enabled" (click)="step.control.enable()">
+        enable {{ stepNumber }}
+      </button>
+      <br />
+    }
+    <br />
+    <button mat-stroked-button type="button" [disabled]="stepper.currentStepIndex() === 0" (click)="stepper.previous()">
+      Previous
+    </button>
+    <button mat-stroked-button type="button" [disabled]="stepper.currentStepIndex() === steps.length - 1" (click)="stepper.next()">
+      Next
+    </button>
+    <br /><br />
+    <textarea #log [value]="" readonly rows="10" style="resize: none; width: 100%;"></textarea>
+    <br />
+    <button mat-stroked-button type="button" (click)="log.value = ''">Clear Log</button>
+  </div>
+</div>

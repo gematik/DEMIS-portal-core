@@ -152,4 +152,22 @@ describe('PasteBoxComponent', () => {
     expect(component.dataPasted.emit).not.toHaveBeenCalled();
     expect(showErrorDialogSpy).toHaveBeenCalledWith(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
   }));
+
+  it('should trim key and value when parsing clipboard data with newline after &', fakeAsync(async () => {
+    const clipboardText = 'URL  key1 = value1  &\n  key2=  value2 ';
+    const expectedParsedClipboardData = new Map<string, string>([
+      ['key1', 'value1'],
+      ['key2', 'value2'],
+    ]);
+    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
+    spyOn(navigator.clipboard, 'writeText');
+    spyOn(component.dataPasted, 'emit');
+
+    component.readFromClipboard();
+    tick(1000);
+
+    expect(navigator.clipboard.readText).toHaveBeenCalled();
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+    expect(component.dataPasted.emit).toHaveBeenCalledWith(expectedParsedClipboardData);
+  }));
 });

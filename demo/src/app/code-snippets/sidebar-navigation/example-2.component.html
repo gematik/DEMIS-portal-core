@@ -1,0 +1,32 @@
+<div style="display: flex; gap: 24px; width: 100%;">
+  <div style="min-width: 320px; max-width: 50%; width: 100%;">
+    <gem-demis-process-stepper #stepper [steps]="steps" (stepChange)="onStepChange($event)"></gem-demis-process-stepper>
+  </div>
+
+  <div style="width: 100%;">
+    <h3>Demo Controls</h3>
+    <button mat-stroked-button type="button" (click)="resetStepper()">Reset stepper</button>
+    <br /><br />
+    @for (step of steps; track step.key; let index = $index) {
+      @let stepNumber = index + 1;
+      <button mat-stroked-button type="button" [disabled]="step.control.disabled || step.control.valid"
+        (click)="completeStep(index)">
+        {{ stepNumber }} -> valid
+      </button>
+      <br />
+    }
+    <br />
+    <button mat-stroked-button type="button" [disabled]="stepper.currentStepIndex() === 0" (click)="stepper.previous()">
+      Previous
+    </button>
+    <button mat-stroked-button type="button"
+      [disabled]="stepper.currentStepIndex() === steps.length - 1 || steps[stepper.currentStepIndex() + 1].control.disabled"
+      (click)="stepper.next()">
+      Next
+    </button>
+    <br /><br />
+    <textarea #log [value]="" readonly rows="10" style="resize: none; width: 100%;"></textarea>
+    <br />
+    <button mat-stroked-button type="button" (click)="log.value = ''">Clear Log</button>
+  </div>
+</div>
