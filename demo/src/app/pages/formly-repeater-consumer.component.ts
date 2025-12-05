@@ -56,9 +56,7 @@ import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
           </li>
           <li>
             <p>Standalone config:</p>
-            <!-- TODO: Uncomment this, once we switched to standalone components and ngx-formly v7 -->
-            <!-- <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-standalone-config.snippet.ts" language="ts" /> -->
-            <p>TBA</p>
+            <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-standalone-config.snippet.ts" language="ts" />
           </li>
         </ul>
 

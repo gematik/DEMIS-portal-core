@@ -14,24 +14,23 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-//TODO: Uncomment and use the following, once we switched to standalone components and ngx-formly v7
+import { ApplicationConfig } from '@angular/core';
+import { FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
+import { provideFormlyCore } from '@ngx-formly/core';
+import { withFormlyMaterial } from '@ngx-formly/material';
 
-// import { ApplicationConfig } from '@angular/core';
-// import { FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
-// import { provideFormlyCore, withFormlyMaterial } from '@ngx-formly/core';
-
-// const appConfig: ApplicationConfig = {
-//   providers: [
-//     provideFormlyCore([
-//       ...withFormlyMaterial(),
-//       {
-//         types: [
-//           {
-//             name: 'repeat',
-//             component: FormlyRepeaterComponent,
-//           },
-//         ],
-//       },
-//     ]),
-//   ],
-// };
+const appConfig: ApplicationConfig = {
+  providers: [
+    provideFormlyCore([
+      ...withFormlyMaterial(),
+      {
+        types: [
+          {
+            name: 'repeat',
+            component: FormlyRepeaterComponent,
+          },
+        ],
+      },
+    ]),
+  ],
+};
