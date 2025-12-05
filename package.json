@@ -1,6 +1,6 @@
 {
   "name": "portal-core",
-  "version": "2.2.4",
+  "version": "2.3.0",
   "scripts": {
     "ng": "ng",
     "clean": "rimraf dist",
@@ -34,8 +34,8 @@
     "@angular/platform-browser-dynamic": "19.2.14",
     "@angular/router": "19.2.14",
     "@gematik/demis-portal-theme-library": "1.0.2",
-    "@ngx-formly/core": "6.3.12",
-    "@ngx-formly/material": "6.3.12",
+    "@ngx-formly/core": "7.0.0",
+    "@ngx-formly/material": "7.0.0",
     "marked": "16.1.2",
     "ngx-highlightjs": "14.0.1",
     "ngx-logger": "5.0.12",
