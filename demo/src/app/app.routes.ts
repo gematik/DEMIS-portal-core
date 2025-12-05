@@ -22,6 +22,7 @@ import { FormlyDatepickerConsumerComponent } from './pages/formly-datepicker-con
 import { PasteBoxConsumerComponent } from './pages/paste-box-consumer.component';
 import { FormlyRepeaterConsumerComponent } from './pages/formly-repeater-consumer.component';
 import { StepperConsumerComponent } from './pages/sidebar-navigation-consumer.component';
+import { FollowUpNotificationIdConsumerComponent } from './pages/follow-up-notification-id-consumer.component';
 
 function prefixRoutes(prefix: string, routes: Routes): Routes {
   return routes.map(route => ({ ...route, path: `${prefix}/${route.path}` }));
@@ -68,6 +69,12 @@ const serviceConsumerRoutes: Routes = [
     title: 'Message Dialog Service',
     pathMatch: 'full',
     component: MessageDialogConsumerComponent,
+  },
+  {
+    path: 'follow-up-notification-id',
+    title: 'Follow Up Notification ID Service',
+    pathMatch: 'full',
+    component: FollowUpNotificationIdConsumerComponent,
   },
 ];
 

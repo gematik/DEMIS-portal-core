@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.2
+
+- Add FollowUp Notification Service & Dialog
+- Add FhirCoreNotificationService for backend calls
+
 ## Release 2.3.1
 
 - Make repeater component standalone

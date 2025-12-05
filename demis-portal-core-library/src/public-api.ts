@@ -54,6 +54,7 @@ export * from './lib/formly/commons';
  **********************************************/
 export * from './lib/services/message-dialog.service';
 export * from './lib/services/markdown.service';
+export * from './lib/services/follow-up-notification-id.service';
 
 /***********************************************
  * MODULES
