@@ -16,7 +16,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { FieldArrayType, FieldTypeConfig, FormlyFieldConfig, FormlyFieldProps, FormlyModule } from '@ngx-formly/core';
+import { FieldArrayType, FieldTypeConfig, FormlyField, FormlyFieldConfig, FormlyFieldProps, provideFormlyCore } from '@ngx-formly/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { NgClass } from '@angular/common';
 
@@ -24,7 +24,9 @@ import { NgClass } from '@angular/common';
   selector: 'gem-demis-repeater',
   templateUrl: './formly-repeater.component.html',
   styleUrls: ['./formly-repeater.component.scss'],
-  imports: [FormlyModule, MatIcon, MatButton, MatIconButton, NgClass],
+  imports: [MatIcon, MatButton, MatIconButton, NgClass, FormlyField],
+  standalone: true,
+  providers: [provideFormlyCore()],
 })
 export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> implements OnInit {
   addButtonLabel!: string;

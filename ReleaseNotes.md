@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.1
+
+- Make repeater component standalone
+- Added notifiedPersonAnonymous config to library
+
 ## Release 2.3.0
 
 - Updated ngx-formly to version 7.0.0

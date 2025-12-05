@@ -44,6 +44,12 @@ export * from './lib/directives/secondary-button.directive';
 export * from './lib/pipes/file-size.pipe';
 
 /***********************************************
+ * FORMLY
+ **********************************************/
+export * from './lib/formly/notified-person-anonymous.config';
+export * from './lib/formly/commons';
+
+/***********************************************
  * SERVICES
  **********************************************/
 export * from './lib/services/message-dialog.service';
