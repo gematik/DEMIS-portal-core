@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 2.2.3
+- Fix routing issue in submit dialog
+
 ## Release 2.2.2
 
 - Fixed pastebox bug when pasting content with newline characters

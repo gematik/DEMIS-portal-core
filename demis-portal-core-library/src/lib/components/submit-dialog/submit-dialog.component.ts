@@ -53,7 +53,7 @@ export class SubmitDialogComponent {
   }
 
   navigateToHome(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['']).then(() => this.router.navigate(['/welcome']));
     this.dialogRef.close();
   }
 

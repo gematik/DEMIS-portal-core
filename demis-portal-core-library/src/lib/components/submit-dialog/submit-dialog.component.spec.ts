@@ -136,7 +136,7 @@ describe('SubmitDialogComponent', () => {
     const homeButton = fixture.debugElement.query(By.css('#btn-back-to-homepage')).nativeElement;
     homeButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/']);
+    expect(router.navigate).toHaveBeenCalledWith(['']);
     expect(dialogRef.close).toHaveBeenCalled();
   });
 });
