@@ -2,11 +2,16 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.0
+
+- Updated ngx-formly to version 7.0.0
+
 ## Release 2.2.4
 
 - Improvements to the section header component
 
 ## Release 2.2.3
+
 - Fix routing issue in submit dialog
 
 ## Release 2.2.2
@@ -16,9 +21,6 @@
 ## Release 2.2.1
 
 - Renaming and adaption of sectionTitle to sectionHeading
-
-## Release 2.2.1
-
 - Fixed a styling issue in the submit-dialog
 - Added a new process stepper implementation and made the old one deprecated
 - Update @angular-devkit/build-angular to 19.2.17

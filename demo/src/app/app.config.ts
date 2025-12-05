@@ -27,8 +27,8 @@ import { FormlyDatepickerComponent, FormlyRepeaterComponent } from '@gematik/dem
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { de } from 'date-fns/locale';
-import { FormlyModule } from '@ngx-formly/core';
-import { FormlyMaterialModule } from '@ngx-formly/material';
+import { provideFormlyCore } from '@ngx-formly/core';
+import { withFormlyMaterial } from '@ngx-formly/material';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,8 +37,8 @@ export const appConfig: ApplicationConfig = {
     { provide: MAT_DATE_LOCALE, useValue: de },
     provideRouter(routes),
     provideAnimationsAsync(),
-    importProvidersFrom([
-      FormlyModule.forRoot({
+    provideFormlyCore([
+      {
         validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }],
         types: [
           {
@@ -50,8 +50,8 @@ export const appConfig: ApplicationConfig = {
             component: FormlyDatepickerComponent,
           },
         ],
-      }),
-      FormlyMaterialModule,
+      },
+      ...withFormlyMaterial(),
     ]),
     provideHttpClient(),
     { provide: MAT_CARD_CONFIG, useValue: { appearance: 'outlined' } },
