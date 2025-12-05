@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 2.3.5
+
+- Updated Angular dependencies to version 19.2.16
+
 ## Release 2.3.4
 
 - Add forms footer to library
