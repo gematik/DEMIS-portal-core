@@ -15,11 +15,11 @@
  */
 
 import { Component } from '@angular/core';
-import { SectionTitleComponent } from '@gematik/demis-portal-core-library';
+import { SectionHeaderComponent } from '@gematik/demis-portal-core-library';
 
 @Component({
-  selector: 'app-section-title-example-1',
-  imports: [SectionTitleComponent],
+  selector: 'app-section-header-example-1',
+  imports: [SectionHeaderComponent],
   templateUrl: './example-1.component.html',
 })
-export class SectionTitleExample1Component {}
+export class SectionHeaderExample1Component {}

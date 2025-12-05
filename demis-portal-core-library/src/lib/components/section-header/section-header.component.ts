@@ -14,29 +14,19 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { SectionHeaderComponent } from '../section-header/section-header.component';
 
-export declare type Step = {
-  number: number;
-  title: string;
-  description: string;
-};
+export type SectionTitleLevel = 1 | 2;
 
-/**
- * @deprecated Replaced by DemisSideNavigationStepperComponent
- */
+export const SECTION_TITLE_DEFAULT_LEVEL: SectionTitleLevel = 2;
+
 @Component({
-  selector: 'gem-demis-deprecated-process-stepper',
-  templateUrl: './process-stepper.component.html',
-  styleUrl: './process-stepper.component.scss',
-  imports: [CommonModule, MatIconModule, SectionHeaderComponent, SectionHeaderComponent],
+  selector: 'gem-demis-section-header',
+  templateUrl: './section-header.component.html',
+  styleUrl: './section-header.component.scss',
+  standalone: true,
 })
-export class ProcessStepperComponent {
-  readonly titleText = input.required<string>();
-  readonly subtitleText = input<string>();
-  readonly steps = input.required<Step[]>();
-  readonly activeStep = input.required<Step>();
+export class SectionHeaderComponent {
+  titleText = input.required<string>();
+  level = input<SectionTitleLevel>(SECTION_TITLE_DEFAULT_LEVEL);
 }

@@ -1,9 +1,9 @@
 <div class="process-stepper-wrapper">
-  <gem-demis-section-title [titleText]="titleText()" [level]="1">
+  <gem-demis-section-header id="igs-process-step-header" [titleText]="titleText()" [level]="2">
     @if (subtitleText()) {
       <p>{{ subtitleText() }}</p>
     }
-  </gem-demis-section-title>
+  </gem-demis-section-header>
   
   <div class="gem-demis-process-steps">
     @for(step of steps(); track $index) {

@@ -1,0 +1,19 @@
+<div class="gem-demis-section-header gem-demis-section-header-level-{{ level() }}">
+  <!-- allows switch between h1 and h2 -->
+  @switch (level()) {
+    @case (1) {
+      <h1 class="section-header">
+        <span class="section-header-title">{{ titleText() }}</span>
+      </h1>
+    }
+    @default {
+      <h2 class="section-header">
+        <span class="section-header-title">{{ titleText() }}</span>
+      </h2>
+    }
+  }
+  <!-- optional subtitle content -->
+  <div class="section-header-subtitle">
+    <ng-content></ng-content>
+  </div>
+</div>

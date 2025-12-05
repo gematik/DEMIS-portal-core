@@ -27,7 +27,7 @@ export * from './lib/components/file-select/file-select.component';
 export * from './lib/components/max-height-content-container/max-height-content-container.component';
 export * from './lib/components/paste-box/paste-box.component';
 export * from './lib/components/deprecated-process-stepper/process-stepper.component';
-export * from './lib/components/section-title/section-title.component';
+export * from './lib/components/section-header/section-header.component';
 export * from './lib/components/tiled-content/tiled-content.component';
 export * from './lib/components/formly-repeater/formly-repeater.component';
 export * from './lib/components/formly-datepicker/formly-datepicker.component';
