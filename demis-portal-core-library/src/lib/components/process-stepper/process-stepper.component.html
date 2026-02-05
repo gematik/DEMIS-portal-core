@@ -60,9 +60,18 @@
         <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }"></ng-content>
       </ng-template>
       
-      <!-- Disabled -->
+      <!-- Disabled: Shows the validity state the step had before being disabled -->
       <ng-template matStepperIcon="disabled" let-index="index">
-        <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+        @let stepData = steps()[index];
+        @if (stepData && wasCompletedBeforeDisabled(stepData)) {
+          <ng-content *ngTemplateOutlet="doneState; context: { index }"></ng-content>
+        }
+        @else if (stepData && hadErrorBeforeDisabled(stepData)) {
+          <ng-content *ngTemplateOutlet="errorState; context: { index }"></ng-content>
+        }
+        @else {
+          <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+        }
       </ng-template>
 
       <!-- Enable multi line step labels with title and description -->

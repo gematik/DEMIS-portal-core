@@ -28,7 +28,7 @@
       <mat-icon class="icon-invalid" matSuffix>warning_amber</mat-icon>
     }
     @if (initialNotificationIdControl.hasError('required')) {
-      <mat-error>Meldungs-ID ist erforderlich</mat-error>
+      <mat-error>Bitte geben Sie eine Meldungs-ID ein.</mat-error>
     }
     @if (initialNotificationIdControl.hasError('invalid')) {
       <mat-error>Die von Ihnen angegebene ID konnte nicht
@@ -43,8 +43,12 @@
     }
   </mat-form-field>
   <p [id]="(getValidationStyle() === 'invalid') ? 'final-dialog-paragraph-error' : 'final-dialog-paragraph'">
-    Alternativ hier die Meldung <a [routerLink]="[followUpDialogData.routerLink]" (click)="closeDialog()"
-                                   [textContent]="[followUpDialogData.linkTextContent]"></a> absetzen.
+    <span aria-hidden="true">Alternativ hier die Meldung </span>
+    <a [routerLink]="[followUpDialogData.routerLink]" (click)="closeDialog()"
+       [attr.aria-label]="'Alternativ hier die Meldung ' + followUpDialogData.linkTextContent + ' absetzen.'">
+      {{ followUpDialogData.linkTextContent }}
+    </a>
+    <span aria-hidden="true"> absetzen.</span>
   </p>
 
   <div class="button-row" mat-dialog-actions>
@@ -61,7 +65,7 @@
         mat-button
         class="btn style dark--color"
         [disabled]="!isTextInputValid()"
-        (click)="validateNotificationId(this.initialNotificationIdControl.value)"
+        (click)="validateNotificationId(initialNotificationIdControl.value)"
       >Überprüfen
       </button>
     }

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -23,17 +23,18 @@
  * COMPONENTS
  **********************************************/
 export * from './lib/components/actions-bar/actions-bar.component';
+export * from './lib/components/deprecated-process-stepper/process-stepper.component';
 export * from './lib/components/file-name-chip/file-name-chip.component';
 export * from './lib/components/file-select/file-select.component';
+export * from './lib/components/formly-datepicker/formly-datepicker.component';
+export * from './lib/components/formly-repeater/formly-repeater.component';
+export * from './lib/components/forms-footer/forms-footer.component';
 export * from './lib/components/max-height-content-container/max-height-content-container.component';
 export * from './lib/components/paste-box/paste-box.component';
-export * from './lib/components/deprecated-process-stepper/process-stepper.component';
-export * from './lib/components/section-header/section-header.component';
-export * from './lib/components/tiled-content/tiled-content.component';
-export * from './lib/components/formly-repeater/formly-repeater.component';
-export * from './lib/components/formly-datepicker/formly-datepicker.component';
 export * from './lib/components/process-stepper/process-stepper.component';
-export * from './lib/components/forms-footer/forms-footer.component';
+export * from './lib/components/section-header/section-header.component';
+export * from './lib/components/side-navigation/side-navigation.component';
+export * from './lib/components/tiled-content/tiled-content.component';
 
 /***********************************************
  * DIRECTIVES
@@ -48,16 +49,16 @@ export * from './lib/pipes/file-size.pipe';
 /***********************************************
  * FORMLY
  **********************************************/
+export * from './lib/formly/commons';
 export * from './lib/formly/notified-person-anonymous.config';
 export * from './lib/formly/notified-person-not-by-name.config';
-export * from './lib/formly/commons';
 
 /***********************************************
  * SERVICES
  **********************************************/
-export * from './lib/services/message-dialog.service';
-export * from './lib/services/markdown.service';
 export * from './lib/services/follow-up-notification-id.service';
+export * from './lib/services/markdown.service';
+export * from './lib/services/message-dialog.service';
 
 /***********************************************
  * MODULES
@@ -68,5 +69,5 @@ export * from './lib/demis-portal-shared.module';
  * FUNCTIONS
  **********************************************/
 export * from './lib/utils/apply-recursivly.function';
-export * from './lib/utils/trim-strings.function';
 export * from './lib/utils/clone-object.function';
+export * from './lib/utils/trim-strings.function';

@@ -1,0 +1,41 @@
+<mat-drawer-container class="drawer-container demis-drawer-container">
+  <mat-drawer mode="side" [opened]="true" [disableClose]="true" [autoFocus]="true" class="drawer-sidenav" style="transition: none !important">
+    <div class="drawer-sidenav-wrapper">
+      <div class="drawer-sidenav-content">
+        <gem-demis-section-header [titleText]="sideNavTitle()">
+          @if (sideNavSubtitle(); as subtitle) {
+            <ng-container *ngTemplateOutlet="subtitle" />
+          }
+        </gem-demis-section-header>
+        @if (steps()) {
+          <gem-demis-process-stepper #internalStepper [steps]="steps()" (stepChange)="onStepChanged($event)" />
+        }
+        @if (additionalSideNavActions(); as actions) {
+          <div class="additional-sidenav-actions">
+            <ng-container *ngTemplateOutlet="actions" />
+          </div>
+        }
+      </div>
+      <div class="drawer-sidenav-footer">
+        <gem-demis-forms-footer [featureFlagPortal]="true" />
+      </div>
+    </div>
+  </mat-drawer>
+
+  <mat-drawer-content class="drawer-content" style="transition: none !important">
+    <div class="drawer-content-wrapper">
+      <div class="drawer-content-main">
+        <ng-container #dynamicComponentContainer></ng-container>
+      </div>
+      @if (currentActionsLeft() || currentActionsRight()) {
+        <div class="drawer-content-footer">
+          <ng-container actions-left *ngTemplateOutlet="currentActionsLeft()"></ng-container>
+
+          <div class="spacer"></div>
+
+          <ng-container actions-right *ngTemplateOutlet="currentActionsRight()"></ng-container>
+        </div>
+      }
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

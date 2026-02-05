@@ -1,0 +1,17 @@
+<h3>Schritt 6: Fragebogen</h3>
+<formly-form [form]="notificationService.questionnaireGroup" [model]="notificationService.questionnaireModel" [fields]="fieldConfig.questionnaireFields" />
+
+<ng-template #actionsLeft>
+  <button mat-stroked-button (click)="navigation.reset(); notificationService.resetForm()">
+    Reset
+  </button>
+  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()">
+    Zurück
+  </button>
+</ng-template>
+
+<ng-template #actionsRight>
+  <button mat-flat-button color="primary" (click)="messageService.showSentMessage()" [disabled]="!notificationService.isFormValid()">
+    Absenden
+  </button>
+</ng-template>

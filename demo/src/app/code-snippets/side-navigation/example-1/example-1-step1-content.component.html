@@ -1,0 +1,5 @@
+<p>Step 1 content works!</p>
+
+<ng-template #actionsRight>
+  <button mat-stroked-button (click)="navigation.next()" [disabled]="!navigation.canGoToNext()">Next</button>
+</ng-template>

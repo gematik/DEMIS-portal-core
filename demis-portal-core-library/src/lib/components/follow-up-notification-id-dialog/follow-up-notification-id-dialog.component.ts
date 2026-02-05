@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -25,6 +25,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { MatInput, MatSuffix } from '@angular/material/input';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogTitle } from '@angular/material/dialog';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'gem-demis-follow-up-notification-id-dialog',
@@ -48,6 +49,11 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogTitle } from '@angular/mate
 export class FollowUpNotificationIdDialogComponent {
   private readonly router = inject(Router);
   private readonly followUpNotificationIdService = inject(FollowUpNotificationIdService);
+  private readonly liveAnnouncer = inject(LiveAnnouncer);
+
+  // Tracks the last status to only announce on transitions.
+  private lastAnnouncedStatus: ValidationStatus | null = null;
+
   protected readonly key: string = 'initialNotificationIdInput';
 
   readonly validationStatus = this.followUpNotificationIdService.validationStatus;
@@ -57,13 +63,28 @@ export class FollowUpNotificationIdDialogComponent {
 
   constructor() {
     effect(() => {
-      if (this.validationStatus() === ValidationStatus.NOT_FOUND) {
+      const status = this.validationStatus();
+
+      if (status === ValidationStatus.NOT_FOUND) {
         this.initialNotificationIdControl.setErrors({ invalid: true });
-      } else if (this.validationStatus() === ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY) {
+      } else if (status === ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY) {
         this.initialNotificationIdControl.setErrors({ unsupportedNotificationCategory: true });
       } else {
         this.initialNotificationIdControl.setErrors(null);
       }
+
+      // Screenreader feedback: announce success when validation succeeded.
+      if (status === ValidationStatus.VALID && this.lastAnnouncedStatus !== ValidationStatus.VALID) {
+        this.liveAnnouncer.announce('Meldungs-ID erfolgreich geprüft. Bitte klicken Sie die Enter-Taste oder den Weiter-Button.', 'assertive').then(() => {
+          // Keep focus on the primary action. The button is created via @if, so wait until it exists.
+          setTimeout(() => {
+            const nextBtn = document.getElementById('btn-next') as HTMLButtonElement | null;
+            nextBtn?.focus();
+          }, 100);
+        });
+      }
+
+      this.lastAnnouncedStatus = status;
     });
   }
 
@@ -95,7 +116,7 @@ export class FollowUpNotificationIdDialogComponent {
   }
 
   closeDialog(): void {
-    this.followUpNotificationIdService.closeDialog();
+    this.liveAnnouncer.announce('Dialog geschlossen.', 'assertive').then(() => this.followUpNotificationIdService.closeDialog());
   }
 
   navigateToWelcomePage() {

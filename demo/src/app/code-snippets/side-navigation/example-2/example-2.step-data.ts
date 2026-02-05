@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -15,19 +15,16 @@
     find details in the "Readme" file.
  */
 
-import { AbstractControl } from '@angular/forms';
+import { ProcessStep } from '@gematik/demis-portal-core-library';
+import { FormService } from './example-2-form.service';
 
-/**
- * Defines a single step in the process stepper.
- *
- * - key:         A unique identifier for the step.
- * - label:       The display label for the step.
- * - description: An optional description for the step.
- * - control:     An AbstractControl instance to manage the step's state and validity.
- */
-export declare type ProcessStep = {
-  key: string;
-  label: string;
-  description?: string;
-  control: AbstractControl;
-};
+export function getStepData(formService: FormService): ProcessStep[] {
+  return [
+    { key: 'step-1', label: 'Step 1', control: formService.getStepControl('step1') },
+    { key: 'step-2', label: 'Step 2', control: formService.getStepControl('step2') },
+    { key: 'step-3', label: 'Step 3', control: formService.getStepControl('step3') },
+    { key: 'step-4', label: 'Step 4', control: formService.getStepControl('step4') },
+    { key: 'step-5', label: 'Step 5', control: formService.getStepControl('step5') },
+    { key: 'step-6', label: 'Step 6', control: formService.getStepControl('step6') },
+  ];
+}

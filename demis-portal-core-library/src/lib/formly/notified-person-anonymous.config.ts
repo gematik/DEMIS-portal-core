@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -25,7 +25,7 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
         className: FormlyConstants.COLMD10,
         template: `
       <div class="info-notification-text">
-        <span class="material-icons md-48 primary-color-icon">info_outline</span>
+          <span class="material-icons-outlined primary-color-icon">error_outline</span>
           <span class="message">Grundsätzlich müssen Sie gemäß Infektionsschutzgesetz alle Ihnen vorliegenden Informationen im Meldeformular angeben, um die Meldepflicht zu erfüllen. Die Nachmeldung oder Korrektur von Angaben hat unverzüglich zu erfolgen.</span>
          </div>
     `,

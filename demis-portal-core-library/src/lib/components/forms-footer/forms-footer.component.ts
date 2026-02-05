@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'gem-demis-forms-footer',
@@ -24,4 +24,8 @@ import { Component } from '@angular/core';
   templateUrl: './forms-footer.component.html',
   styleUrl: './forms-footer.component.css',
 })
-export class FormsFooterComponent {}
+
+//can be removed when FEATURE_FLAG_PORTAL_ACCESSIBILITY is removed
+export class FormsFooterComponent {
+  featureFlagPortal = input.required<boolean>();
+}

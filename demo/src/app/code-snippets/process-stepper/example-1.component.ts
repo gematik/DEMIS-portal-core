@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -17,17 +17,18 @@
 
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
+import { FormGroup } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { DemisProcessStepperComponent, StepChangeEvent } from '@gematik/demis-portal-core-library';
-import { stepData } from './example-2.step-data';
+import { DemisProcessStepperComponent, ProcessStep, StepChangeEvent } from '@gematik/demis-portal-core-library';
+import { stepData } from './example-1.step-data';
 
 @Component({
-  selector: 'app-stepper-example-2',
+  selector: 'app-stepper-example-1',
   standalone: true,
   imports: [DemisProcessStepperComponent, MatButton],
-  templateUrl: './example-2.component.html',
+  templateUrl: './example-1.component.html',
 })
-export class StepperExample2Component {
+export class StepperExample1Component {
   @ViewChild('stepper') stepper!: DemisProcessStepperComponent;
   @ViewChild('log') log!: ElementRef<HTMLTextAreaElement>;
 
@@ -35,39 +36,18 @@ export class StepperExample2Component {
     return stepData;
   }
 
-  resetStepper() {
-    this.stepper.reset();
-    this.steps.forEach((step, index) => {
-      if (index !== 0) {
-        step.control.disable();
-      } else {
-        step.control.enable();
-      }
-    });
+  resetStep(step: ProcessStep) {
+    const ctrl = step.control as FormGroup;
+    ctrl.reset();
+    ctrl.markAsUntouched();
+    ctrl.updateValueAndValidity();
   }
 
-  /**
-   * Completes the current step and moves to the next step.
-   *
-   * @param stepIndex  The index of the step to complete.
-   */
-  completeStep(stepIndex: number) {
-    // Get necessary steps
-    const currentStep = this.steps.at(stepIndex);
-    const nextStep = this.steps.at(stepIndex + 1);
-    if (!currentStep) {
-      return; // Early return if the current step does not exist
-    }
-    // Mark current step as completed by setting a valid value
-    currentStep.control.setValue('ok');
-    // Ensure the current control is marked as touched and validity is updated
-    currentStep.control.markAsTouched();
-    currentStep.control.updateValueAndValidity();
-    // If there is a next step, enable it and move to it
-    if (nextStep) {
-      nextStep.control.enable();
-      this.stepper.next();
-    }
+  changeStepValidity(step: ProcessStep, valid: boolean) {
+    const ctrl = step.control as FormGroup;
+    ctrl.controls['input'].setValue(valid ? 'ok' : '');
+    ctrl.markAsTouched();
+    ctrl.updateValueAndValidity();
   }
 
   onStepChange(e: StepChangeEvent) {

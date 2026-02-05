@@ -1,0 +1,5 @@
+<p>Step 6 content works!</p>
+
+<ng-template #actionsLeft>
+  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()">Previous</button>
+</ng-template>

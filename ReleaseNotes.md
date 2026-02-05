@@ -2,6 +2,35 @@
 
 # Release Notes Portal-Core
 
+## Release 2.4.4
+- Add accessibility footer link with featureFlagPortal enabled
+
+## Release 2.4.3
+
+- Improved accessibility of follow-up notification dialog
+
+## Release 2.4.2
+
+- Improved accessibility of follow-up notification dialog
+
+## Release 2.4.1
+
+- Fixed version hickup
+
+## Release 2.4.0
+
+- Added SideNavigation component to library and demo app
+
+## Release 2.3.9
+
+- Updated dependencies
+
+## Release 2.3.8
+
+- Changed info icon for notified person in formly templates
+- Disabled Sandbox for ChromeHeadless browser to run karma tests in CI
+- Temporarily disabled the accessibility statement in the form footer.
+
 ## Release 2.3.7
 
 - Made gender optional in notified-person-anonymous

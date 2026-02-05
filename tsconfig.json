@@ -8,6 +8,7 @@
         "./dist/gematik/demis-portal-core-library"
       ]
     },
+    "preserveSymlinks": true,
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,

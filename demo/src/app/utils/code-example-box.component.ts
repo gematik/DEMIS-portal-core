@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -73,7 +73,13 @@ export interface CodeExampleBoxComponentOptions {
             <span>Code</span>
           </div>
           @if (!isCodeSectionCollapsed()) {
-            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" [dynamicHeight]="false" animationDuration="0ms" [disableRipple]="true">
+            <mat-tab-group
+              [ngClass]="{ enlarged: isRenderedSectionCollapsed() }"
+              mat-stretch-tabs="false"
+              mat-align-tabs="start"
+              [dynamicHeight]="false"
+              animationDuration="0ms"
+              [disableRipple]="true">
               @for (codeSnippet of options().codeSnippets; track codeSnippet.fileName) {
                 <mat-tab [label]="codeSnippet.fileName">
                   <app-code-snippet-box [codeSnippetPath]="codeSnippet.codeSnippetPath + '/' + codeSnippet.fileName" [language]="codeSnippet.language" />
@@ -144,6 +150,14 @@ export interface CodeExampleBoxComponentOptions {
 
       .shrunk {
         width: 170px !important;
+      }
+
+      .mat-mdc-tab-group {
+        max-width: 41vw !important;
+      }
+
+      .mat-mdc-tab-group.enlarged {
+        max-width: 75vw !important;
       }
     `,
   ],
