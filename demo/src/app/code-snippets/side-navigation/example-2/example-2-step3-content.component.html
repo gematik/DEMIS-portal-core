@@ -1,0 +1,25 @@
+<mat-form-field>
+  <mat-label>Step 3 Input</mat-label>
+  <input matInput [formControl]="formService.getStepControl('step3')" placeholder="Enter text for step 3" />
+  @if (formService.getStepControl('step3').hasError('required')) {
+    <mat-error>This field is required</mat-error>
+  }
+</mat-form-field>
+
+<ng-template #actionsLeft>
+  <button mat-stroked-button (click)="navigation.reset()">
+    Reset
+  </button>
+  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()">
+    Previous
+  </button>
+</ng-template>
+
+<ng-template #actionsRight>
+  <button mat-stroked-button (click)="navigation.next()" [disabled]="!navigation.canGoToNext()">
+    Next
+  </button>
+  <button mat-flat-button color="primary" (click)="messageService.showFormData()" [disabled]="!formService.isFormValid()">
+    Submit
+  </button>
+</ng-template>

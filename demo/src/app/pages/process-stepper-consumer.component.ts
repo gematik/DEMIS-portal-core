@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -22,8 +22,8 @@ import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
-import { StepperExample1Component } from '../code-snippets/sidebar-navigation/example-1.component';
-import { StepperExample2Component } from '../code-snippets/sidebar-navigation/example-2.component';
+import { StepperExample1Component } from '../code-snippets/process-stepper/example-1.component';
+import { StepperExample2Component } from '../code-snippets/process-stepper/example-2.component';
 
 @Component({
   selector: 'app-stepper-consumer',
@@ -56,13 +56,13 @@ import { StepperExample2Component } from '../code-snippets/sidebar-navigation/ex
         <app-doc-table [dataSource]="inputsDocTableDataSource"></app-doc-table>
 
         <app-subsection-title>Types used by inputs</app-subsection-title>
-        <app-code-snippet-box codeSnippetPath="code-snippets/sidebar-navigation/process-step.snippet.ts" language="ts" />
+        <app-code-snippet-box codeSnippetPath="code-snippets/process-stepper/process-step.snippet.ts" language="ts" />
 
         <app-subsection-title>Outputs</app-subsection-title>
         <app-doc-table [dataSource]="outputsDocTableDataSource"></app-doc-table>
 
         <app-subsection-title>Types used by outputs</app-subsection-title>
-        <app-code-snippet-box codeSnippetPath="code-snippets/sidebar-navigation/step-change-event.snippet.ts" language="ts" />
+        <app-code-snippet-box codeSnippetPath="code-snippets/process-stepper/step-change-event.snippet.ts" language="ts" />
 
         <app-subsection-title>Used CSS</app-subsection-title>
         <app-doc-table [dataSource]="cssDocTableDataSource"></app-doc-table>
@@ -131,17 +131,17 @@ export class StepperConsumerComponent {
         {
           fileName: 'example-1.component.html',
           language: 'html',
-          codeSnippetPath: 'code-snippets/sidebar-navigation',
+          codeSnippetPath: 'code-snippets/process-stepper',
         },
         {
           fileName: 'example-1.component.ts',
           language: 'ts',
-          codeSnippetPath: 'code-snippets/sidebar-navigation',
+          codeSnippetPath: 'code-snippets/process-stepper',
         },
         {
           fileName: 'example-1.step-data.ts',
           language: 'ts',
-          codeSnippetPath: 'code-snippets/sidebar-navigation',
+          codeSnippetPath: 'code-snippets/process-stepper',
         },
       ],
     },
@@ -152,17 +152,17 @@ export class StepperConsumerComponent {
         {
           fileName: 'example-2.component.html',
           language: 'html',
-          codeSnippetPath: 'code-snippets/sidebar-navigation',
+          codeSnippetPath: 'code-snippets/process-stepper',
         },
         {
           fileName: 'example-2.component.ts',
           language: 'ts',
-          codeSnippetPath: 'code-snippets/sidebar-navigation',
+          codeSnippetPath: 'code-snippets/process-stepper',
         },
         {
           fileName: 'example-2.step-data.ts',
           language: 'ts',
-          codeSnippetPath: 'code-snippets/sidebar-navigation',
+          codeSnippetPath: 'code-snippets/process-stepper',
         },
       ],
     },

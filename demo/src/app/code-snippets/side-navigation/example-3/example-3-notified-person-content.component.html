@@ -1,0 +1,18 @@
+<h3>Schritt 2: Gemeldete Person</h3>
+<p style="margin-bottom: 16px;">Magic Spell: {{ inputData()?.magicSpell }}</p>
+<formly-form [form]="notificationService.notifiedPersonGroup" [model]="notificationService.notifiedPersonModel" [fields]="fieldConfig.notifiedPersonFields" />
+
+<ng-template #actionsLeft>
+  <button mat-stroked-button (click)="navigation.reset(); notificationService.resetForm()">
+    Reset
+  </button>
+  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()">
+    Zurück
+  </button>
+</ng-template>
+
+<ng-template #actionsRight>
+  <button mat-stroked-button (click)="navigation.next()" [disabled]="!navigation.canGoToNext()">
+    Weiter
+  </button>
+</ng-template>

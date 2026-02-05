@@ -10,6 +10,12 @@ p {
   font-size: 13px;
 }
 
+button.cdk-keyboard-focused.cdk-focused,
+button.cdk-program-focused.cdk-focused {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 #dialog-container {
   border: 1px solid #000;
   width: 610px;

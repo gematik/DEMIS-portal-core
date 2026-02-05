@@ -1,0 +1,23 @@
+<gem-demis-side-navigation #sideNavigation sideNavTitle="Meldeprozess" [stepsMap]="stepsMap()">
+  <ng-template #sideNavSubtitle>
+    <p>Bitte durchlaufen Sie die folgenden Schritte, um Ihre Meldung abzuschließen.</p>
+  </ng-template>
+
+  <ng-template #additionalSideNavActions>
+    <div style="display: inline-flex; flex-direction: column; gap: 16px; width: 100%; align-items: center;">
+      <button mat-flat-button color="primary" (click)="messageService.showMagicMessage()">Magic</button>
+
+      <gem-demis-paste-box (dataPasted)="onDataPasted($event)"></gem-demis-paste-box>
+      
+      <div style="font-size: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; width: 100%; display: flex; align-items: flex-start; gap: 8px;">
+        <div style="flex: 1; text-align: center;">
+          <strong>Zum Testen kopieren:</strong><br>
+          <code style="font-size: 11px; word-break: break-all;">URL notifyingPerson.name=Dr. Max Mustermann&notifiedPerson.name=Erika Musterfrau&diseaseChoice.disease=Erkältung&condition.value=Ja&commonData.info=Testdaten&questionnaire.answer=Alles gut</code>
+        </div>
+        <button mat-icon-button (click)="copyTestData()" title="In Zwischenablage kopieren">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</gem-demis-side-navigation>

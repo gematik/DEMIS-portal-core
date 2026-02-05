@@ -1,0 +1,8 @@
+<h3>Schritt 1: Meldende Person</h3>
+<formly-form [form]="notificationService.notifyingPersonGroup" [model]="notificationService.notifyingPersonModel" [fields]="fieldConfig.notifyingPersonFields" />
+
+<ng-template #actionsRight>
+  <button mat-stroked-button (click)="navigation.next()" [disabled]="!navigation.canGoToNext()">
+    Weiter
+  </button>
+</ng-template>

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -22,7 +22,8 @@ import { MessageDialogConsumerComponent } from './pages/message-dialog-consumer.
 import { FormlyDatepickerConsumerComponent } from './pages/formly-datepicker-consumer.component';
 import { PasteBoxConsumerComponent } from './pages/paste-box-consumer.component';
 import { FormlyRepeaterConsumerComponent } from './pages/formly-repeater-consumer.component';
-import { StepperConsumerComponent } from './pages/sidebar-navigation-consumer.component';
+import { StepperConsumerComponent } from './pages/process-stepper-consumer.component';
+import { SideNavigationConsumerComponent } from './pages/side-navigation-consumer.component';
 import { FormsFooterConsumerComponent } from './pages/forms-footer-consumer.component';
 import { FollowUpNotificationIdConsumerComponent } from './pages/follow-up-notification-id-consumer.component';
 
@@ -67,6 +68,12 @@ const componentConsumerRoutes: Routes = [
     title: 'Forms Footer ',
     pathMatch: 'full',
     component: FormsFooterConsumerComponent,
+  },
+  {
+    path: 'side-navigation',
+    title: 'Side Navigation ',
+    pathMatch: 'full',
+    component: SideNavigationConsumerComponent,
   },
 ];
 

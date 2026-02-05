@@ -15,13 +15,58 @@
     header-selected-state-label-text-weight: bold,
   ));
 
-  .step-disabled .mat-step-header {
-    pointer-events: none;
-    
-    * {
+  .step-disabled {
+    .mat-step-header {
       pointer-events: none;
-      color: var(--color-neutral-light);
-      border-color: var(--color-neutral-light);
+      
+      * {
+        pointer-events: none;
+      }
+
+      .mat-step-icon {
+        border-color: var(--color-neutral-light) !important;
+        background-color: var(--color-white) !important;
+        
+        // Override Material state colors
+        &.mat-step-icon-state-done,
+        &.mat-step-icon-state-error {
+          background-color: var(--color-white) !important;
+        }
+      }
+
+      // Target all text/icon content
+      .mat-step-label,
+      .step-label,
+      .step-description {
+        color: var(--color-neutral-light) !important;
+      }
+
+      // Target step number
+      .step-number {
+        color: var(--color-neutral-light) !important;
+      }
+
+      // Target mat-icon with all possible class combinations
+      .mat-step-icon-content {
+        mat-icon,
+        .mat-icon {
+          color: var(--color-neutral-light) !important;
+        }
+      }
+
+      // Extra specific selectors for icons
+      mat-icon.step-valid,
+      mat-icon.step-invalid,
+      .mat-icon.step-valid,
+      .mat-icon.step-invalid {
+        color: var(--color-neutral-light) !important;
+      }
+
+      // Catch-all for any mat-icon element within disabled step header
+      mat-icon[class*="step-"],
+      .mat-icon[class*="step-"] {
+        color: var(--color-neutral-light) !important;
+      }
     }
   }
 
@@ -39,11 +84,15 @@
     border-width: 1px;
     border-style: dashed;
     border-color: var(--color-primary);
-
+    
     &.mat-step-icon-state-edit {
       background-color: var(--color-white);
-      color: inherit;
+      color: var(--color-primary);
       border-style: solid;
+    }
+    
+    &.mat-step-icon-state-done {
+      background-color: var(--color-primary);
     }
 
     &-selected.mat-step-icon-state-number, &.mat-step-icon-state-error {
@@ -77,5 +126,13 @@
 
   .mat-vertical-content-container {
     height: 0;
+  }
+
+  .mat-step-icon.mat-step-icon-state-number.mat-step-icon-selected:has(.mat-icon) {
+    background-color: var(--color-primary);
+
+    .mat-icon {
+      color: var(--color-white);
+    }
   }
 }

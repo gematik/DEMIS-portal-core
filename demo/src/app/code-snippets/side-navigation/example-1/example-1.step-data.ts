@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -15,19 +15,16 @@
     find details in the "Readme" file.
  */
 
+import { FormControl } from '@angular/forms';
 import { ProcessStep } from '@gematik/demis-portal-core-library';
 
-/**
- * Event emitted when the selected step changes.
- *
- * - selectedIndex:           The index of the newly selected step.
- * - selectedStep:            The newly selected step.
- * - previouslySelectedIndex: The index of the previously selected step.
- * - previouslySelectedStep:  The previously selected step.
- */
-export declare type StepChangeEvent = {
-  selectedIndex: number;
-  selectedStep: ProcessStep;
-  previouslySelectedIndex: number;
-  previouslySelectedStep: ProcessStep | undefined;
-};
+export function getStepData(): ProcessStep[] {
+  return [
+    { key: 'step-1', label: 'Step 1', control: new FormControl() },
+    { key: 'step-2', label: 'Step 2', control: new FormControl() },
+    { key: 'step-3', label: 'Step 3', control: new FormControl() },
+    { key: 'step-4', label: 'Step 4', control: new FormControl() },
+    { key: 'step-5', label: 'Step 5', control: new FormControl() },
+    { key: 'step-6', label: 'Step 6', control: new FormControl() },
+  ];
+}

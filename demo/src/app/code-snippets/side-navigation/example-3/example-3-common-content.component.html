@@ -1,0 +1,17 @@
+<h3>Schritt 5: Allgemeine Daten</h3>
+<formly-form [form]="notificationService.commonDataGroup" [model]="notificationService.commonDataModel" [fields]="fieldConfig.commonDataFields" />
+
+<ng-template #actionsLeft>
+  <button mat-stroked-button (click)="navigation.reset(); notificationService.resetForm()">
+    Reset
+  </button>
+  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()">
+    Zurück
+  </button>
+</ng-template>
+
+<ng-template #actionsRight>
+  <button mat-stroked-button (click)="navigation.next()" [disabled]="!navigation.canGoToNext()">
+    Weiter
+  </button>
+</ng-template>

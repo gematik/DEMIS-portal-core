@@ -27,10 +27,10 @@
       <br />
     }
     <br />
-    <button mat-stroked-button type="button" [disabled]="stepper.currentStepIndex() === 0" (click)="stepper.previous()">
+    <button mat-stroked-button type="button" [disabled]="!stepper.canGoToPrevious()" (click)="stepper.previous()">
       Previous
     </button>
-    <button mat-stroked-button type="button" [disabled]="stepper.currentStepIndex() === steps.length - 1" (click)="stepper.next()">
+    <button mat-stroked-button type="button" [disabled]="!stepper.canGoToNext()" (click)="stepper.next()">
       Next
     </button>
     <br /><br />

@@ -36,7 +36,8 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "codeCoverage": true
+            "codeCoverage": true,
+            "preserveSymlinks": true
           }
         }
       }
@@ -63,6 +64,7 @@
             ],
             "tsConfig": "demo/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "preserveSymlinks": true,
             "assets": [
               {
                 "glob": "**/*",
@@ -130,6 +132,7 @@
             ],
             "tsConfig": "demo/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
+            "preserveSymlinks": true,
             "assets": [
               {
                 "glob": "**/*",

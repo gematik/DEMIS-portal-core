@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -22,6 +22,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { signal, WritableSignal } from '@angular/core';
 import { of } from 'rxjs';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 describe('FollowUpNotificationIdDialogComponent', () => {
   let component: FollowUpNotificationIdDialogComponent;
@@ -52,7 +53,15 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       .provide({
         provide: MAT_DIALOG_DATA,
         useValue: mockDialogData,
+      })
+      .provide({
+        provide: LiveAnnouncer,
+        useValue: {
+          announce: (_message: string, _politeness?: any) => Promise.resolve(),
+          clear: () => {},
+        } satisfies Partial<LiveAnnouncer>,
       });
+
     fixture = MockRender(FollowUpNotificationIdDialogComponent);
     component = fixture.point.componentInstance;
 
@@ -173,9 +182,9 @@ describe('FollowUpNotificationIdDialogComponent', () => {
   });
 
   describe('closeDialog()', () => {
-    it('delegates to FollowUpNotificationIdService', () => {
+    it('delegates to FollowUpNotificationIdService', async () => {
       const spy = spyOn(service, 'closeDialog');
-      component.closeDialog();
+      await component.closeDialog();
       expect(spy).toHaveBeenCalled();
     });
   });
@@ -191,6 +200,66 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       expect(navSpy.calls.count()).toBe(2);
       expect(navSpy.calls.argsFor(0)[0]).toEqual(['']);
       expect(navSpy.calls.argsFor(1)[0]).toEqual(['/welcome']);
+    });
+  });
+
+  describe('Accessibility announcements', () => {
+    it('announces success once when validation status transitions to VALID', () => {
+      const liveAnnouncer = fixture.point.injector.get(LiveAnnouncer);
+      const announceSpy = spyOn(liveAnnouncer, 'announce').and.callThrough();
+
+      // Transition to VALID triggers announcement.
+      validationStatusMock.set(ValidationStatus.VALID);
+      fixture.detectChanges();
+
+      expect(announceSpy).toHaveBeenCalledTimes(1);
+      expect(announceSpy.calls.mostRecent().args[0]).toContain('Meldungs-ID');
+
+      // Further detectChanges should not announce again.
+      fixture.detectChanges();
+      expect(announceSpy).toHaveBeenCalledTimes(1);
+
+      // Setting VALID again should not spam announcements.
+      validationStatusMock.set(ValidationStatus.VALID);
+      fixture.detectChanges();
+      expect(announceSpy).toHaveBeenCalledTimes(1);
+
+      // Transition away and back should announce again.
+      validationStatusMock.set(ValidationStatus.NOT_FOUND);
+      fixture.detectChanges();
+      validationStatusMock.set(ValidationStatus.VALID);
+      fixture.detectChanges();
+      expect(announceSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not announce for invalid states', () => {
+      const liveAnnouncer = fixture.point.injector.get(LiveAnnouncer);
+      const announceSpy = spyOn(liveAnnouncer, 'announce').and.callThrough();
+
+      validationStatusMock.set(ValidationStatus.NOT_FOUND);
+      fixture.detectChanges();
+
+      validationStatusMock.set(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
+      fixture.detectChanges();
+
+      expect(announceSpy).not.toHaveBeenCalled();
+    });
+
+    it('moves focus to the "Weiter" button once validation becomes VALID', async () => {
+      validationStatusMock.set(ValidationStatus.VALID);
+      fixture.detectChanges();
+
+      // afterNextRender() schedules work; let the fixture settle.
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const nextBtn = document.getElementById('btn-next') as HTMLButtonElement | null;
+      expect(nextBtn).withContext('Expected "Weiter" button to exist in VALID state').not.toBeNull();
+      expect(document.activeElement).toBe(nextBtn);
+
+      // Extra change detection should not steal focus.
+      fixture.detectChanges();
+      expect(document.activeElement).toBe(nextBtn);
     });
   });
 });

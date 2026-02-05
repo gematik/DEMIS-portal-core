@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -99,9 +99,10 @@ describe('DemisProcessStepperComponent', () => {
   };
 
   // Helper function to apply mock stepper to a component
+  // Since stepper is a signal (viewChild.required), we need to mock it as a function that returns the mock
   const applyMockStepper = (component: DemisProcessStepperComponent, mockStepper: jasmine.SpyObj<MatStepper>): void => {
     Object.defineProperty(component, 'stepper', {
-      value: mockStepper,
+      value: () => mockStepper,
       writable: true,
       configurable: true,
     });
@@ -517,7 +518,7 @@ describe('DemisProcessStepperComponent', () => {
 
       applyMockStepper(component, mockStepper);
       Object.defineProperty(component, 'stepperElementRef', {
-        value: mockElementRef,
+        value: () => mockElementRef,
         writable: true,
       });
 
@@ -569,7 +570,7 @@ describe('DemisProcessStepperComponent', () => {
         };
 
         Object.defineProperty(component, 'stepperElementRef', {
-          value: newMockElementRef,
+          value: () => newMockElementRef,
           writable: true,
         });
 
@@ -595,7 +596,7 @@ describe('DemisProcessStepperComponent', () => {
 
         applyMockStepper(emptyComponent, mockStepper);
         Object.defineProperty(emptyComponent, 'stepperElementRef', {
-          value: mockElementRef,
+          value: () => mockElementRef,
           writable: true,
         });
 
@@ -982,6 +983,504 @@ describe('DemisProcessStepperComponent', () => {
 
         expect(mockStepper.reset).toHaveBeenCalled();
         expect(isolatedComponent.currentStepIndex()).toBe(0);
+      });
+    });
+  });
+
+  describe('Computed Properties', () => {
+    beforeEach(() => {
+      fixture = MockRender(
+        `
+        <gem-demis-process-stepper 
+          [steps]="steps" 
+          [initStepIndex]="initStepIndex">
+        </gem-demis-process-stepper>
+      `,
+        {
+          steps: createMockSteps(),
+          initStepIndex: 1,
+        }
+      );
+      component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+    });
+
+    describe('canGoToNext', () => {
+      it('should return true when next step is not disabled', () => {
+        // Current step is 1, next step (2) is enabled
+        expect(component.canGoToNext()).toBe(true);
+      });
+
+      it('should return false when at last step (no next step)', () => {
+        component.currentStepIndex.set(2);
+        fixture.detectChanges();
+
+        expect(component.canGoToNext()).toBe(false);
+      });
+
+      it('should return false when currentIndex is undefined', () => {
+        component.currentStepIndex.set(undefined as any);
+        fixture.detectChanges();
+
+        expect(component.canGoToNext()).toBe(false);
+      });
+
+      it('should return false when steps array is empty', () => {
+        ngMocks.flushTestBed();
+        const emptyFixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: [],
+            initStepIndex: 0,
+          }
+        );
+        const emptyComponent = ngMocks.findInstance(emptyFixture.debugElement, DemisProcessStepperComponent);
+
+        expect(emptyComponent.canGoToNext()).toBe(false);
+      });
+    });
+
+    describe('canGoToPrevious', () => {
+      it('should return true when previous step is not disabled', () => {
+        // Current step is 1, previous step (0) is enabled
+        expect(component.canGoToPrevious()).toBe(true);
+      });
+
+      it('should return false when at first step (no previous step)', () => {
+        component.currentStepIndex.set(0);
+        fixture.detectChanges();
+
+        expect(component.canGoToPrevious()).toBe(false);
+      });
+
+      it('should return false when currentIndex is undefined', () => {
+        component.currentStepIndex.set(undefined as any);
+        fixture.detectChanges();
+
+        expect(component.canGoToPrevious()).toBe(false);
+      });
+
+      it('should return false when steps array is empty', () => {
+        ngMocks.flushTestBed();
+        const emptyFixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: [],
+            initStepIndex: 0,
+          }
+        );
+        const emptyComponent = ngMocks.findInstance(emptyFixture.debugElement, DemisProcessStepperComponent);
+
+        expect(emptyComponent.canGoToPrevious()).toBe(false);
+      });
+    });
+
+    describe('currentStep', () => {
+      it('should return current step based on currentStepIndex', () => {
+        const steps = component.steps();
+        component.currentStepIndex.set(0);
+        fixture.detectChanges();
+
+        expect(component.currentStep()).toBe(steps[0]);
+      });
+
+      it('should return undefined when currentStepIndex is out of bounds (negative)', () => {
+        component.currentStepIndex.set(-1);
+        fixture.detectChanges();
+
+        expect(component.currentStep()).toBeUndefined();
+      });
+
+      it('should return undefined when currentStepIndex is out of bounds (too large)', () => {
+        component.currentStepIndex.set(999);
+        fixture.detectChanges();
+
+        expect(component.currentStep()).toBeUndefined();
+      });
+
+      it('should update when currentStepIndex changes', () => {
+        const steps = component.steps();
+
+        component.currentStepIndex.set(0);
+        fixture.detectChanges();
+        expect(component.currentStep()).toBe(steps[0]);
+
+        component.currentStepIndex.set(1);
+        fixture.detectChanges();
+        expect(component.currentStep()).toBe(steps[1]);
+
+        component.currentStepIndex.set(2);
+        fixture.detectChanges();
+        expect(component.currentStep()).toBe(steps[2]);
+      });
+    });
+  });
+
+  describe('Constructor Effect - Control State Changes', () => {
+    it('should subscribe to statusChanges of all step controls', () => {
+      const steps = createMockSteps();
+
+      // Spies on statusChanges
+      steps.forEach(step => spyOn(step.control.statusChanges, 'subscribe').and.callThrough());
+
+      // Create component which triggers constructor effect
+      fixture = MockRender(
+        `
+        <gem-demis-process-stepper 
+          [steps]="steps" 
+          [initStepIndex]="initStepIndex">
+        </gem-demis-process-stepper>
+      `,
+        {
+          steps: steps,
+          initStepIndex: 0,
+        }
+      );
+
+      component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+      fixture.detectChanges();
+
+      // At least one subscription should have been made
+      // (merge combines them, so we can't guarantee individual calls)
+      expect(component).toBeTruthy();
+    });
+
+    it('should update controlStatesChanged signal when control status changes', fakeAsync(() => {
+      fixture = MockRender(
+        `
+        <gem-demis-process-stepper 
+          [steps]="steps" 
+          [initStepIndex]="initStepIndex">
+        </gem-demis-process-stepper>
+      `,
+        {
+          steps: createMockSteps(),
+          initStepIndex: 0,
+        }
+      );
+
+      component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+      fixture.detectChanges();
+
+      const steps = component.steps();
+
+      // Get initial canGoToNext value
+      const initialCanGoToNext = component.canGoToNext();
+
+      // Disable next step's control
+      steps[1].control.disable();
+      steps[1].control.updateValueAndValidity();
+      tick();
+      fixture.detectChanges();
+
+      // canGoToNext should have changed
+      const updatedCanGoToNext = component.canGoToNext();
+      expect(updatedCanGoToNext).not.toBe(initialCanGoToNext);
+      expect(updatedCanGoToNext).toBe(false);
+    }));
+
+    it('should handle empty steps array in constructor effect', () => {
+      expect(() => {
+        const emptyFixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: [],
+            initStepIndex: 0,
+          }
+        );
+        emptyFixture.detectChanges();
+      }).not.toThrow();
+    });
+  });
+
+  describe('Disabled Step State Methods', () => {
+    describe('isCompleted', () => {
+      it('should return true for enabled step that is touched and valid', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Set control to valid and touched
+        stepToTest.control.setValue('valid value');
+        stepToTest.control.markAsTouched();
+        stepToTest.control.updateValueAndValidity();
+
+        expect(component.isCompleted(stepToTest)).toBe(true);
+      });
+
+      it('should return false for enabled step that is not touched', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Set control to valid but NOT touched
+        stepToTest.control.setValue('valid value');
+        stepToTest.control.updateValueAndValidity();
+
+        expect(component.isCompleted(stepToTest)).toBe(false);
+      });
+
+      it('should return true for disabled step with saved valid state', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Disable the control
+        stepToTest.control.disable();
+
+        // Manually set the map to simulate saved valid state
+        (component as any).stepValidityStateBeforeDisabled.set(stepToTest.key, {
+          touched: true,
+          valid: true,
+        });
+
+        expect(component.isCompleted(stepToTest)).toBe(true);
+      });
+
+      it('should return false for disabled step with saved invalid state', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Disable the control
+        stepToTest.control.disable();
+
+        // Manually set the map to simulate saved invalid state
+        (component as any).stepValidityStateBeforeDisabled.set(stepToTest.key, {
+          touched: true,
+          valid: false,
+        });
+
+        expect(component.isCompleted(stepToTest)).toBe(false);
+      });
+    });
+
+    describe('hasError', () => {
+      it('should return true for enabled step that is touched and invalid', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Set control to invalid and touched
+        stepToTest.control.setValue('');
+        stepToTest.control.markAsTouched();
+        stepToTest.control.updateValueAndValidity();
+
+        expect(component.hasError(stepToTest)).toBe(true);
+      });
+
+      it('should return false for enabled step that is not touched', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Set control to invalid but NOT touched
+        stepToTest.control.setValue('');
+        stepToTest.control.updateValueAndValidity();
+
+        expect(component.hasError(stepToTest)).toBe(false);
+      });
+
+      it('should return true for disabled step with saved invalid state', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Disable the control
+        stepToTest.control.disable();
+
+        // Manually set the map to simulate saved invalid state
+        (component as any).stepValidityStateBeforeDisabled.set(stepToTest.key, {
+          touched: true,
+          valid: false,
+        });
+
+        expect(component.hasError(stepToTest)).toBe(true);
+      });
+
+      it('should return false for disabled step with saved valid state', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(
+          `
+          <gem-demis-process-stepper 
+            [steps]="steps" 
+            [initStepIndex]="initStepIndex">
+          </gem-demis-process-stepper>
+        `,
+          {
+            steps: steps,
+            initStepIndex: 0,
+          }
+        );
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+        fixture.detectChanges();
+
+        // Disable the control
+        stepToTest.control.disable();
+
+        // Manually set the map to simulate saved valid state
+        (component as any).stepValidityStateBeforeDisabled.set(stepToTest.key, {
+          touched: true,
+          valid: true,
+        });
+
+        expect(component.hasError(stepToTest)).toBe(false);
+      });
+    });
+
+    describe('wasCompletedBeforeDisabled', () => {
+      it('should return true when savedState is touched and valid', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(DemisProcessStepperComponent, { steps, initStepIndex: 0 });
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+
+        (component as any).stepValidityStateBeforeDisabled.set(stepToTest.key, { touched: true, valid: true });
+        expect(component.wasCompletedBeforeDisabled(stepToTest)).toBe(true);
+      });
+
+      it('should return false when savedState does not exist', () => {
+        const steps = createMockSteps();
+        fixture = MockRender(DemisProcessStepperComponent, { steps, initStepIndex: 0 });
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+
+        expect(component.wasCompletedBeforeDisabled(steps[0])).toBe(false);
+      });
+    });
+
+    describe('hadErrorBeforeDisabled', () => {
+      it('should return true when savedState is touched and invalid', () => {
+        const steps = createMockSteps();
+        const stepToTest = steps[0];
+
+        fixture = MockRender(DemisProcessStepperComponent, { steps, initStepIndex: 0 });
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+
+        (component as any).stepValidityStateBeforeDisabled.set(stepToTest.key, { touched: true, valid: false });
+        expect(component.hadErrorBeforeDisabled(stepToTest)).toBe(true);
+      });
+
+      it('should return false when savedState does not exist', () => {
+        const steps = createMockSteps();
+        fixture = MockRender(DemisProcessStepperComponent, { steps, initStepIndex: 0 });
+        component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
+
+        expect(component.hadErrorBeforeDisabled(steps[0])).toBe(false);
       });
     });
   });

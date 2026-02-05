@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -20,6 +20,7 @@ import { provideRouter } from '@angular/router';
 import { provideHighlightOptions } from 'ngx-highlightjs';
 
 import { MAT_CARD_CONFIG } from '@angular/material/card';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { routes } from './app.routes';
@@ -41,6 +42,9 @@ export const appConfig: ApplicationConfig = {
     provideFormlyCore([
       {
         validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }],
+        extras: {
+          lazyRender: true,
+        },
         types: [
           {
             name: 'repeat',
@@ -56,6 +60,7 @@ export const appConfig: ApplicationConfig = {
     ]),
     provideHttpClient(),
     { provide: MAT_CARD_CONFIG, useValue: { appearance: 'outlined' } },
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline', floatLabel: 'always' } },
     provideHighlightOptions({
       fullLibraryLoader: () => import('highlight.js'),
       lineNumbersLoader: () => import('ngx-highlightjs/line-numbers'),
