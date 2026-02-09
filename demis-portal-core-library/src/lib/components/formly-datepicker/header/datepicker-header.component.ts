@@ -22,13 +22,13 @@ import { MatCalendar, MatCalendarView } from '@angular/material/datepicker';
 import { startWith, Subject, takeUntil } from 'rxjs';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatepickerStateService } from '../services/datepicker-state.service';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { DatePrecision, NavigationDirection, precisionToView, VALID_FORMATS, YEARS_PER_PAGE } from '../datepicker-shared';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from 'date-fns';
 
 @Component({
   selector: 'gem-demis-datepicker-header',
-  imports: [MatIcon, MatIconButton, AsyncPipe, MatButton, NgIf],
+  imports: [MatIcon, MatIconButton, AsyncPipe, MatButton],
   templateUrl: './datepicker-header.component.html',
   styleUrl: './datepicker-header.component.scss',
 })

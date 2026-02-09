@@ -64,12 +64,12 @@ form, .form-container {
 
 /** Input Field Styles **/
 ::ng-deep .initial-notification-id-input-field-valid {
-  --mdc-outlined-text-field-outline-color: var(--color-success-dark);
-  --mdc-outlined-text-field-focus-outline-color: var(--color-success-dark);
-  --mdc-outlined-text-field-hover-outline-color: var(--color-success-dark);
-  --mdc-outlined-text-field-label-text-color: var(--color-success-dark);
-  --mdc-outlined-text-field-hover-label-text-color: var(--color-success-dark);
-  --mdc-outlined-text-field-focus-label-text-color: var(--color-success-dark);
+  --mat-form-field-outlined-outline-color: var(--color-success-dark);
+  --mat-form-field-outlined-focus-outline-color: var(--color-success-dark);
+  --mat-form-field-outlined-hover-outline-color: var(--color-success-dark);
+  --mat-form-field-outlined-label-text-color: var(--color-success-dark);
+  --mat-form-field-outlined-hover-label-text-color: var(--color-success-dark);
+  --mat-form-field-outlined-focus-label-text-color: var(--color-success-dark);
 }
 
 ::ng-deep .initial-notification-id-input-field-valid .mat-mdc-input-element {
@@ -79,12 +79,12 @@ form, .form-container {
 /** Input Field Styles **/
 ::ng-deep .initial-notification-id-input-field-invalid,
 ::ng-deep .initial-notification-id-input-field-notvalidated {
-  --mdc-outlined-text-field-error-outline-color: var(--color-error-dark);
-  --mdc-outlined-text-field-error-focus-outline-color: var(--color-error-dark);
-  --mdc-outlined-text-field-error-hover-outline-color: var(--color-error-dark);
-  --mdc-outlined-text-field-error-label-text-color: var(--color-error-dark);
-  --mdc-outlined-text-field-error-hover-label-text-color: var(--color-error-dark);
-  --mdc-outlined-text-field-error-focus-label-text-color: var(--color-error-dark);
+  --mat-form-field-outlined-error-outline-color: var(--color-error-dark);
+  --mat-form-field-outlined-error-focus-outline-color: var(--color-error-dark);
+  --mat-form-field-outlined-error-hover-outline-color: var(--color-error-dark);
+  --mat-form-field-outlined-error-label-text-color: var(--color-error-dark);
+  --mat-form-field-outlined-error-hover-label-text-color: var(--color-error-dark);
+  --mat-form-field-outlined-error-focus-label-text-color: var(--color-error-dark);
 }
 
 ::ng-deep .initial-notification-id-input-field-invalid .mat-mdc-form-field-error,

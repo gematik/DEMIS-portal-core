@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 3.0.0
+
+- **Breaking Change**: Switched to Angular 21 and updated all dependencies accordingly.
+
 ## Release 2.4.4
 - Add accessibility footer link with featureFlagPortal enabled
 

@@ -23,6 +23,8 @@ import { Router } from '@angular/router';
 import { signal, WritableSignal } from '@angular/core';
 import { of } from 'rxjs';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 describe('FollowUpNotificationIdDialogComponent', () => {
   let component: FollowUpNotificationIdDialogComponent;
@@ -40,6 +42,8 @@ describe('FollowUpNotificationIdDialogComponent', () => {
 
   beforeEach(async () => {
     await MockBuilder(FollowUpNotificationIdDialogComponent)
+      .keep(MatFormField)
+      .keep(MatInput)
       .mock(FollowUpNotificationIdService, {
         validationStatus: validationStatusMock,
         validateNotificationId: (_id: string, _path: string) => {},
@@ -61,6 +65,9 @@ describe('FollowUpNotificationIdDialogComponent', () => {
           clear: () => {},
         } satisfies Partial<LiveAnnouncer>,
       });
+
+    // Reset the mock to the initial state before each test
+    validationStatusMock.set(ValidationStatus.NOT_VALIDATED);
 
     fixture = MockRender(FollowUpNotificationIdDialogComponent);
     component = fixture.point.componentInstance;

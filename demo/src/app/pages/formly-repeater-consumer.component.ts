@@ -50,16 +50,7 @@ import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
 
         <app-subsection-title>Use the custom type in your project</app-subsection-title>
         <p>You need to import the Formly Repeater component and bind it to the custom type declared in your Formly config</p>
-        <ul>
-          <li>
-            <p>NgModule-based config:</p>
-            <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-with-module-based-config.snippet.ts" language="ts" />
-          </li>
-          <li>
-            <p>Standalone config:</p>
-            <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-standalone-config.snippet.ts" language="ts" />
-          </li>
-        </ul>
+        <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-standalone-config.snippet.ts" language="ts" />
 
         <app-subsection-title>Configuration props</app-subsection-title>
         <app-doc-table [dataSource]="propertiesDocTableDataSource"></app-doc-table>

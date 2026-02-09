@@ -29,7 +29,7 @@ import { MaxHeightContentContainerComponent } from './max-height-content-contain
       <div>Content</div>
     </gem-demis-max-height-content-container>
   `,
-  imports: [MaxHeightContentContainerComponent, CommonModule],
+  imports: [MaxHeightContentContainerComponent],
 })
 class MaxHeightContextComponent {
   testElements = jasmine.createSpy('testElements').and.returnValue(['#something']);
