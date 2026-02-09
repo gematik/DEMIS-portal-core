@@ -15,7 +15,6 @@
     find details in the "Readme" file.
  */
 
-import { CommonModule } from '@angular/common';
 import { AfterViewChecked, ChangeDetectorRef, Component, OnChanges, OnDestroy, OnInit, SimpleChanges, inject, signal, input } from '@angular/core';
 import { MaxContainerHeightService } from '../../services/max-container-height.service';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
@@ -36,7 +35,7 @@ import { debounceTime, Subject, takeUntil } from 'rxjs';
       }
     `,
   ],
-  imports: [CommonModule],
+  imports: [],
 })
 export class MaxHeightContentContainerComponent implements OnInit, OnChanges, AfterViewChecked, OnDestroy {
   readonly elementSelectorsToSubtract = input.required<string[]>();

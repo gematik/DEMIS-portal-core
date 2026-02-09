@@ -21,26 +21,10 @@ const rootPkg = require('../package.json');
 const libPkgPath = path.resolve(__dirname, '../demis-portal-core-library/package.json');
 const libPkg = require(libPkgPath);
 
-const peerDepsToSync = [
-  '@angular/animations',
-  '@angular/cdk',
-  '@angular/common',
-  '@angular/compiler',
-  '@angular/core',
-  '@angular/forms',
-  '@angular/material-date-fns-adapter',
-  '@angular/material',
-  '@angular/platform-browser-dynamic',
-  '@angular/platform-browser',
-  '@angular/router',
-  '@ngx-formly/core',
-  '@ngx-formly/material',
-  'ngx-logger',
-  'rxjs',
-  'zone.js',
-];
-
-const depsToSync = ['tslib'];
+// Automatically get all peerDependencies from the library package.json
+const peerDepsToSync = Object.keys(libPkg.peerDependencies || {});
+// Automatically get all dependencies from the library package.json
+const depsToSync = Object.keys(libPkg.dependencies || {});
 
 console.log('Syncing dependencies...');
 
@@ -54,20 +38,47 @@ depsToSync.forEach(dep => {
   console.log(`- ${dep}`);
 });
 
-libPkg.peerDependencies = libPkg.peerDependencies || {};
-libPkg.dependencies = libPkg.dependencies || {};
+/**
+ * Syncs versions from the root package.json to the target object.
+ * First looks in dependencies, then in devDependencies.
+ * @param {string[]} depsToSync - List of dependency names to sync
+ * @param {Object} targetObj - Target object to write versions to
+ * @returns {{ synced: number, skipped: string[] }} - Sync result with count and skipped deps
+ */
+function syncVersions(depsToSync, targetObj) {
+  let synced = 0;
+  const skipped = [];
 
-peerDepsToSync.forEach(dep => {
-  if (rootPkg.dependencies[dep]) {
-    libPkg.peerDependencies[dep] = rootPkg.dependencies[dep];
-  }
-});
+  depsToSync.forEach(dep => {
+    if (rootPkg.dependencies && rootPkg.dependencies[dep]) {
+      targetObj[dep] = rootPkg.dependencies[dep];
+      synced++;
+    } else if (rootPkg.devDependencies && rootPkg.devDependencies[dep]) {
+      targetObj[dep] = rootPkg.devDependencies[dep];
+      synced++;
+    } else {
+      skipped.push(dep);
+    }
+  });
 
-depsToSync.forEach(dep => {
-  if (rootPkg.dependencies[dep]) {
-    libPkg.dependencies[dep] = rootPkg.dependencies[dep];
-  }
-});
+  return { synced, skipped };
+}
 
-fs.writeFileSync(libPkgPath, JSON.stringify(libPkg, null, 2));
+const peerResult = syncVersions(peerDepsToSync, libPkg.peerDependencies);
+const depsResult = syncVersions(depsToSync, libPkg.dependencies);
+
+fs.writeFileSync(libPkgPath, JSON.stringify(libPkg, null, 2) + '\n');
+
+console.log(`\n✓ ${peerResult.synced} peer dependencies synced.`);
+if (peerResult.skipped.length > 0) {
+  console.log(`⚠ ${peerResult.skipped.length} peer dependencies not found in workspace package.json:`);
+  peerResult.skipped.forEach(dep => console.log(`  - ${dep}`));
+}
+
+console.log(`✓ ${depsResult.synced} dependencies synced.`);
+if (depsResult.skipped.length > 0) {
+  console.log(`⚠ ${depsResult.skipped.length} dependencies not found in workspace package.json:`);
+  depsResult.skipped.forEach(dep => console.log(`  - ${dep}`));
+}
+
 console.log('\nDependencies are in sync now!');
