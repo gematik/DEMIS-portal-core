@@ -69,9 +69,6 @@ export class FollowUpNotificationIdService {
       });
 
       this.dialogRef.afterClosed().subscribe(() => {
-        if (this.validationStatus() === ValidationStatus.VALID && this.validatedNotificationId()) {
-          this.hasValidNotificationId.set(true);
-        }
         this.dialogRef = null;
       });
     }
@@ -91,6 +88,7 @@ export class FollowUpNotificationIdService {
           this.validationStatus.set(ValidationStatus.VALID);
           this.validatedNotificationId.set(id);
           this.followUpNotificationCategory.set(response.notificationCategory);
+          this.hasValidNotificationId.set(true);
         } else {
           this.validationStatus.set(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
           this.validatedNotificationId.set(undefined);

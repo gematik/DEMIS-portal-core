@@ -1,6 +1,6 @@
 {
   "name": "portal-core",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "overrides": {
     "ng-mocks": {
       "@angular/common": "$@angular/common",
@@ -10,7 +10,8 @@
       "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
       "rxjs": "$rxjs",
       "zone.js": "$zone.js"
-    }
+    },
+    "ajv": "^8.18.0"
   },
   "scripts": {
     "ng": "ng",
@@ -22,7 +23,7 @@
     "build:schematics": "npm run build --prefix schematics",
     "watch": "ng build @gematik/demis-portal-core-library --watch --configuration production",
     "start": "wait-on dist/gematik/demis-portal-core-library/package.json && ng serve --port 4299",
-    "dev": "npm run clean && npm-run-all --parallel watch start",
+    "dev": "npm run clean && npm-run-all2 --parallel watch start",
     "test-local": "ng test @gematik/demis-portal-core-library --karma-config karma.conf.js",
     "test": "ng test @gematik/demis-portal-core-library --karma-config karma.single-run.conf.js",
     "test:coverage": "ng test @gematik/demis-portal-core-library --karma-config karma.coverage.conf.js",
@@ -31,24 +32,23 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/core": "21.1.2",
-    "@angular-devkit/schematics": "21.1.2",
-    "@angular/animations": "21.1.2",
-    "@angular/cdk": "21.1.2",
-    "@angular/common": "21.1.2",
-    "@angular/compiler": "21.1.2",
-    "@angular/core": "21.1.2",
-    "@angular/forms": "21.1.2",
-    "@angular/material": "21.1.2",
-    "@angular/material-date-fns-adapter": "21.1.2",
-    "@angular/platform-browser": "21.1.2",
-    "@angular/platform-browser-dynamic": "21.1.2",
-    "@angular/router": "21.1.2",
-    "@gematik/demis-portal-theme-library": "1.0.4",
+    "@angular-devkit/core": "21.1.4",
+    "@angular-devkit/schematics": "21.1.4",
+    "@angular/animations": "21.1.5",
+    "@angular/cdk": "21.1.5",
+    "@angular/common": "21.1.5",
+    "@angular/compiler": "21.1.5",
+    "@angular/core": "21.1.5",
+    "@angular/forms": "21.1.5",
+    "@angular/material": "21.1.5",
+    "@angular/material-date-fns-adapter": "21.1.5",
+    "@angular/platform-browser": "21.1.5",
+    "@angular/platform-browser-dynamic": "21.1.5",
+    "@angular/router": "21.1.5",
     "@ngx-formly/core": "7.1.0",
     "@ngx-formly/material": "7.1.0",
     "date-fns": "3.6.0",
-    "marked": "17.0.1",
+    "marked": "17.0.3",
     "ngx-highlightjs": "14.0.1",
     "ngx-logger": "5.0.12",
     "rxjs": "7.8.2",
@@ -56,9 +56,9 @@
     "zone.js": "0.16.0"
   },
   "devDependencies": {
-    "@angular/build": "21.1.2",
-    "@angular/cli": "21.1.2",
-    "@angular/compiler-cli": "21.1.2",
+    "@angular/build": "21.1.4",
+    "@angular/cli": "21.1.4",
+    "@angular/compiler-cli": "21.1.5",
     "@types/jasmine": "6.0.0",
     "@types/node": "22.19.7",
     "core-schematics": "file:schematics",
@@ -71,10 +71,10 @@
     "karma-jasmine-html-reporter": "2.2.0",
     "karma-junit-reporter": "2.0.1",
     "karma-sonarqube-unit-reporter": "0.0.23",
-    "ng-mocks": "14.15.0",
+    "ng-mocks": "14.15.1",
     "ng-packagr": "21.1.0",
-    "npm-run-all": "4.1.5",
+    "npm-run-all2": "8.0.4",
     "typescript": "5.9.3",
-    "wait-on": "9.0.3"
+    "wait-on": "9.0.4"
   }
 }

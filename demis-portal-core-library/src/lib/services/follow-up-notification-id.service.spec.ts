@@ -109,31 +109,6 @@ describe('FollowUpNotificationIdService', () => {
 
       expect(dialog.open).not.toHaveBeenCalled();
     });
-
-    it('sets hasValidNotificationId to true after close if VALID + ID present', () => {
-      service.openDialog(dialogData);
-
-      expect(service.hasValidNotificationId()).toBeFalse();
-
-      // Simulate successful state
-      service.validationStatus.set(ValidationStatus.VALID);
-      service.validatedNotificationId.set('id-123');
-
-      dialogRefMock.close();
-
-      expect(service.hasValidNotificationId()).toBeTrue();
-    });
-
-    it('remains false after close if not VALID or no ID', () => {
-      service.openDialog(dialogData);
-
-      service.validationStatus.set(ValidationStatus.NOT_FOUND);
-      service.validatedNotificationId.set(undefined);
-
-      dialogRefMock.close();
-
-      expect(service.hasValidNotificationId()).toBeFalse();
-    });
   });
 
   describe('closeDialog()', () => {
@@ -179,6 +154,7 @@ describe('FollowUpNotificationIdService', () => {
       expect(service.validationStatus()).toBe(ValidationStatus.VALID);
       expect(service.validatedNotificationId()).toBe(id);
       expect(service.followUpNotificationCategory()).toBe('invp');
+      expect(service.hasValidNotificationId()).toBe(true);
     });
 
     it('sets NOT_FOUND and clears signals on error', () => {
@@ -192,6 +168,7 @@ describe('FollowUpNotificationIdService', () => {
       expect(service.validationStatus()).toBe(ValidationStatus.NOT_FOUND);
       expect(service.validatedNotificationId()).toBeUndefined();
       expect(service.followUpNotificationCategory()).toBeUndefined();
+      expect(service.hasValidNotificationId()).toBe(false);
     });
 
     it('accepts supported category if codes are set', () => {
@@ -212,6 +189,7 @@ describe('FollowUpNotificationIdService', () => {
       expect(service.validationStatus()).toBe(ValidationStatus.VALID);
       expect(service.validatedNotificationId()).toBe(id);
       expect(service.followUpNotificationCategory()).toBe('abvp');
+      expect(service.hasValidNotificationId()).toBe(true);
     });
 
     it('unsupported category sets validationStatus UNSUPPORTED_NOTIFICATION_CATEGORY', () => {
@@ -237,6 +215,7 @@ describe('FollowUpNotificationIdService', () => {
       expect(service.validationStatus()).toBe(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
       expect(service.validatedNotificationId()).toBeUndefined();
       expect(service.followUpNotificationCategory()).toBeUndefined();
+      expect(service.hasValidNotificationId()).toBe(false);
     });
 
     it('accepts any category if no codes are set', () => {
@@ -249,6 +228,7 @@ describe('FollowUpNotificationIdService', () => {
       expect(service.validationStatus()).toBe(ValidationStatus.VALID);
       expect(service.validatedNotificationId()).toBe(id);
       expect(service.followUpNotificationCategory()).toBe('abcd');
+      expect(service.hasValidNotificationId()).toBe(true);
     });
   });
 
