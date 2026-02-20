@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 3.0.1
+
+- Adapted follow up notification dialog by setting hasValidNotificationId after validation of notificationId field
+- Upgraded dependencies to latest versions
+
 ## Release 3.0.0
 
 - **Breaking Change**: Switched to Angular 21 and updated all dependencies accordingly.
