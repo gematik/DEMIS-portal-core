@@ -28,25 +28,22 @@
       @if (customErrorMessage) {
         {{ customErrorMessage }}
       } @else {
-        <formly-validation-message [field]="field"></formly-validation-message>
+        <formly-validation-message [field]="field" />
       }
     </mat-error>
 
-  <mat-datepicker-toggle
-    matIconSuffix
+  <mat-datepicker-toggle matIconSuffix
     [for]="picker"
     (click)="onDatepickerToggleClick()"
     (keydown)="onDatepickerToggleClick()"
-  ></mat-datepicker-toggle>
+   />
 
-  <mat-datepicker
-    #picker
+  <mat-datepicker #picker
     [startView]="calendarStartView"
     [calendarHeaderComponent]="datepickerHeader"
     class="datepicker-content"
     (monthSelected)="onMonthSelected($event)"
     (yearSelected)="onYearSelected($event)"
-  >
-  </mat-datepicker>
+   />
 </mat-form-field>
 

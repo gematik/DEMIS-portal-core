@@ -58,7 +58,7 @@ export interface CodeExampleBoxComponentOptions {
             <span>Rendered</span>
           </div>
           @if (!isRenderedSectionCollapsed()) {
-            <ng-content></ng-content>
+            <ng-content />
           }
         </div>
 

@@ -23,7 +23,7 @@ import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
   selector: 'app-test-form',
   template: `
     <form [formGroup]="form">
-      <formly-form [fields]="fields" [form]="form" [model]="model"></formly-form>
+      <formly-form [fields]="fields" [form]="form" [model]="model" />
     </form>
   `,
   imports: [FormlyModule, ReactiveFormsModule],

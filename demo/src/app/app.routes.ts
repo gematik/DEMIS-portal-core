@@ -25,6 +25,7 @@ import { FormlyRepeaterConsumerComponent } from './pages/formly-repeater-consume
 import { StepperConsumerComponent } from './pages/process-stepper-consumer.component';
 import { SideNavigationConsumerComponent } from './pages/side-navigation-consumer.component';
 import { FormsFooterConsumerComponent } from './pages/forms-footer-consumer.component';
+import { FollowUpMixedCodesConsumerComponent } from './pages/follow-up-mixed-codes-consumer.component';
 import { FollowUpNotificationIdConsumerComponent } from './pages/follow-up-notification-id-consumer.component';
 
 function prefixRoutes(prefix: string, routes: Routes): Routes {
@@ -90,6 +91,12 @@ const serviceConsumerRoutes: Routes = [
     title: 'Follow Up Notification ID Service',
     pathMatch: 'full',
     component: FollowUpNotificationIdConsumerComponent,
+  },
+  {
+    path: 'follow-up-mixed-codes',
+    title: 'Follow Up Mixed Codes Service',
+    pathMatch: 'full',
+    component: FollowUpMixedCodesConsumerComponent,
   },
 ];
 

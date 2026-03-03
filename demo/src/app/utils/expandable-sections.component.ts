@@ -21,6 +21,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 @Component({
   selector: 'app-expandable-sections',
   imports: [MatExpansionModule],
-  template: `<mat-accordion><ng-content></ng-content></mat-accordion>`,
+  template: `<mat-accordion><ng-content /></mat-accordion>`,
 })
 export class ExpandableSectionsComponent {}

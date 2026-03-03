@@ -30,7 +30,9 @@ describe('FormsFooterComponent', () => {
 
     fixture = TestBed.createComponent(FormsFooterComponent);
     component = fixture.componentInstance;
+    // Set required inputs before detecting changes
     fixture.componentRef.setInput('featureFlagPortal', true);
+    fixture.componentRef.setInput('featureFlagFooterLink', true);
     fixture.detectChanges();
   });
 

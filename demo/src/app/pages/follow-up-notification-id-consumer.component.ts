@@ -51,26 +51,26 @@ import { FollowUpNotificationIdExample1Component } from '../code-snippets/follow
         <app-code-snippet-box language="ts" codeSnippetString='import { FollowUpNotificationIdService } from "@gematik/demis-portal-core-library";' />
 
         <app-subsection-title>Readonly Variables</app-subsection-title>
-        <app-doc-table [dataSource]="readonlyVariablesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="readonlyVariablesDocTableDataSource" />
 
         <app-subsection-title>Enum ValidationStatus</app-subsection-title>
-        <app-doc-table [dataSource]="validationStatusDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="validationStatusDocTableDataSource" />
 
         <app-subsection-title>Methods</app-subsection-title>
-        <app-doc-table [dataSource]="methodsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="methodsDocTableDataSource" />
 
         <app-subsection-title>openDialog - Parameters</app-subsection-title>
-        <app-doc-table [dataSource]="openDialogDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="openDialogDocTableDataSource" />
 
         <app-subsection-title>Interface FollowUpServiceDialogData - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="followUpServiceDialogDataDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="followUpServiceDialogDataDocTableDataSource" />
 
         <app-subsection-title>Interface FollowUpDialogData - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="followUpDialogDataDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="followUpDialogDataDocTableDataSource" />
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-follow-up-notification-id-example-1></app-follow-up-notification-id-example-1>
+        <app-follow-up-notification-id-example-1 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

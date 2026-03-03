@@ -17,7 +17,7 @@
         }
       </div>
       <div class="drawer-sidenav-footer">
-        <gem-demis-forms-footer [featureFlagPortal]="true" />
+        <gem-demis-forms-footer [featureFlagPortal]="true" [featureFlagFooterLink]="true" />
       </div>
     </div>
   </mat-drawer>
@@ -25,15 +25,15 @@
   <mat-drawer-content class="drawer-content" style="transition: none !important">
     <div class="drawer-content-wrapper">
       <div class="drawer-content-main">
-        <ng-container #dynamicComponentContainer></ng-container>
+        <ng-container #dynamicComponentContainer />
       </div>
       @if (currentActionsLeft() || currentActionsRight()) {
         <div class="drawer-content-footer">
-          <ng-container actions-left *ngTemplateOutlet="currentActionsLeft()"></ng-container>
+          <ng-container actions-left *ngTemplateOutlet="currentActionsLeft()" />
 
           <div class="spacer"></div>
 
-          <ng-container actions-right *ngTemplateOutlet="currentActionsRight()"></ng-container>
+          <ng-container actions-right *ngTemplateOutlet="currentActionsRight()" />
         </div>
       }
     </div>

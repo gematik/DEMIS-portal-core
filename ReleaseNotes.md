@@ -2,17 +2,25 @@
 
 # Release Notes Portal-Core
 
-## Release 3.0.1
+## Release 3.0.4
+- updated angular dependencies to latest versions
+- change imprint route and add id for footer links with featureFlagFooterLink enabled
 
-- Adapted follow up notification dialog by setting hasValidNotificationId after validation of notificationId field
+## Release 3.0.3
+- Added Follow-Up Mixed Codes Dialog & Service
+
+## Release 3.0.2
 - Upgraded dependencies to latest versions
+
+## Release 3.0.1
+- Adapted follow up notification dialog by setting hasValidNotificationId after validation of notificationId field
 
 ## Release 3.0.0
 
 - **Breaking Change**: Switched to Angular 21 and updated all dependencies accordingly.
 
 ## Release 2.4.4
-- Add accessibility footer link with featureFlagPortal enabled
+- Added accessibility footer link with featureFlagPortal enabled
 
 ## Release 2.4.3
 

@@ -23,7 +23,7 @@ import { debounceTime, Subject, takeUntil } from 'rxjs';
   selector: 'gem-demis-max-height-content-container',
   template: `
     <div id="gem-demis-max-height-content-container" [style.height]="containerHeight()">
-      <ng-content></ng-content>
+      <ng-content />
     </div>
   `,
   styles: [

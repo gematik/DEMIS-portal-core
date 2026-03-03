@@ -67,6 +67,11 @@ export enum FormlyConstants {
 
 export type selectOption = { label: string; value: any };
 
+export type customCodeDisplay = {
+  code: string;
+  display: string;
+};
+
 export const GERMANY_COUNTRY_CODE: string = 'DE';
 export const TEXT_MAX_LENGTH: number = 100;
 

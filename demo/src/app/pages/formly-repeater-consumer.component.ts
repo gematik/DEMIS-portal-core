@@ -53,25 +53,25 @@ import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
         <app-code-snippet-box codeSnippetPath="code-snippets/formly-repeater/declare-custom-type-standalone-config.snippet.ts" language="ts" />
 
         <app-subsection-title>Configuration props</app-subsection-title>
-        <app-doc-table [dataSource]="propertiesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="propertiesDocTableDataSource" />
 
         <app-subsection-title>Public methods</app-subsection-title>
-        <app-doc-table [dataSource]="publicMethodsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="publicMethodsDocTableDataSource" />
 
         <app-subsection-title>Used CSS</app-subsection-title>
-        <app-doc-table [dataSource]="cssDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="cssDocTableDataSource" />
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-formly-repeater-example-1></app-formly-repeater-example-1>
+        <app-formly-repeater-example-1 />
       </app-code-example-box>
 
       <app-code-example-box [options]="examples[1]">
-        <app-formly-repeater-example-2></app-formly-repeater-example-2>
+        <app-formly-repeater-example-2 />
       </app-code-example-box>
 
       <app-code-example-box [options]="examples[2]">
-        <app-formly-repeater-example-3></app-formly-repeater-example-3>
+        <app-formly-repeater-example-3 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

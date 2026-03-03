@@ -7,7 +7,7 @@
     <div style="display: inline-flex; flex-direction: column; gap: 16px; width: 100%; align-items: center;">
       <button mat-flat-button color="primary" (click)="messageService.showMagicMessage()">Magic</button>
 
-      <gem-demis-paste-box (dataPasted)="onDataPasted($event)"></gem-demis-paste-box>
+      <gem-demis-paste-box (dataPasted)="onDataPasted($event)" />
       
       <div style="font-size: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; width: 100%; display: flex; align-items: flex-start; gap: 8px;">
         <div style="flex: 1; text-align: center;">

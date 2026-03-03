@@ -54,20 +54,20 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         </p>
 
         <app-subsection-title>Properties</app-subsection-title>
-        <app-doc-table [dataSource]="propertiesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="propertiesDocTableDataSource" />
 
         <app-subsection-title>Used CSS variables</app-subsection-title>
-        <app-doc-table [dataSource]="cssVariablesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="cssVariablesDocTableDataSource" />
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-formly-datepicker-example-1></app-formly-datepicker-example-1>
+        <app-formly-datepicker-example-1 />
       </app-code-example-box>
       <app-code-example-box [options]="examples[1]">
-        <app-formly-datepicker-example-2></app-formly-datepicker-example-2>
+        <app-formly-datepicker-example-2 />
       </app-code-example-box>
       <app-code-example-box [options]="examples[2]">
-        <app-formly-datepicker-example-3></app-formly-datepicker-example-3>
+        <app-formly-datepicker-example-3 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

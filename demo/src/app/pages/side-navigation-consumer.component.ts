@@ -59,16 +59,16 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         <app-code-snippet-box language="html" codeSnippetString="gem-demis-side-navigation" />
 
         <app-subsection-title>Inputs</app-subsection-title>
-        <app-doc-table [dataSource]="inputsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="inputsDocTableDataSource" />
 
         <app-subsection-title>Content Projection</app-subsection-title>
-        <app-doc-table [dataSource]="contentProjectionDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="contentProjectionDocTableDataSource" />
 
         <app-subsection-title>Public Methods</app-subsection-title>
-        <app-doc-table [dataSource]="methodsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="methodsDocTableDataSource" />
 
         <app-subsection-title>Helper Types & Functions</app-subsection-title>
-        <app-doc-table [dataSource]="helperTypesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="helperTypesDocTableDataSource" />
 
         <app-subsection-title>Notes</app-subsection-title>
         <ul>
@@ -89,15 +89,15 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-side-navigation-example-1></app-side-navigation-example-1>
+        <app-side-navigation-example-1 />
       </app-code-example-box>
 
       <app-code-example-box [options]="examples[1]">
-        <app-side-navigation-example-2></app-side-navigation-example-2>
+        <app-side-navigation-example-2 />
       </app-code-example-box>
 
       <app-code-example-box [options]="examples[2]">
-        <app-side-navigation-example-3></app-side-navigation-example-3>
+        <app-side-navigation-example-3 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

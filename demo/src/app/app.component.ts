@@ -21,6 +21,6 @@ import { NavigationComponent } from './navigation/navigation.component';
 @Component({
   selector: 'app-root',
   imports: [NavigationComponent],
-  template: `<app-navigation></app-navigation>`,
+  template: `<app-navigation />`,
 })
 export class AppComponent {}

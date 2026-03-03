@@ -1,14 +1,14 @@
 <mat-sidenav-container style="flex-grow: 1">
   <mat-sidenav #sidenav mode="side" opened="true" [ngStyle]="{ width: '25vw' }">
     <div class="info-tile-container">
-      <ng-content select="[infoTile]"></ng-content>
+      <ng-content select="[infoTile]" />
     </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
     <div class="tiled-content-wrapper">
       <div class="content-tile-container" [style.height]="containerHeight()">
-        <ng-content select="[contentTile]"></ng-content>
+        <ng-content select="[contentTile]" />
       </div>
     </div>
   </mat-sidenav-content>

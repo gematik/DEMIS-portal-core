@@ -1,0 +1,34 @@
+<div id="dialog-container">
+  <h1 id="dialog-title" mat-dialog-title>
+    In welchen Meldetatbestand möchten Sie eine Folgemeldung absetzen?
+  </h1>
+  <p id="dialog-paragraph">Bitte geben Sie an, welchen Meldetatbestand Sie nutzen möchten, um eine Folgemeldung ohne
+    Angaben von Personendaten abzusetzen</p>
+
+  <mat-radio-group aria-label="Wählen Sie einen Meldetatbestand aus." class="radio-group" [(ngModel)]="selectedValue">
+    @for (category of notificationCategories; track category.code) {
+      <mat-radio-button style="padding-bottom: 10px !important;" [value]="category.code">Folgemeldung von "<span
+        class="display-value">{{ category.display }}</span>" ohne Angabe von Personendaten
+      </mat-radio-button>
+    }</mat-radio-group>
+
+  <div class="button-row" mat-dialog-actions>
+    <button
+      id="btn-back-to-homepage"
+      mat-button
+      class="btn style color"
+      (click)="navigateToWelcomePage()"
+    >Zurück zur Startseite
+    </button>
+
+    <button
+      id="btn-next "
+      mat-button
+      class="btn style dark--color"
+      [disabled]="nextButtonDisabled()"
+      (click)="closeDialog()"
+    >Weiter
+    </button>
+
+  </div>
+</div>
