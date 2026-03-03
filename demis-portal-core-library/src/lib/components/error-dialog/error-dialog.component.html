@@ -10,7 +10,7 @@
     <div id="error-list">
       @for (error of errors(); track $index) {
         @if ($index > 0) {
-          <mat-divider></mat-divider>
+          <mat-divider />
         }
 
         <div id="error-{{ $index }}" class="error-item">

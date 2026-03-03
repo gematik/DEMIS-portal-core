@@ -27,7 +27,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
         <mat-panel-title>Overview</mat-panel-title>
       </mat-expansion-panel-header>
 
-      <ng-content></ng-content>
+      <ng-content />
     </mat-expansion-panel>
   `,
   styles: `

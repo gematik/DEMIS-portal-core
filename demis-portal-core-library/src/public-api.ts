@@ -57,6 +57,7 @@ export * from './lib/formly/notified-person-not-by-name.config';
  * SERVICES
  **********************************************/
 export * from './lib/services/follow-up-notification-id.service';
+export * from './lib/services/follow-up-mixed-codes.service';
 export * from './lib/services/markdown.service';
 export * from './lib/services/message-dialog.service';
 

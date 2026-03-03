@@ -37,7 +37,7 @@ export interface DocTableRowData {
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element" [innerHtml]="markdownService.convertToSanitizedHtml(element.name)"></mat-cell>
+        <mat-cell *matCellDef="let element" [innerHtml]="markdownService.convertToSanitizedHtml(element.name)" />
       </ng-container>
 
       <!-- Description Column -->
@@ -54,8 +54,8 @@ export interface DocTableRowData {
         </mat-cell>
       </ng-container>
 
-      <mat-header-row *matHeaderRowDef="['name', 'description']"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: ['name', 'description']"></mat-row>
+      <mat-header-row *matHeaderRowDef="['name', 'description']" />
+      <mat-row *matRowDef="let row; columns: ['name', 'description']" />
     </mat-table>
   `,
   styles: `

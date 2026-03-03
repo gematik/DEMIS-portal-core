@@ -3,13 +3,18 @@
   <nav aria-label="Rechtliche Informationen">
     <ul class="footer-links">
       @if (featureFlagPortal()) {
-        <li><a href="#accessibility-statement" class="footer-link">Barrierefreiheit</a></li>
+        <li><a href="#accessibility-statement" class="footer-link" id="a-to-accessibility-statement">Barrierefreiheit</a></li>
       }
       <li class="footer-link-group">
-        <a href="#impressum" class="footer-link">Impressum</a>
-        <a href="#privacy-policy" class="footer-link">Datenschutz</a>
+        @if (featureFlagFooterLink()) {
+          <a href="#imprint" class="footer-link" id="a-to-imprint">Impressum</a>
+          <a href="#privacy-policy" class="footer-link" id="a-to-privacy">Datenschutz</a>
+        }
+        @else {
+          <a href="#impressum" class="footer-link">Impressum</a>
+          <a href="#privacy-policy" class="footer-link">Datenschutz</a>
+        }
       </li>
     </ul>
   </nav>
 </footer>
-

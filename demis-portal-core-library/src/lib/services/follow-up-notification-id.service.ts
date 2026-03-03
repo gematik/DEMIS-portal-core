@@ -44,6 +44,9 @@ export interface FollowUpServiceDialogData {
   providedIn: 'root',
 })
 export class FollowUpNotificationIdService {
+  set isMixedCodesActive(value: boolean) {
+    this._isMixedCodesActive = value;
+  }
   private readonly dialog = inject(MatDialog);
   private readonly fhirCoreNotificationService = inject(FhirCoreNotificationService);
   private notificationCategoryCodes: string[] | undefined;
@@ -53,25 +56,29 @@ export class FollowUpNotificationIdService {
   readonly hasValidNotificationId = signal<boolean | undefined>(false);
   readonly followUpNotificationCategory = signal<string | undefined>(undefined);
 
+  private _isMixedCodesActive = false;
+
   readonly hasValidNotificationId$ = toObservable(this.hasValidNotificationId);
 
   private dialogRef: MatDialogRef<FollowUpNotificationIdDialogComponent> | null = null;
 
   openDialog(followUpServiceDialogData: FollowUpServiceDialogData): void {
     this.notificationCategoryCodes = followUpServiceDialogData.notificationCategoryCodes;
-    if (this.dialog.openDialogs.length === 0) {
-      this.dialogRef = this.dialog.open(FollowUpNotificationIdDialogComponent, {
-        disableClose: true,
-        ariaModal: true,
-        ariaLabelledBy: 'dialog-title',
-        ariaDescribedBy: 'dialog-paragraph',
-        data: followUpServiceDialogData.dialogData,
-      });
-
-      this.dialogRef.afterClosed().subscribe(() => {
-        this.dialogRef = null;
-      });
+    if (this.dialogRef) {
+      return;
     }
+
+    this.dialogRef = this.dialog.open(FollowUpNotificationIdDialogComponent, {
+      disableClose: true,
+      ariaModal: true,
+      ariaLabelledBy: 'dialog-title',
+      ariaDescribedBy: 'dialog-paragraph',
+      data: followUpServiceDialogData.dialogData,
+    });
+
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef = null;
+    });
   }
 
   closeDialog(): void {
@@ -84,23 +91,31 @@ export class FollowUpNotificationIdService {
     this.validationStatus.set(ValidationStatus.NOT_VALIDATED);
     this.fhirCoreNotificationService.fetchFollowUpNotificationCategory(id, pathToDestinationLookup).subscribe({
       next: (response: FollowUpNotificationCategory) => {
-        if (this.isSupportedNotificationCategory(response.notificationCategory)) {
-          this.validationStatus.set(ValidationStatus.VALID);
-          this.validatedNotificationId.set(id);
-          this.followUpNotificationCategory.set(response.notificationCategory);
-          this.hasValidNotificationId.set(true);
+        if (this._isMixedCodesActive) {
+          this.setValidState(id, response.notificationCategory);
+        } else if (this.isSupportedNotificationCategory(response.notificationCategory)) {
+          this.setValidState(id, response.notificationCategory);
         } else {
-          this.validationStatus.set(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
-          this.validatedNotificationId.set(undefined);
-          this.followUpNotificationCategory.set(undefined);
+          this.setInvalidState(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
         }
       },
       error: () => {
-        this.validationStatus.set(ValidationStatus.NOT_FOUND);
-        this.validatedNotificationId.set(undefined);
-        this.followUpNotificationCategory.set(undefined);
+        this.setInvalidState(ValidationStatus.NOT_FOUND);
       },
     });
+  }
+
+  private setValidState(id: string, notificationCategory: string): void {
+    this.validationStatus.set(ValidationStatus.VALID);
+    this.validatedNotificationId.set(id);
+    this.followUpNotificationCategory.set(notificationCategory);
+    this.hasValidNotificationId.set(true);
+  }
+
+  private setInvalidState(status: ValidationStatus): void {
+    this.validationStatus.set(status);
+    this.validatedNotificationId.set(undefined);
+    this.followUpNotificationCategory.set(undefined);
   }
 
   resetState(): void {

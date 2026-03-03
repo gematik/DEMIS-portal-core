@@ -20,7 +20,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-subsection-title',
   imports: [],
-  template: ` <h2><ng-content></ng-content></h2> `,
+  template: ` <h2><ng-content /></h2> `,
   styles: `
     h2 {
       font-size: 14px;

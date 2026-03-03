@@ -54,21 +54,21 @@ import { SectionHeaderExample1Component } from '../code-snippets/section-header/
         <app-code-snippet-box language="html" codeSnippetString="gem-demis-section-header" />
 
         <app-subsection-title>Properties</app-subsection-title>
-        <app-doc-table [dataSource]="propertiesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="propertiesDocTableDataSource" />
 
         <app-subsection-title>Subtitle contents</app-subsection-title>
         <p>Use Angular content projection to insert some HTML template code to be rendered as subtitle contents. This is optional.</p>
 
         <app-subsection-title>Used CSS variables</app-subsection-title>
-        <app-doc-table [dataSource]="cssVariablesDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="cssVariablesDocTableDataSource" />
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-section-header-example-1></app-section-header-example-1>
+        <app-section-header-example-1 />
       </app-code-example-box>
 
       <app-code-example-box [options]="examples[1]">
-        <app-section-header-example-2></app-section-header-example-2>
+        <app-section-header-example-2 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

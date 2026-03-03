@@ -77,9 +77,7 @@ describe('FollowUpNotificationIdService', () => {
       notificationCategoryCodes: ['invp', 'abvp'],
     };
 
-    it('opens the dialog only if none is open and passes data', () => {
-      expect(dialog.openDialogs.length).toBe(0);
-
+    it('opens the dialog and passes data', () => {
       service.openDialog(dialogData);
 
       expect(dialog.open).toHaveBeenCalledTimes(1);
@@ -97,17 +95,24 @@ describe('FollowUpNotificationIdService', () => {
           errorUnsupportedNotificationCategory: dialogData.dialogData.errorUnsupportedNotificationCategory,
         })
       );
-
-      // simulate open dialog
-      (dialog.openDialogs as any[]).push({} as any);
     });
 
     it('does not open another dialog if one is already open', () => {
-      (dialog.openDialogs as any[]).push({} as any);
+      service.openDialog(dialogData);
 
       service.openDialog(dialogData);
 
-      expect(dialog.open).not.toHaveBeenCalled();
+      expect(dialog.open).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens again after the dialog is closed', () => {
+      service.openDialog(dialogData);
+
+      dialogRefMock.close();
+
+      service.openDialog(dialogData);
+
+      expect(dialog.open).toHaveBeenCalledTimes(2);
     });
   });
 

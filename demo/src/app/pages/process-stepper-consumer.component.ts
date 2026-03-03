@@ -53,19 +53,19 @@ import { StepperExample2Component } from '../code-snippets/process-stepper/examp
         <app-code-snippet-box language="html" codeSnippetString="gem-demis-process-stepper" />
 
         <app-subsection-title>Inputs</app-subsection-title>
-        <app-doc-table [dataSource]="inputsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="inputsDocTableDataSource" />
 
         <app-subsection-title>Types used by inputs</app-subsection-title>
         <app-code-snippet-box codeSnippetPath="code-snippets/process-stepper/process-step.snippet.ts" language="ts" />
 
         <app-subsection-title>Outputs</app-subsection-title>
-        <app-doc-table [dataSource]="outputsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="outputsDocTableDataSource" />
 
         <app-subsection-title>Types used by outputs</app-subsection-title>
         <app-code-snippet-box codeSnippetPath="code-snippets/process-stepper/step-change-event.snippet.ts" language="ts" />
 
         <app-subsection-title>Used CSS</app-subsection-title>
-        <app-doc-table [dataSource]="cssDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="cssDocTableDataSource" />
 
         <app-subsection-title>Notes</app-subsection-title>
         <ul>
@@ -75,11 +75,11 @@ import { StepperExample2Component } from '../code-snippets/process-stepper/examp
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-stepper-example-1></app-stepper-example-1>
+        <app-stepper-example-1 />
       </app-code-example-box>
 
       <app-code-example-box [options]="examples[1]">
-        <app-stepper-example-2></app-stepper-example-2>
+        <app-stepper-example-2 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

@@ -15,16 +15,25 @@
     find details in the "Readme" file.
  */
 
-import { Component } from '@angular/core';
-import { FormsFooterComponent } from '@gematik/demis-portal-core-library';
+import { Component, inject } from '@angular/core';
+import { FollowUpMixedCodesService } from '../../../../../demis-portal-core-library/src/lib/services/follow-up-mixed-codes.service';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  selector: 'app-forms-footer-example-1',
+  selector: 'app-follow-up-mixed-codes-example-1',
   standalone: true,
-  imports: [FormsFooterComponent],
+  imports: [MatButton],
   templateUrl: './example-1.component.html',
 })
-export class FormsFooterExample1Component {
-  featureFlagPortal = true;
-  featureFlagFooterLink = true;
+export class FollowUpMixedCodesExample1Component {
+  private readonly followUpMixedService = inject(FollowUpMixedCodesService);
+
+  mixedCodesList = [
+    { code: 'invp', display: 'Influenzavirus' },
+    { code: 'tubk', display: 'Tuberkulosebakterium' },
+  ];
+
+  showFollowUpMixedCodesDialog() {
+    this.followUpMixedService.openDialog(this.mixedCodesList);
+  }
 }

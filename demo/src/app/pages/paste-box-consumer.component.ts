@@ -55,20 +55,20 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         <app-code-snippet-box language="html" codeSnippetString="gem-demis-paste-box" />
 
         <app-subsection-title>Events</app-subsection-title>
-        <app-doc-table [dataSource]="eventsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="eventsDocTableDataSource" />
 
         <app-subsection-title>Used CSS</app-subsection-title>
-        <app-doc-table [dataSource]="cssDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="cssDocTableDataSource" />
 
         <app-subsection-title>Material Icon</app-subsection-title>
         <p>The button uses an outlined icon. Make sure, that your consuming app uses the CSS definitions for outlined material icons in some way.</p>
 
         <app-subsection-title>Example clipboard contents</app-subsection-title>
-        <app-doc-table [dataSource]="exampleClipboardContentsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="exampleClipboardContentsDocTableDataSource" />
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-paste-box-example-1></app-paste-box-example-1>
+        <app-paste-box-example-1 />
       </app-code-example-box>
     </app-expandable-sections>
   `,

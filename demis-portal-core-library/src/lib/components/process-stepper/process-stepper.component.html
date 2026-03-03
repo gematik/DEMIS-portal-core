@@ -21,16 +21,16 @@
 <ng-template #controlSensitiveState let-stepNumber="index + 1" let-index="index">
   @if (currentStepIndex() === index) {
     @if (currentStep()?.control?.untouched) {
-      <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+      <ng-content *ngTemplateOutlet="numberState; context: { index }" />
     }
     @else if (currentStep()?.control?.valid) {
-      <ng-content *ngTemplateOutlet="doneState; context: { index }"></ng-content>
+      <ng-content *ngTemplateOutlet="doneState; context: { index }" />
     } @else {
-      <ng-content *ngTemplateOutlet="errorState; context: { index }"></ng-content>
+      <ng-content *ngTemplateOutlet="errorState; context: { index }" />
     }
   }
   @else {
-    <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+    <ng-content *ngTemplateOutlet="numberState; context: { index }" />
   }
 </ng-template>
 
@@ -42,35 +42,35 @@
     <mat-step [completed]="isCompleted(step)" [hasError]="hasError(step)" [stepControl]="step.control">
       <!-- Completed -->
       <ng-template matStepperIcon="done" let-index="index">
-        <ng-content *ngTemplateOutlet="doneState; context: { index }"></ng-content>
+        <ng-content *ngTemplateOutlet="doneState; context: { index }" />
       </ng-template>
       
       <!-- Error -->
       <ng-template matStepperIcon="error" let-index="index">
-        <ng-content *ngTemplateOutlet="errorState; context: { index }"></ng-content>
+        <ng-content *ngTemplateOutlet="errorState; context: { index }" />
       </ng-template>
       
       <!-- Number -->
       <ng-template matStepperIcon="number" let-index="index">
-        <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }"></ng-content>
+        <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }" />
       </ng-template>
 
       <!-- Edit -->
       <ng-template matStepperIcon="edit" let-index="index">
-        <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }"></ng-content>
+        <ng-content *ngTemplateOutlet="controlSensitiveState; context: { index }" />
       </ng-template>
       
       <!-- Disabled: Shows the validity state the step had before being disabled -->
       <ng-template matStepperIcon="disabled" let-index="index">
         @let stepData = steps()[index];
         @if (stepData && wasCompletedBeforeDisabled(stepData)) {
-          <ng-content *ngTemplateOutlet="doneState; context: { index }"></ng-content>
+          <ng-content *ngTemplateOutlet="doneState; context: { index }" />
         }
         @else if (stepData && hadErrorBeforeDisabled(stepData)) {
-          <ng-content *ngTemplateOutlet="errorState; context: { index }"></ng-content>
+          <ng-content *ngTemplateOutlet="errorState; context: { index }" />
         }
         @else {
-          <ng-content *ngTemplateOutlet="numberState; context: { index }"></ng-content>
+          <ng-content *ngTemplateOutlet="numberState; context: { index }" />
         }
       </ng-template>
 

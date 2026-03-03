@@ -53,41 +53,41 @@ import { MessageDialogExample3Component } from '../code-snippets/message-dialog-
         <app-code-snippet-box language="ts" codeSnippetString='import { MessageDialogService } from "@gematik/demis-portal-core-library";' />
 
         <app-subsection-title>Methods</app-subsection-title>
-        <app-doc-table [dataSource]="methodsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="methodsDocTableDataSource" />
 
         <app-subsection-title>showErrorDialog - Parameters</app-subsection-title>
-        <app-doc-table [dataSource]="showErrorDialogDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="showErrorDialogDocTableDataSource" />
 
         <app-subsection-title>showSubmitDialog - Parameters</app-subsection-title>
-        <app-doc-table [dataSource]="showSubmitDialogDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="showSubmitDialogDocTableDataSource" />
 
         <app-subsection-title>showSpinnerDialog - Parameters</app-subsection-title>
-        <app-doc-table [dataSource]="showSpinnerDialogDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="showSpinnerDialogDocTableDataSource" />
 
         <app-subsection-title>Interface ErrorsDialogProps - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="errorsDialogPropsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="errorsDialogPropsDocTableDataSource" />
 
         <app-subsection-title>Interface SubmitDialogProps - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="submitDialogPropsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="submitDialogPropsDocTableDataSource" />
 
         <app-subsection-title>Interface SpinnerDialogProps - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="spinnerDialogPropsDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="spinnerDialogPropsDocTableDataSource" />
 
         <app-subsection-title>Interface ErrorMessage - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="errorMessageDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="errorMessageDocTableDataSource" />
 
         <app-subsection-title>Interface DialogStyle - Properties</app-subsection-title>
-        <app-doc-table [dataSource]="dialogStyleDocTableDataSource"></app-doc-table>
+        <app-doc-table [dataSource]="dialogStyleDocTableDataSource" />
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
-        <app-message-dialog-example-1></app-message-dialog-example-1>
+        <app-message-dialog-example-1 />
       </app-code-example-box>
       <app-code-example-box [options]="examples[1]">
-        <app-message-dialog-example-2></app-message-dialog-example-2>
+        <app-message-dialog-example-2 />
       </app-code-example-box>
       <app-code-example-box [options]="examples[2]">
-        <app-message-dialog-example-3></app-message-dialog-example-3>
+        <app-message-dialog-example-3 />
       </app-code-example-box>
     </app-expandable-sections>
   `,
