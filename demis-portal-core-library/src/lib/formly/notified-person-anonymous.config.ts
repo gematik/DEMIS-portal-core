@@ -26,7 +26,7 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
         template: `
       <div class="info-notification-text">
           <span class="material-icons-outlined primary-color-icon">error_outline</span>
-          <span class="message">Grundsätzlich müssen Sie gemäß Infektionsschutzgesetz alle Ihnen vorliegenden Informationen im Meldeformular angeben, um die Meldepflicht zu erfüllen. Die Nachmeldung oder Korrektur von Angaben hat unverzüglich zu erfolgen.</span>
+          <span class="message">Sie sind im Prozess des Absetzens einer Folgemeldung. Informationen zur betroffenen Person liegen dem zuständigen Gesundheitsamt bereits im Rahmen der getätigten Initialmeldung vor. Erneute Angaben zur betroffenen Person ermöglichen es dem Gesundheitsamt Plausibilitätschecks im Kontext des Zusammenführens der Meldungen durchzuführen. Bitte machen Sie daher, falls möglich, wiederholt Angaben zu 'Geschlecht' sowie 'Geburtsmonat/-jahr'.</span>
          </div>
     `,
         key: 'notifiedPersonInfoWrapper',
