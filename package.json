@@ -1,6 +1,6 @@
 {
   "name": "portal-core",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "overrides": {
     "ng-mocks": {
       "@angular/common": "$@angular/common",
