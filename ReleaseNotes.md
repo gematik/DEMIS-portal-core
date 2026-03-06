@@ -2,20 +2,29 @@
 
 # Release Notes Portal-Core
 
+## Release 3.0.6
+
+- refactored Datepicker to not use formfield wrapper in Field Type
+
 ## Release 3.0.5
+
 - Changed info text in notifiedPersonAnonymous
 
 ## Release 3.0.4
+
 - Updated angular dependencies to latest versions
 - Changed imprint route and add id for footer links with featureFlagFooterLink enabled
 
 ## Release 3.0.3
+
 - Added Follow-Up Mixed Codes Dialog & Service
 
 ## Release 3.0.2
+
 - Upgraded dependencies to latest versions
 
 ## Release 3.0.1
+
 - Adapted follow up notification dialog by setting hasValidNotificationId after validation of notificationId field
 
 ## Release 3.0.0

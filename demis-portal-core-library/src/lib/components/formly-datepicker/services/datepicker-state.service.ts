@@ -23,51 +23,51 @@ import { DatePrecision, DEFAULT_PRECISION_LEVEL } from '../datepicker-shared';
  */
 @Injectable()
 export class DatepickerStateService {
-  private allowedPrecisions!: DatePrecision[];
-  private currentPrecision!: WritableSignal<DatePrecision>;
-  private minDate!: Signal<Date | null>;
-  private maxDate!: Signal<Date | null>;
-  private multiYear!: boolean;
+  private _allowedPrecisions!: DatePrecision[];
+  private _currentPrecision!: WritableSignal<DatePrecision>;
+  private _minDate!: Signal<Date | null>;
+  private _maxDate!: Signal<Date | null>;
+  private _multiYear!: boolean;
 
   initSharedState(allowedPrecisions: DatePrecision[], minDate: Signal<Date | null>, maxDate: Signal<Date | null>, multiYear: boolean) {
-    this.allowedPrecisions = allowedPrecisions.length > 0 ? allowedPrecisions : [DEFAULT_PRECISION_LEVEL];
-    this.currentPrecision = signal(this.getHighestPrecisionAvailable());
-    this.minDate = minDate;
-    this.maxDate = maxDate;
-    this.multiYear = multiYear;
+    this._allowedPrecisions = allowedPrecisions.length > 0 ? allowedPrecisions : DEFAULT_PRECISION_LEVEL;
+    this._currentPrecision = signal(this.highestPrecisionAvailable);
+    this._minDate = minDate;
+    this._maxDate = maxDate;
+    this._multiYear = multiYear;
   }
 
-  getAllowedPrecisions(): DatePrecision[] {
-    return this.allowedPrecisions;
+  get allowedPrecisions(): DatePrecision[] {
+    return this._allowedPrecisions;
   }
 
-  getMinDate(): Signal<Date | null> {
-    return this.minDate;
+  get minDate(): Signal<Date | null> {
+    return this._minDate;
   }
 
-  getMaxDate(): Signal<Date | null> {
-    return this.maxDate;
+  get maxDate(): Signal<Date | null> {
+    return this._maxDate;
   }
 
-  isMultiYear(): boolean {
-    return this.multiYear;
+  get multiYear(): boolean {
+    return this._multiYear;
   }
 
-  getCurrentPrecision(): Signal<DatePrecision> {
-    return this.currentPrecision.asReadonly();
+  get currentPrecision(): Signal<DatePrecision> {
+    return this._currentPrecision.asReadonly();
   }
 
   setCurrentPrecision(precision: DatePrecision) {
-    this.currentPrecision.set(precision);
+    this._currentPrecision.set(precision);
   }
 
-  getHighestPrecisionAvailable(): DatePrecision {
+  get highestPrecisionAvailable(): DatePrecision {
     const priority: DatePrecision[] = ['day', 'month', 'year'];
     for (const precision of priority) {
-      if (this.getAllowedPrecisions()?.includes(precision)) {
+      if (this.allowedPrecisions?.includes(precision)) {
         return precision;
       }
     }
-    return DEFAULT_PRECISION_LEVEL;
+    return DEFAULT_PRECISION_LEVEL[0];
   }
 }

@@ -229,8 +229,8 @@ describe('datepicker-shared', () => {
   });
 
   describe('DEFAULT_PRECISION_LEVEL constant', () => {
-    it('should be set to day', () => {
-      expect(DEFAULT_PRECISION_LEVEL).toBe('day');
+    it('should contain all precision levels', () => {
+      expect(DEFAULT_PRECISION_LEVEL).toEqual(['day', 'month', 'year']);
     });
   });
 });

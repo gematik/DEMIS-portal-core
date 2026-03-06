@@ -19,18 +19,17 @@ import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } fr
 import { provideRouter } from '@angular/router';
 import { provideHighlightOptions } from 'ngx-highlightjs';
 
-import { MAT_CARD_CONFIG } from '@angular/material/card';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
-import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
-import { FormlyDatepickerComponent, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
+import { MAT_CARD_CONFIG } from '@angular/material/card';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { de } from 'date-fns/locale';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { FormlyDatepickerComponent, FormlyRepeaterComponent, DATEPICKER_VALIDATION_MESSAGES } from '@gematik/demis-portal-core-library';
 import { provideFormlyCore } from '@ngx-formly/core';
 import { withFormlyMaterial } from '@ngx-formly/material';
+import { de } from 'date-fns/locale';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,13 +37,10 @@ export const appConfig: ApplicationConfig = {
     provideDateFnsAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: de },
     provideRouter(routes),
-    provideAnimationsAsync(),
     provideFormlyCore([
+      ...withFormlyMaterial(),
       {
-        validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }],
-        extras: {
-          lazyRender: true,
-        },
+        validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }, ...DATEPICKER_VALIDATION_MESSAGES],
         types: [
           {
             name: 'repeat',
@@ -53,10 +49,10 @@ export const appConfig: ApplicationConfig = {
           {
             name: 'datepicker',
             component: FormlyDatepickerComponent,
+            wrappers: ['form-field'],
           },
         ],
       },
-      ...withFormlyMaterial(),
     ]),
     provideHttpClient(),
     { provide: MAT_CARD_CONFIG, useValue: { appearance: 'outlined' } },

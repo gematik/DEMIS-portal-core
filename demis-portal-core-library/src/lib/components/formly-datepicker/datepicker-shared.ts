@@ -22,7 +22,7 @@ import { FormControl } from '@angular/forms';
 
 export type DatePrecision = 'day' | 'month' | 'year';
 export type SupportedDateFormat = 'ISO' | 'GERMAN';
-export const DEFAULT_PRECISION_LEVEL: DatePrecision = 'day';
+export const DEFAULT_PRECISION_LEVEL: DatePrecision[] = ['day', 'month', 'year'];
 
 export interface DatepickerCustomProps extends FormlyFieldProps {
   allowedPrecisions?: DatePrecision[];

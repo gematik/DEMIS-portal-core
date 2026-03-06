@@ -22,13 +22,12 @@ import { MatCalendar, MatCalendarView } from '@angular/material/datepicker';
 import { startWith, Subject, takeUntil } from 'rxjs';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatepickerStateService } from '../services/datepicker-state.service';
-import { AsyncPipe } from '@angular/common';
 import { DatePrecision, NavigationDirection, precisionToView, VALID_FORMATS, YEARS_PER_PAGE } from '../datepicker-shared';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from 'date-fns';
 
 @Component({
   selector: 'gem-demis-datepicker-header',
-  imports: [MatIcon, MatIconButton, AsyncPipe, MatButton],
+  imports: [MatIcon, MatIconButton, MatButton],
   templateUrl: './datepicker-header.component.html',
   styleUrl: './datepicker-header.component.scss',
 })
@@ -58,16 +57,16 @@ export class DatepickerHeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.allowedPrecisions = this.datepickerStateService.getAllowedPrecisions();
-    this.currentPrecision = this.datepickerStateService.getCurrentPrecision()();
+    this.allowedPrecisions = this.datepickerStateService.allowedPrecisions;
+    this.currentPrecision = this.datepickerStateService.currentPrecision();
 
     this.calendar.stateChanges.pipe(startWith(null), takeUntil(this.destroy$)).subscribe(() => {
       this.periodLabel.set(this.dateAdapter.format(this.calendar.activeDate, this.dateFormats.display.monthYearLabel).toLocaleUpperCase());
     });
 
-    this.minDate = this.datepickerStateService.getMinDate();
-    this.maxDate = this.datepickerStateService.getMaxDate();
-    this.multiYear = this.datepickerStateService.isMultiYear();
+    this.minDate = this.datepickerStateService.minDate;
+    this.maxDate = this.datepickerStateService.maxDate;
+    this.multiYear = this.datepickerStateService.multiYear;
   }
 
   ngOnDestroy() {

@@ -15,8 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { NgClass } from '@angular/common';
-import { AfterViewInit, Component, DoCheck, effect, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, effect, inject, OnDestroy, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -27,7 +26,7 @@ import { FieldTypeConfig, FormlyModule } from '@ngx-formly/core';
 import { FieldType } from '@ngx-formly/material';
 import { format, isValid, parse } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import {
   convertNonIsoFormats,
   DatepickerCustomProps,
@@ -41,6 +40,7 @@ import {
 } from './datepicker-shared';
 import { DatepickerHeaderComponent } from './header/datepicker-header.component';
 import { DatepickerStateService } from './services/datepicker-state.service';
+import { DatepickerStylesComponent } from './datepicker-styles/datepicker-styles.component';
 
 const DYNAMIC_DATE_FNS_FORMATS = {
   parse: {
@@ -57,7 +57,7 @@ const DYNAMIC_DATE_FNS_FORMATS = {
 @Component({
   selector: 'gem-demis-datepicker',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, ReactiveFormsModule, FormlyModule, NgClass],
+  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, ReactiveFormsModule, FormlyModule, DatepickerStylesComponent],
   providers: [
     DatepickerStateService,
     provideDateFnsAdapter(),
@@ -72,11 +72,9 @@ const DYNAMIC_DATE_FNS_FORMATS = {
     },
   ],
   templateUrl: './formly-datepicker.component.html',
-  styleUrls: ['./formly-datepicker.component.scss'],
 })
 export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implements OnInit, OnDestroy, DoCheck, AfterViewInit {
-  label!: string;
-  allowedPrecisions!: DatePrecision[];
+  private allowedPrecisions: DatePrecision[] = DEFAULT_PRECISION_LEVEL;
 
   private readonly _minDate = signal<Date | null>(null);
   private readonly _maxDate = signal<Date | null>(null);
@@ -84,11 +82,10 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
   readonly maxDate = this._maxDate.asReadonly();
   private prevMinDate: Date | null = null;
   private prevMaxDate: Date | null = null;
+  private multiYear = false;
 
-  multiYear!: boolean;
-  hint!: string;
-
-  @ViewChild('picker') picker!: MatDatepicker<Date>;
+  readonly picker = viewChild.required<MatDatepicker<Date>>('picker');
+  readonly datepickerToggleSuffix = viewChild.required<TemplateRef<unknown>>('matSuffix');
 
   private readonly dateFormats = inject(MAT_DATE_FORMATS);
   private readonly datepickerStateService = inject(DatepickerStateService);
@@ -127,12 +124,13 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
 
     // Needed if the value of the FormControl is set programmatically after the component is initialized.
     // This happens when data are copied from clipboard.
-    this.formControl.valueChanges.subscribe(() => {
+    this.formControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.detectAndApplyPrecisionOnProgrammaticValue();
     });
   }
 
   ngAfterViewInit() {
+    this.props['suffix'] = this.datepickerToggleSuffix();
     this.detectAndApplyPrecisionOnProgrammaticValue(); //handle initial and default value
   }
 
@@ -147,7 +145,6 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
   }
 
   private setDefaultValues() {
-    this.label = this.datepickerProps.label!;
     this._minDate.set(this.datepickerProps.minDate ?? null);
     this._maxDate.set(this.datepickerProps.maxDate ?? null);
     this.multiYear = this.datepickerProps.multiYear ?? false;
@@ -155,9 +152,10 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
     const requestedPrecisions = this.datepickerProps.allowedPrecisions ?? DEFAULT_PRECISION_LEVEL;
     this.allowedPrecisions = Array.from(VALID_FORMATS.keys()).filter(it => requestedPrecisions.includes(it));
     this.datepickerStateService.initSharedState(this.allowedPrecisions, this.minDate, this.maxDate, this.multiYear);
-    this.setCurrentPrecision(this.datepickerStateService.getHighestPrecisionAvailable());
+    this.setCurrentPrecision(this.datepickerStateService.highestPrecisionAvailable);
 
-    this.hint = this.allowedPrecisions.map(it => VALID_FORMATS.get(it)!.display).join(' | ');
+    const hint = this.allowedPrecisions.map(it => VALID_FORMATS.get(it)!.display).join(' | ');
+    this.props['hintStart'] = hint;
   }
 
   private detectAndApplyPrecisionOnProgrammaticValue(): void {
@@ -250,7 +248,7 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
    */
   private keepCurrentPrecisionInSync() {
     effect(() => {
-      const precisionSignal = this.datepickerStateService.getCurrentPrecision();
+      const precisionSignal = this.datepickerStateService.currentPrecision;
       this.setCurrentPrecision(precisionSignal());
     });
   }
@@ -329,19 +327,19 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
   onMonthSelected(date: Date) {
     if (this.currentPrecision === 'month') {
       this.formControl.setValue(date);
-      this.picker.close();
+      this.picker().close();
     }
   }
 
   onYearSelected(date: Date) {
     if (this.currentPrecision === 'year') {
       this.formControl.setValue(date);
-      this.picker.close();
+      this.picker().close();
     }
   }
 
   onDatepickerToggleClick() {
-    const defaultPrecision = this.datepickerStateService.getHighestPrecisionAvailable();
+    const defaultPrecision = this.datepickerStateService.highestPrecisionAvailable;
     this.setCurrentPrecision(defaultPrecision);
     this.datepickerStateService.setCurrentPrecision(defaultPrecision);
   }
@@ -362,43 +360,6 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
   private inputStringToDate(input: string, precision: DatePrecision): Date | null {
     if (precision !== null) {
       return parse(input, VALID_FORMATS.get(precision)!.input, new Date());
-    }
-    return null;
-  }
-
-  get customErrorMessage(): string | null {
-    const errors = this.formControl.errors;
-    const rawValue = this.formControl.value;
-
-    if (!errors) return null;
-
-    const isVisibleInInput = rawValue instanceof Date;
-    const messagesFromFormlyConfig = this.field.validation?.messages;
-    const showRaw = !isVisibleInInput && typeof rawValue === 'string';
-    const rawSuffix = showRaw ? ` "${rawValue}"` : '';
-
-    if (errors['formatMismatch']) {
-      return `Es sind nur folgende Formate erlaubt: ${this.hint}`;
-    }
-
-    if (errors['invalidDate']) {
-      return `Das eingegebene Datum${rawSuffix} ist ungültig`;
-    }
-
-    if (errors['matDatepickerMin']) {
-      if (typeof messagesFromFormlyConfig?.['minDate'] === 'string') {
-        return messagesFromFormlyConfig?.['minDate'];
-      } else {
-        return `Das Datum darf nicht vor dem ${format(errors['matDatepickerMin'].min, 'dd.MM.yyyy')} liegen`;
-      }
-    }
-
-    if (errors['matDatepickerMax']) {
-      if (typeof messagesFromFormlyConfig?.['maxDate'] === 'string') {
-        return messagesFromFormlyConfig?.['maxDate'];
-      } else {
-        return `Das Datum darf nicht nach dem ${format(errors['matDatepickerMax'].max, 'dd.MM.yyyy')} liegen`;
-      }
     }
     return null;
   }

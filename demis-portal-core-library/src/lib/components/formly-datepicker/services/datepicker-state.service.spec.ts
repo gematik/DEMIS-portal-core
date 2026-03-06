@@ -40,13 +40,72 @@ describe('DatepickerStateService', () => {
   describe('initSharedState', () => {
     it('if no allowedPrecisions passed as param, use DEFAULT_PRECISION_LEVEL', () => {
       service.initSharedState([], signal(null), signal(null), false);
-      expect(service.getAllowedPrecisions()).toEqual([DEFAULT_PRECISION_LEVEL]);
+      expect(service.allowedPrecisions).toEqual(DEFAULT_PRECISION_LEVEL);
+    });
+
+    it('should use provided allowedPrecisions when not empty', () => {
+      service.initSharedState(['month', 'year'], signal(null), signal(null), false);
+      expect(service.allowedPrecisions).toEqual(['month', 'year']);
+    });
+
+    it('should store minDate and maxDate signals', () => {
+      const minDate = new Date(2020, 0, 1);
+      const maxDate = new Date(2025, 11, 31);
+      const minDateSignal = signal<Date | null>(minDate);
+      const maxDateSignal = signal<Date | null>(maxDate);
+
+      service.initSharedState(['day'], minDateSignal, maxDateSignal, false);
+
+      expect(service.minDate()).toBe(minDate);
+      expect(service.maxDate()).toBe(maxDate);
+    });
+
+    it('should store multiYear flag', () => {
+      service.initSharedState(['year'], signal(null), signal(null), true);
+      expect(service.multiYear).toBe(true);
+
+      service.initSharedState(['year'], signal(null), signal(null), false);
+      expect(service.multiYear).toBe(false);
     });
   });
 
-  describe('not initialized', () => {
-    it('should return DEFAULT_PRECISION_LEVEL as highest available precision', () => {
-      expect(service.getHighestPrecisionAvailable()).toEqual(DEFAULT_PRECISION_LEVEL);
+  describe('precision management', () => {
+    beforeEach(() => {
+      service.initSharedState(['day', 'month', 'year'], signal(null), signal(null), false);
+    });
+
+    it('should return current precision as read-only signal', () => {
+      const precision = service.currentPrecision;
+      expect(precision()).toBe('day'); // highest precision available
+    });
+
+    it('should update current precision', () => {
+      service.setCurrentPrecision('month');
+      expect(service.currentPrecision()).toBe('month');
+
+      service.setCurrentPrecision('year');
+      expect(service.currentPrecision()).toBe('year');
+    });
+  });
+
+  describe('highestPrecisionAvailable', () => {
+    it('should return DEFAULT_PRECISION_LEVEL[0] when not initialized', () => {
+      expect(service.highestPrecisionAvailable).toEqual(DEFAULT_PRECISION_LEVEL[0]);
+    });
+
+    it('should return day when day precision is allowed', () => {
+      service.initSharedState(['day', 'month', 'year'], signal(null), signal(null), false);
+      expect(service.highestPrecisionAvailable).toBe('day');
+    });
+
+    it('should return month when month is highest allowed', () => {
+      service.initSharedState(['month', 'year'], signal(null), signal(null), false);
+      expect(service.highestPrecisionAvailable).toBe('month');
+    });
+
+    it('should return year when only year is allowed', () => {
+      service.initSharedState(['year'], signal(null), signal(null), false);
+      expect(service.highestPrecisionAvailable).toBe('year');
     });
   });
 });

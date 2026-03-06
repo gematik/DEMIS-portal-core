@@ -15,23 +15,17 @@
     find details in the "Readme" file.
  */
 
-import { HarnessLoader } from '@angular/cdk/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
-import { MatInputHarness } from '@angular/material/input/testing';
+import { Component, ViewEncapsulation } from '@angular/core';
 
-export function getButton(loader: HarnessLoader, selector: string) {
-  return loader.getHarness(MatButtonHarness.with({ selector: selector }));
-}
-
-export function getInput(loader: HarnessLoader, selector: string) {
-  return loader.getHarness(MatInputHarness.with({ selector: selector }));
-}
-
-export async function getDatepicker(loader: HarnessLoader, inputId: string): Promise<MatDatepickerInputHarness> {
-  return await loader.getHarness(
-    MatDatepickerInputHarness.with({
-      selector: inputId,
-    })
-  );
-}
+@Component({
+  selector: 'gem-demis-util-datepicker-styles',
+  template: `<!-- ONLY USED FOR GLOBAL STYLES! DO NOT EXPORT! -->`,
+  styles: `
+    .gem-demis-formly-datepicker-body {
+      /* Make all views for the different precisions the same panel height. */
+      min-height: 395px;
+    }
+  `,
+  encapsulation: ViewEncapsulation.None, // <-- Applies styles globally!
+})
+export class DatepickerStylesComponent {}

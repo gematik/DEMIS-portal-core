@@ -23,13 +23,16 @@ import { DebugElement, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCalendarHarness, MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyModule } from '@ngx-formly/core';
+import { FormlyMaterialModule } from '@ngx-formly/material';
 import { format, isValid, setDate } from 'date-fns';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { FormlyDatepickerMockComponent } from '../../../test/utils/formly-datepicker.mock.component';
-import { checkValidationError, getButton, getDatepicker, getErrorFor, getHintForFormFieldWithLabel } from '../../../test/utils/test-utils';
+import { getButton, getDatepicker } from '../../../test/utils/test-utils';
 import { FormlyDatepickerComponent } from './formly-datepicker.component';
 import { DatepickerHeaderComponent } from './header/datepicker-header.component';
 
@@ -44,10 +47,12 @@ describe('FormlyDatepickerComponent', () => {
       .keep(FormlyDatepickerComponent)
       .keep(ReactiveFormsModule)
       .keep(NoopAnimationsModule)
+      .keep(MatFormFieldModule)
+      .keep(MatInputModule)
+      .keep(FormlyMaterialModule)
       .keep(
         FormlyModule.forRoot({
-          types: [{ name: 'datepicker', component: FormlyDatepickerComponent }],
-          validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }],
+          types: [{ name: 'datepicker', component: FormlyDatepickerComponent, wrappers: ['form-field'] }],
         })
       );
   });
@@ -69,15 +74,9 @@ describe('FormlyDatepickerComponent', () => {
   describe('User enters date manually', () => {
     describe('datepicker can handle 3 input precision levels: day, month and year', () => {
       let inputField: MatDatepickerInputHarness;
-      let hintText: string;
 
       beforeEach(async () => {
         inputField = await getDatepicker(loader, '#datepickerAllPrecisionLevels-datepicker-input-field');
-        hintText = await getHintForFormFieldWithLabel(loader, 'Datepicker with all precision levels');
-      });
-
-      it('should display allowed formats as hint', async () => {
-        expect(hintText).toBe('TT.MM.JJJJ | MM.JJJJ | JJJJ');
       });
 
       it('User can type date with day precision', async () => {
@@ -97,158 +96,99 @@ describe('FormlyDatepickerComponent', () => {
     });
 
     describe('it is possible to restrict the allowed input formats', () => {
-      it('input field should only accept day precision', async () => {
+      it('input field should only accept day precision and reject other formats', async () => {
         const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
-
-        const hintText = await getHintForFormFieldWithLabel(loader, 'Geburtstag');
-        expect(hintText).toBe('TT.MM.JJJJ');
+        const control = component.form.get('datepickerWithConstraints');
 
         await inputField.setValue('12.06.2022');
-        expect(component.form.get('datepickerWithConstraints')?.valid).toBeTrue();
+        expect(control?.valid).toBeTrue();
 
         await inputField.setValue('06.2022');
-        expect(component.form.get('datepickerWithConstraints')?.invalid).toBeTrue();
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('formatMismatch')).toBeTrue();
 
         await inputField.setValue('2022');
-        expect(component.form.get('datepickerWithConstraints')?.invalid).toBeTrue();
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('formatMismatch')).toBeTrue();
       });
+    });
 
-      it('A clear message should be displayed when the format of the input is not allowed', async () => {
+    describe('Input validation sets correct FormControl errors', () => {
+      it('min date violation sets matDatepickerMin error', async () => {
         const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
-        await inputField.setValue('2022');
+        const control = component.form.get('datepickerWithConstraints');
+
+        await inputField.setValue('01.01.1869');
         await inputField.blur();
         fixture.detectChanges();
 
-        const errorMessage = await getErrorFor(loader, 'Geburtstag');
-        expect(errorMessage).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ');
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('matDatepickerMin')).toBeTrue();
+      });
+
+      it('max date violation sets matDatepickerMax error', async () => {
+        const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
+        const control = component.form.get('datepickerWithConstraints');
+
+        await inputField.setValue('01.01.2500');
+        await inputField.blur();
+        fixture.detectChanges();
+
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('matDatepickerMax')).toBeTrue();
+      });
+
+      it('required field sets required error when empty', async () => {
+        const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
+        const control = component.form.get('datepickerWithConstraints');
+
+        await inputField.setValue('');
+        await inputField.blur();
+        fixture.detectChanges();
+
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('required')).toBeTrue();
+      });
+
+      it('invalid dates set invalidDate error', async () => {
+        const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
+        const control = component.form.get('datepickerWithConstraints');
+
+        await inputField.setValue('31.02.2022');
+        await inputField.blur();
+        fixture.detectChanges();
+
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('invalidDate')).toBeTrue();
+      });
+
+      it('invalid formats set formatMismatch error', async () => {
+        const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
+        const control = component.form.get('datepickerWithConstraints');
+
+        await inputField.setValue('1547.554.32');
+        await inputField.blur();
+        fixture.detectChanges();
+
+        expect(control?.invalid).toBeTrue();
+        expect(control?.hasError('formatMismatch')).toBeTrue();
       });
     });
 
-    describe('Input validation work as expected', () => {
-      it('a min date can be set and validated', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithConstraints',
-          label: 'Geburtstag',
-          value: '01.01.1869',
-          expectedMessage: 'Das Datum darf nicht vor dem 01.01.1870 liegen',
-        });
-      });
-
-      it('min date validation message can be overridden in formly config', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithValidationMessage',
-          label: 'Foo',
-          value: '01.01.1869',
-          expectedMessage: 'A message from consuming app on error of type minDate',
-        });
-      });
-
-      it('a max date can be set and validated', async () => {
-        const today = format(new Date(), 'dd.MM.yyyy');
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithConstraints',
-          label: 'Geburtstag',
-          value: '01.01.2500',
-          expectedMessage: `Das Datum darf nicht nach dem ${today} liegen`,
-        });
-      });
-
-      it('a max date can be set and validated', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithValidationMessage',
-          label: 'Foo',
-          value: '01.01.2500',
-          expectedMessage: 'A message from consuming app on error of type maxDate',
-        });
-      });
-
-      it('a date can be required', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithConstraints',
-          label: 'Geburtstag',
-          value: '',
-          expectedMessage: 'Diese Angabe wird benötigt', // Default message for required field as defined in Formly root config
-        });
-      });
-
-      it('validation message for required defined by consuming app', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithValidationMessage',
-          label: 'Foo',
-          value: '',
-          expectedMessage: 'A message from consuming app on error of type required',
-        });
-      });
-
-      it('invalid dates are detected', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithConstraints',
-          label: 'Geburtstag',
-          value: '31.02.2022',
-          expectedMessage: 'Das eingegebene Datum ist ungültig',
-        });
-      });
-
-      it('invalid formats are detected', async () => {
-        await checkValidationError({
-          loader,
-          component,
-          controlName: 'datepickerWithConstraints',
-          label: 'Geburtstag',
-          value: '1547.554.32',
-          expectedMessage: 'Es sind nur folgende Formate erlaubt: TT.MM.JJJJ',
-        });
-      });
-    });
-
-    describe('Check default values', () => {
-      it('Check default precision', async () => {
-        const hintElement = fixture.debugElement.query(By.css('#defaultDatepicker-datepicker-form-field .datepicker-hint'));
-        const hintText = hintElement?.nativeElement.textContent.trim();
-        expect(hintText).toBe('TT.MM.JJJJ');
-
+    describe('Default precision behavior', () => {
+      it('default precision is day, month, and year formats', async () => {
         const inputField = await getDatepicker(loader, '#defaultDatepicker-datepicker-input-field');
+        const control = component.form.get('defaultDatepicker');
+
         await inputField.setValue('12.06.2022');
         expect(component.model['defaultDatepicker']).toEqual('2022-06-12');
-        expect(component.form.get('defaultDatepicker')?.invalid).toBeFalse();
+        expect(control?.invalid).toBeFalse();
 
         await inputField.setValue('06.2022');
-        expect(component.form.get('defaultDatepicker')?.invalid).toBeTrue();
+        expect(control?.invalid).toBeFalse();
 
         await inputField.setValue('2022');
-        expect(component.form.get('defaultDatepicker')?.invalid).toBeTrue();
-      });
-
-      it('Check default label', async () => {
-        const labelElement = fixture.debugElement.query(By.css('#defaultDatepicker-datepicker-form-field .datepicker-label'));
-        const labelText = labelElement?.nativeElement.textContent.trim();
-        expect(labelText).toBe('');
-      });
-
-      it('A * is added as suffix for mandatory field with label not blank', async () => {
-        const labelElement = fixture.debugElement.query(By.css('#datepickerWithConstraints-datepicker-form-field .datepicker-label'));
-        const labelText = labelElement?.nativeElement.textContent.trim();
-        expect(labelText).toBe('Geburtstag');
-      });
-
-      it('No * is added as suffix for mandatory field with label not blank', async () => {
-        const labelElement = fixture.debugElement.query(By.css('#defaultDatepickerMandatory-datepicker-form-field .datepicker-label'));
-        const labelText = labelElement?.nativeElement.textContent.trim();
-        expect(labelText).toBe('');
+        expect(control?.invalid).toBeFalse();
       });
     });
 
@@ -376,25 +316,7 @@ describe('FormlyDatepickerComponent', () => {
     });
   });
 
-  describe('Custom error messages and edge cases', () => {
-    it('customErrorMessage returns null when no errors exist', () => {
-      const control = component.form.get('datepickerAllPrecisionLevels');
-      control!.setValue('15.06.2023');
-      fixture.detectChanges();
-
-      expect(component['customErrorMessage']).toBeNull();
-    });
-
-    it('customErrorMessage handles invalidDate errors with raw value', () => {
-      const control = component.form.get('datepickerAllPrecisionLevels');
-      control!.setValue('invalid-date');
-      fixture.detectChanges();
-
-      const errorMessage = component['customErrorMessage'];
-      expect(errorMessage).toContain('Das eingegebene Datum');
-      expect(errorMessage).toContain('ist ungültig');
-    });
-
+  describe('Edge cases', () => {
     it('calendarStartView returns correct view based on precision and multiYear setting', () => {
       // Test with normal mode
       component['currentPrecision'] = 'day';
@@ -408,7 +330,7 @@ describe('FormlyDatepickerComponent', () => {
     });
 
     it('calendarStartView returns multi-year when multiYear is enabled', () => {
-      component.multiYear = true;
+      component['multiYear'] = true;
       component['currentPrecision'] = 'day';
       expect(component.calendarStartView).toBe('multi-year');
     });
@@ -452,7 +374,7 @@ describe('FormlyDatepickerComponent', () => {
       const precisions: Array<'day' | 'month' | 'year'> = ['day', 'month', 'year'];
       const expectedViews = ['month', 'year', 'multi-year'];
 
-      component.multiYear = false;
+      component['multiYear'] = false;
       precisions.forEach((precision, index) => {
         component['setCurrentPrecision'](precision);
         expect(component.calendarStartView).toBe(expectedViews[index]);
@@ -538,10 +460,10 @@ describe('FormlyDatepickerComponent', () => {
       expect(displayedValue).toBe('08.2021');
     });
 
-    it('If the value is updated programmatically, an error is thrown if the precision detected from model is not allowed', async () => {
+    it('If the value is updated programmatically, no error is thrown when the precision is within default allowed precisions', async () => {
       component.form.get('withDefaultValue_IsoMonth_defaultPrecision')!.setValue('2025-02');
       const control = component.form.get('withDefaultValue_IsoMonth_defaultPrecision');
-      expect(control?.hasError('formatMismatch')).toBeTrue();
+      expect(control?.hasError('formatMismatch')).toBeFalse();
     });
 
     it('If the value is updated programmatically, an error is thrown if no precision is detected from model', async () => {
@@ -629,11 +551,11 @@ describe('FormlyDatepickerComponent', () => {
       });
 
       it('User can switch only to allowed precision levels', async () => {
-        await defaultDatepicker.openCalendar(); // only day precision allowed
+        await defaultDatepicker.openCalendar(); // all precision levels allowed by default
         const monthButton = await getButton(loader, '#datepicker-precision-toggle-month');
         const yearButton = await getButton(loader, '#datepicker-precision-toggle-year');
-        expect(await monthButton.isDisabled()).toBeTrue();
-        expect(await yearButton.isDisabled()).toBeTrue();
+        expect(await monthButton.isDisabled()).toBeFalse();
+        expect(await yearButton.isDisabled()).toBeFalse();
       });
 
       it('User can switch precision level multiple time', async () => {
