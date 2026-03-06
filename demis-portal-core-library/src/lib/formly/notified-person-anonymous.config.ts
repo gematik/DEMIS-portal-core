@@ -50,7 +50,6 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
         key: 'info.birthDate',
         className: FormlyConstants.COLMD5,
         type: 'datepicker',
-        wrappers: [],
         props: {
           label: 'Geburtsdatum',
           allowedPrecisions: ['month', 'year'],

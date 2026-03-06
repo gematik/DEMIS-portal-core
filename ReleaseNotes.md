@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 3.0.7
+
+- Fixed formly configs for notified person after datepicker fix
+
 ## Release 3.0.6
 
 - refactored Datepicker to not use formfield wrapper in Field Type
