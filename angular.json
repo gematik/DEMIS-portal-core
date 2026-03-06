@@ -9,6 +9,11 @@
   "projects": {
     "@gematik/demis-portal-core-library": {
       "projectType": "library",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "demis-portal-core-library",
       "sourceRoot": "demis-portal-core-library/src",
       "prefix": "gem-demis",

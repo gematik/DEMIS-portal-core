@@ -15,23 +15,25 @@
     find details in the "Readme" file.
  */
 
-import { HarnessLoader } from '@angular/cdk/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
-import { MatInputHarness } from '@angular/material/input/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-export function getButton(loader: HarnessLoader, selector: string) {
-  return loader.getHarness(MatButtonHarness.with({ selector: selector }));
-}
+import { DatepickerStylesComponent } from './datepicker-styles.component';
 
-export function getInput(loader: HarnessLoader, selector: string) {
-  return loader.getHarness(MatInputHarness.with({ selector: selector }));
-}
+describe('DatepickerStylesComponent', () => {
+  let component: DatepickerStylesComponent;
+  let fixture: ComponentFixture<DatepickerStylesComponent>;
 
-export async function getDatepicker(loader: HarnessLoader, inputId: string): Promise<MatDatepickerInputHarness> {
-  return await loader.getHarness(
-    MatDatepickerInputHarness.with({
-      selector: inputId,
-    })
-  );
-}
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DatepickerStylesComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DatepickerStylesComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

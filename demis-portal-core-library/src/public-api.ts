@@ -26,6 +26,7 @@ export * from './lib/components/actions-bar/actions-bar.component';
 export * from './lib/components/deprecated-process-stepper/process-stepper.component';
 export * from './lib/components/file-name-chip/file-name-chip.component';
 export * from './lib/components/file-select/file-select.component';
+export * from './lib/components/formly-datepicker/datepicker-validation-messages';
 export * from './lib/components/formly-datepicker/formly-datepicker.component';
 export * from './lib/components/formly-repeater/formly-repeater.component';
 export * from './lib/components/forms-footer/forms-footer.component';
