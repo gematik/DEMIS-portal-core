@@ -25,6 +25,13 @@ import { Component, ViewEncapsulation } from '@angular/core';
       /* Make all views for the different precisions the same panel height. */
       min-height: 395px;
     }
+
+    /* This is a temporary workaround until we have a central solution for
+       spacing within our forms. That is most likely to happen with DEMIS-4770.
+       Once this ticket is resolved, this workaround shall be removed. */
+    .mat-mdc-form-field:has(gem-demis-datepicker) {
+      margin-bottom: 1rem;
+    }
   `,
   encapsulation: ViewEncapsulation.None, // <-- Applies styles globally!
 })
