@@ -2,13 +2,22 @@
 
 # Release Notes Portal-Core
 
+## Release 3.0.9
+
+- Updated @gematik/demis-portal-theme-library to 1.1.1
+- Dependency update because of GHSA-g93w-mfhg-p222
+
+## Release 3.0.8
+
+- Fixed position of delete button in repeater component
+ 
 ## Release 3.0.7
 
 - Fixed formly configs for notified person after datepicker fix
 
 ## Release 3.0.6
 
-- refactored Datepicker to not use formfield wrapper in Field Type
+- Refactored Datepicker to not use formfield wrapper in Field Type
 
 ## Release 3.0.5
 

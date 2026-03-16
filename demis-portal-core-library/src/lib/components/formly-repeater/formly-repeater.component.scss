@@ -1,19 +1,19 @@
-.single-input-field{
+.single-input-field {
   .repeated-item-with-delete-icon {
     position: relative;
 
     .remove-button {
       position: absolute;
       color: var(--color-primary);
-      top: 50%;
+      top: 43%;
       transform: translateY(-60%);
-      right: 0.5rem;
+      right: 0.2rem;
     }
   }
 }
 
 //When we repeat a single input field we need space at the end of the field for the delete icon, hence:
-:host ::ng-deep .single-input-field .mat-mdc-form-field-infix  {
+:host ::ng-deep .single-input-field .mat-mdc-form-field-infix {
   padding-right: 2rem;
   box-sizing: border-box;
 }
