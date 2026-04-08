@@ -26,19 +26,27 @@ import {
   TEXT_MAX_LENGTH,
 } from './commons';
 
-export const notifiedPersonNotByNameConfigFields = (countryOptionList: selectOption[], genderOptionList: selectOption[]): FormlyFieldConfig[] => {
+export const notifiedPersonNotByNameConfigFields = (
+  countryOptionList: selectOption[],
+  genderOptionList: selectOption[],
+  infoNotificationText?: string
+): FormlyFieldConfig[] => {
   return [
     formlyRow([
-      {
-        className: FormlyConstants.COLMD10,
-        template: `
+      ...(infoNotificationText
+        ? [
+            {
+              className: FormlyConstants.COLMD10,
+              template: `
       <div class="info-notification-text">
           <span class="material-icons-outlined primary-color-icon">error_outline</span>
-          <span class="message">Grundsätzlich müssen Sie gemäß Infektionsschutzgesetz alle Ihnen vorliegenden Informationen im Meldeformular angeben, um die Meldepflicht zu erfüllen. Die Nachmeldung oder Korrektur von Angaben hat unverzüglich zu erfolgen.</span>
+          <span class="message">${infoNotificationText}</span>
          </div>
     `,
-        key: 'notifiedPersonInfoWrapper',
-      },
+              key: 'notifiedPersonInfoWrapper',
+            } as FormlyFieldConfig,
+          ]
+        : []),
       {
         className: '',
         template: '<h2>Allgemein</h2>',
@@ -85,7 +93,7 @@ export const notifiedPersonNotByNameConfigFields = (countryOptionList: selectOpt
           label: 'Geburtsdatum',
           allowedPrecisions: ['day'],
           required: false,
-          minDate: new Date('1870-01-01'),
+          minDate: new Date('1900-01-01'),
           maxDate: new Date(),
           multiYear: true,
         },

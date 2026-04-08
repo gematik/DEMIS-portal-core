@@ -17,7 +17,7 @@
 
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ErrorsDialogProps, MessageDialogService, SubmitDialogProps } from '@gematik/demis-portal-core-library';
+import { MessageDialogService, SubmitDialogProps } from '@gematik/demis-portal-core-library';
 
 @Component({
   selector: 'app-message-dialog-example-2',

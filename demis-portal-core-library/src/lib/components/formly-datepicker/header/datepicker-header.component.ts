@@ -118,7 +118,7 @@ export class DatepickerHeaderComponent implements OnInit, OnDestroy {
     const dateLimit = direction === NavigationDirection.PAST ? this.minDate() : this.maxDate();
     const activeDate = this.calendar.activeDate;
 
-    if (!dateLimit) return true;
+    if (!(dateLimit instanceof Date)) return true;
 
     switch (mode) {
       case 'month':
@@ -144,8 +144,8 @@ export class DatepickerHeaderComponent implements OnInit, OnDestroy {
    * @private
    */
   private isSameMultiYearView(date1: Date, date2: Date): boolean {
-    const year1 = date1.getFullYear();
-    const year2 = date2.getFullYear();
+    const year1 = this.dateAdapter.getYear(date1);
+    const year2 = this.dateAdapter.getYear(date2);
     const startingYear = this.getStartingYear(this.minDate(), this.maxDate());
     return Math.floor((year1 - startingYear) / YEARS_PER_PAGE) === Math.floor((year2 - startingYear) / YEARS_PER_PAGE);
   }
@@ -157,10 +157,10 @@ export class DatepickerHeaderComponent implements OnInit, OnDestroy {
   private getStartingYear(minDate: Date | null, maxDate: Date | null): number {
     let startingYear = 0;
     if (maxDate) {
-      const maxYear = maxDate.getFullYear();
+      const maxYear = this.dateAdapter.getYear(maxDate);
       startingYear = maxYear - YEARS_PER_PAGE + 1;
     } else if (minDate) {
-      startingYear = minDate.getFullYear();
+      startingYear = this.dateAdapter.getYear(minDate);
     }
     return startingYear;
   }

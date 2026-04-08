@@ -2,6 +2,24 @@
 
 # Release Notes Portal-Core
 
+## Release 3.2.1
+- added feature-flag support for error filtering
+
+
+## Release 3.2.0
+
+- Added gitReleaseNotesUpdateVersionEntry to release pipeline
+- Added info notification text parameter
+- Changed datepicker minDate in notifiedPerson configs
+
+## Release 3.1.1
+
+- added an option to filter the displayed validation errors by severity level
+
+## Release 3.1.0
+
+- Fixed year selection bug in datepicker component
+
 ## Release 3.0.9
 
 - Updated @gematik/demis-portal-theme-library to 1.1.1

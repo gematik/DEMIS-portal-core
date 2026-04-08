@@ -18,19 +18,27 @@
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { FormlyConstants, formlyInputField, formlyRow, GERMANY_COUNTRY_CODE, selectOption } from './commons';
 
-export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOption[], genderOptionList: selectOption[]): FormlyFieldConfig[] => {
+export const notifiedPersonAnonymousConfigFields = (
+  countryOptionList: selectOption[],
+  genderOptionList: selectOption[],
+  infoNotificationText?: string
+): FormlyFieldConfig[] => {
   return [
     formlyRow([
-      {
-        className: FormlyConstants.COLMD10,
-        template: `
+      ...(infoNotificationText
+        ? [
+            {
+              className: FormlyConstants.COLMD10,
+              template: `
       <div class="info-notification-text">
           <span class="material-icons-outlined primary-color-icon">error_outline</span>
-          <span class="message">Sie sind im Prozess des Absetzens einer Folgemeldung. Informationen zur betroffenen Person liegen dem zuständigen Gesundheitsamt bereits im Rahmen der getätigten Initialmeldung vor. Erneute Angaben zur betroffenen Person ermöglichen es dem Gesundheitsamt Plausibilitätschecks im Kontext des Zusammenführens der Meldungen durchzuführen. Bitte machen Sie daher, falls möglich, wiederholt Angaben zu 'Geschlecht' sowie 'Geburtsmonat/-jahr'.</span>
+          <span class="message">${infoNotificationText}</span>
          </div>
     `,
-        key: 'notifiedPersonInfoWrapper',
-      },
+              key: 'notifiedPersonInfoWrapper',
+            } as FormlyFieldConfig,
+          ]
+        : []),
       {
         className: '',
         template: '<h2>Allgemein</h2>',
@@ -54,7 +62,7 @@ export const notifiedPersonAnonymousConfigFields = (countryOptionList: selectOpt
           label: 'Geburtsdatum',
           allowedPrecisions: ['month', 'year'],
           required: false,
-          minDate: new Date('1870-01-01'),
+          minDate: new Date('1900-01-01'),
           maxDate: new Date(),
           multiYear: true,
         },

@@ -25,6 +25,7 @@ import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 import { MessageDialogExample2Component } from '../code-snippets/message-dialog-service/example-2.component';
 import { MessageDialogExample3Component } from '../code-snippets/message-dialog-service/example-3.component';
+import { MessageDialogExample4Component } from '../code-snippets/message-dialog-service/example-4.component';
 
 @Component({
   selector: 'app-message-dialog',
@@ -38,6 +39,7 @@ import { MessageDialogExample3Component } from '../code-snippets/message-dialog-
     MessageDialogExample1Component,
     MessageDialogExample2Component,
     MessageDialogExample3Component,
+    MessageDialogExample4Component,
   ],
   template: `
     <app-expandable-sections>
@@ -88,6 +90,9 @@ import { MessageDialogExample3Component } from '../code-snippets/message-dialog-
       </app-code-example-box>
       <app-code-example-box [options]="examples[2]">
         <app-message-dialog-example-3 />
+      </app-code-example-box>
+      <app-code-example-box [options]="examples[3]">
+        <app-message-dialog-example-4 />
       </app-code-example-box>
     </app-expandable-sections>
   `,
@@ -236,6 +241,22 @@ export class MessageDialogConsumerComponent {
         },
         {
           fileName: 'example-3.component.ts',
+          language: 'ts',
+          codeSnippetPath: 'code-snippets/message-dialog-service',
+        },
+      ],
+    },
+    {
+      expanderTitle: 'Example 4',
+      expanderDescription: 'A error dialog with error filtering based on severity level',
+      codeSnippets: [
+        {
+          fileName: 'example-4.component.html',
+          language: 'html',
+          codeSnippetPath: 'code-snippets/message-dialog-service',
+        },
+        {
+          fileName: 'example-4.component.ts',
           language: 'ts',
           codeSnippetPath: 'code-snippets/message-dialog-service',
         },
