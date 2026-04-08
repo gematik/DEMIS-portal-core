@@ -27,11 +27,31 @@ export interface ErrorsDialogProps {
   clipboardContent?: string;
   errorTitle?: string;
   redirectToHome?: boolean;
+  // Even though logFilteringEnabled and minSeverityLevel belong together, they are kept separate because
+  // logFilteringEnabled is only required as long as we use the feature flag FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING
+  // Props can be consolidated once FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING is removed.
+  logFilteringEnabled?: boolean;
+  minSeverityLevel?: SeverityEnum;
 }
+
+export enum SeverityEnum {
+  FATAL = 'fatal',
+  ERROR = 'error',
+  WARNING = 'warning',
+  INFORMATION = 'information',
+}
+
+const severityRank: Record<SeverityEnum, number> = {
+  [SeverityEnum.FATAL]: 4,
+  [SeverityEnum.ERROR]: 3,
+  [SeverityEnum.WARNING]: 2,
+  [SeverityEnum.INFORMATION]: 1,
+};
 
 export interface ErrorMessage {
   text: string;
   queryString?: string;
+  severity?: SeverityEnum;
 }
 
 export interface DialogStyle {
@@ -75,12 +95,32 @@ export class MessageDialogService {
   }
 
   showErrorDialog(data: ErrorsDialogProps, style?: DialogStyle): void {
+    const dialogData = data.logFilteringEnabled
+      ? {
+          ...data,
+          errors: this.filterBySeverityLevel(data),
+        }
+      : data;
+
     this.matDialog.open(ErrorDialogWithSearchInKbComponent, {
-      data: data,
+      data: data.logFilteringEnabled ? dialogData : data,
       height: style?.height ?? '600px',
       width: style?.width ?? '800px',
       maxWidth: style?.maxWidth ?? '800px',
-      disableClose: data.redirectToHome ?? false,
+      disableClose: dialogData.redirectToHome ?? false,
+    });
+  }
+
+  private normalizeSeverity(value: unknown): SeverityEnum {
+    return Object.values(SeverityEnum).includes(value as SeverityEnum) ? (value as SeverityEnum) : SeverityEnum.ERROR;
+  }
+
+  private filterBySeverityLevel(data: ErrorsDialogProps): ErrorMessage[] {
+    const threshold = this.normalizeSeverity(data.minSeverityLevel);
+
+    return data.errors.filter(error => {
+      const severity = this.normalizeSeverity(error.severity);
+      return severityRank[severity] >= severityRank[threshold];
     });
   }
 

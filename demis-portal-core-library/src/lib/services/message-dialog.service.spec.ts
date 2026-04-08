@@ -18,12 +18,13 @@
 import { TestBed } from '@angular/core/testing';
 
 import {
-  ErrorDialogInsertDataFromClipboard,
   DialogStyle,
+  ErrorDialogInsertDataFromClipboard,
   ErrorsDialogProps,
   MessageDialogService,
-  SubmitDialogProps,
+  SeverityEnum,
   SpinnerDialogProps,
+  SubmitDialogProps,
 } from './message-dialog.service';
 import { ErrorDialogComponent, ErrorDialogData } from '../components/error-dialog/error-dialog.component';
 import { MockComponent, MockModule } from 'ng-mocks';
@@ -110,6 +111,104 @@ describe('MessageDialogService', () => {
       expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
         data: dataWithRedirect,
         ...defaultStyleWithCloseDisabled,
+      });
+    });
+  });
+
+  describe(' should filter errors based on log level', () => {
+    const data = {
+      errorTitle: 'Test Error',
+      errors: [
+        { text: 'errorInformationLevel', severity: SeverityEnum.INFORMATION },
+        { text: 'errorWarningLevel', severity: SeverityEnum.WARNING },
+        { text: 'errorErrorLevel', severity: SeverityEnum.ERROR },
+        { text: 'errorFatalLevel', severity: SeverityEnum.FATAL },
+        { text: 'errorWithoutSeverity' },
+      ],
+    } as ErrorsDialogProps;
+
+    it('should not filter out when filtering off', () => {
+      const openSpy = spyOn(matDialog, 'open');
+      service.showErrorDialog(data);
+
+      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
+        data: data,
+        ...defaultStyle,
+      });
+    });
+
+    it('should filter out errors below the default log level', () => {
+      const openSpy = spyOn(matDialog, 'open');
+
+      service.showErrorDialog({ ...data, logFilteringEnabled: true });
+
+      const expectedFilteredData = {
+        ...data,
+        logFilteringEnabled: true,
+        errors: [
+          { text: 'errorErrorLevel', severity: SeverityEnum.ERROR },
+          { text: 'errorFatalLevel', severity: SeverityEnum.FATAL },
+          { text: 'errorWithoutSeverity' }, // Should be considered as ERROR level, because no severity level is provided
+        ],
+      };
+
+      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
+        data: expectedFilteredData,
+        ...defaultStyle,
+      });
+    });
+
+    it('should filter out error below the specified log level', () => {
+      const openSpy = spyOn(matDialog, 'open');
+      const customLogLevel = SeverityEnum.WARNING;
+      service.showErrorDialog({
+        ...data,
+        logFilteringEnabled: true,
+        minSeverityLevel: customLogLevel,
+      });
+
+      const expectedFilteredData = {
+        ...data,
+        logFilteringEnabled: true,
+        minSeverityLevel: customLogLevel,
+        errors: [
+          { text: 'errorWarningLevel', severity: SeverityEnum.WARNING },
+          { text: 'errorErrorLevel', severity: SeverityEnum.ERROR },
+          { text: 'errorFatalLevel', severity: SeverityEnum.FATAL },
+          { text: 'errorWithoutSeverity' }, // Should be considered as ERROR level, because no severity level is provided
+        ],
+      };
+
+      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
+        data: expectedFilteredData,
+        ...defaultStyle,
+      });
+    });
+
+    it('unexpected log level is handled as error', () => {
+      const openSpy = spyOn(matDialog, 'open');
+      service.showErrorDialog({
+        ...data,
+        errors: [
+          {
+            text: 'errorWithUnexpectedLogLevel',
+            // This simulates an unexpected log level that is not part of the SeverityEnum.
+            // The service should handle this gracefully and treat it as ERROR level.
+            severity: 'unexpectedValue' as unknown as SeverityEnum,
+          },
+        ],
+        logFilteringEnabled: true,
+      });
+
+      const expectedFilteredData = {
+        ...data,
+        logFilteringEnabled: true,
+        errors: [{ text: 'errorWithUnexpectedLogLevel', severity: 'unexpectedValue' }],
+      };
+
+      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
+        data: expectedFilteredData,
+        ...defaultStyle,
       });
     });
   });
