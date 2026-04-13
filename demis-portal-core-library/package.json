@@ -1,6 +1,6 @@
 {
   "name": "@gematik/demis-portal-core-library",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "peerDependencies": {
     "@angular/animations": "21.2.4",
     "@angular/cdk": "21.2.2",

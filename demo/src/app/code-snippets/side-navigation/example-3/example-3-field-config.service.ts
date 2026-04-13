@@ -29,11 +29,20 @@ export class FieldConfigService {
 
   readonly notifyingPersonFields: FormlyFieldConfig[] = [
     {
-      key: 'name',
+      key: 'given',
       type: 'input',
       props: {
-        label: 'Name der meldenden Person',
-        placeholder: 'z.B. Dr. Max Mustermann',
+        label: 'Vorname (N.given)',
+        placeholder: 'e.g. Max',
+        required: true,
+      },
+    },
+    {
+      key: 'family',
+      type: 'input',
+      props: {
+        label: 'Nachname (N.family)',
+        placeholder: 'e.g. Mustermann',
         required: true,
       },
     },
@@ -41,11 +50,20 @@ export class FieldConfigService {
 
   readonly notifiedPersonFields: FormlyFieldConfig[] = [
     {
-      key: 'name',
+      key: 'given',
       type: 'input',
       props: {
-        label: 'Name der gemeldeten Person',
-        placeholder: 'z.B. Erika Musterfrau',
+        label: 'Vorname (P.given)',
+        placeholder: 'e.g. Erika',
+        required: true,
+      },
+    },
+    {
+      key: 'family',
+      type: 'input',
+      props: {
+        label: 'Nachname (P.family)',
+        placeholder: 'e.g. Musterfrau',
         required: true,
       },
     },
@@ -53,17 +71,17 @@ export class FieldConfigService {
 
   readonly diseaseChoiceFields: FormlyFieldConfig[] = [
     {
-      key: 'disease',
+      key: 'code',
       type: 'select',
       props: {
-        label: 'Krankheit',
-        placeholder: 'Krankheit auswählen',
+        label: 'Meldetatbestand (D.code)',
+        placeholder: 'Meldetatbestand auswählen',
         required: true,
         multiple: false,
         options: [
           { label: '- Keine Auswahl -', value: null },
-          { label: 'Erkältung', value: 'Erkältung' },
-          { label: 'Andere Krankheit', value: 'Andere Krankheit' },
+          { label: 'COVID-19 (cvdd)', value: 'cvdd' },
+          { label: 'Masern (msvd)', value: 'msvd' },
         ],
       },
     },
@@ -71,18 +89,18 @@ export class FieldConfigService {
 
   readonly conditionFields: FormlyFieldConfig[] = [
     {
-      key: 'value',
+      key: 'status',
       type: 'input',
       props: {
-        label: 'Zustand des Patienten',
-        placeholder: 'z.B. Stabil',
+        label: 'Meldungsstatus (D.status)',
+        placeholder: 'e.g. final, preliminary',
         required: true,
       },
       expressions: {
         'props.type': () => {
-          const diseaseValue = this.notificationService.diseaseChoiceModel.disease;
-          // Hide input field when Erkältung is selected - radio buttons shown via template
-          return diseaseValue === 'Erkältung' ? 'hidden' : 'input';
+          const diseaseValue = this.notificationService.diseaseChoiceModel.code;
+          // Show radio buttons for COVID-19, text input for other diseases
+          return diseaseValue === 'cvdd' ? 'hidden' : 'input';
         },
       },
     },
@@ -90,14 +108,14 @@ export class FieldConfigService {
 
   readonly conditionRadioFields: FormlyFieldConfig[] = [
     {
-      key: 'value',
+      key: 'status',
       type: 'radio',
       props: {
-        label: 'Männerschnupfen?',
+        label: 'Meldungsstatus (D.status)',
         required: true,
         options: [
-          { label: 'Ja', value: 'Ja' },
-          { label: 'Nein', value: 'Nein' },
+          { label: 'Endgültig (final)', value: 'final' },
+          { label: 'Vorläufig (preliminary)', value: 'preliminary' },
         ],
       },
     },
@@ -105,11 +123,11 @@ export class FieldConfigService {
 
   readonly commonDataFields: FormlyFieldConfig[] = [
     {
-      key: 'info',
+      key: 'importantInfo',
       type: 'input',
       props: {
-        label: 'Zusätzliche Informationen',
-        placeholder: 'z.B. Kontaktinformationen',
+        label: 'Wichtige Zusatzinformationen (C.importantInfo)',
+        placeholder: 'e.g. Kontaktperson identifiziert',
         required: true,
       },
     },
@@ -117,11 +135,11 @@ export class FieldConfigService {
 
   readonly questionnaireFields: FormlyFieldConfig[] = [
     {
-      key: 'answer',
+      key: 'hospitalized',
       type: 'input',
       props: {
-        label: 'Fragebogen-Antwort',
-        placeholder: 'z.B. Weitere Angaben',
+        label: 'Hospitalisierung (C.hospitalized)',
+        placeholder: 'e.g. yes, no, noInformation',
         required: true,
       },
     },

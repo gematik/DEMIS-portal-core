@@ -61,6 +61,8 @@ export * from './lib/services/follow-up-notification-id.service';
 export * from './lib/services/follow-up-mixed-codes.service';
 export * from './lib/services/markdown.service';
 export * from './lib/services/message-dialog.service';
+export * from './lib/services/step-navigation';
+export * from './lib/services/provide-step-navigation';
 
 /***********************************************
  * MODULES

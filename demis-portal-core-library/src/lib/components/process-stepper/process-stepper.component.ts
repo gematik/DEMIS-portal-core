@@ -100,6 +100,12 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
   private readonly stepValidityStateBeforeDisabled = new Map<string, { touched: boolean; valid: boolean }>();
 
   /**
+   * Snapshot of the initial enabled/disabled and value state of each step control,
+   * captured in ngAfterViewInit. Used by reset() to fully restore the initial state.
+   */
+  private readonly initialControlStates = new Map<string, { disabled: boolean; value: any }>();
+
+  /**
    * Computed property to check if navigation to the next step is possible.
    * Returns true only if a next step exists and is not disabled.
    */
@@ -239,6 +245,21 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
   ngAfterViewInit(): void {
     this.stepper().selectedIndex = this.initStepIndex();
     this.currentStepIndex.set(this.initStepIndex());
+    this.snapshotInitialControlStates();
+  }
+
+  /**
+   * Captures the initial enabled/disabled and value state of all step controls.
+   * Called once after the view is initialized so that reset() can restore this state.
+   */
+  private snapshotInitialControlStates(): void {
+    this.initialControlStates.clear();
+    this.steps().forEach(step => {
+      this.initialControlStates.set(step.key, {
+        disabled: step.control.disabled,
+        value: step.control.value,
+      });
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -357,9 +378,69 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
 
   /**
    * Resets the stepper to its initial state.
+   * Restores the enabled/disabled and value state of all step controls
+   * to the snapshot taken during initialization.
+   *
+   * Temporarily enables all step controls before calling stepper().reset()
+   * so that the MatStepper's selectionChange event is not blocked by disabled
+   * step guards in onSelectionChange(). This ensures SideNavigationComponent
+   * receives the stepChange event and updates its rendered content.
+   * After the reset, restoreInitialControlStates() restores the original
+   * enabled/disabled states from the snapshot.
    */
   reset() {
+    this.steps().forEach(step => step.control.enable());
+    this.stepValidityStateBeforeDisabled.clear();
     this.stepper().reset();
     this.currentStepIndex.set(this.initStepIndex());
+    this.restoreInitialControlStates();
+  }
+
+  /**
+   * Restores all step controls to their initial enabled/disabled and value state.
+   */
+  private restoreInitialControlStates(): void {
+    this.steps().forEach(step => {
+      const initial = this.initialControlStates.get(step.key);
+      if (!initial) return;
+
+      step.control.reset(initial.value);
+      if (initial.disabled) {
+        step.control.disable();
+      } else {
+        step.control.enable();
+      }
+    });
+  }
+
+  /**
+   * Navigates to a specific step by index.
+   * Does nothing if the index is out of bounds or the target step is disabled.
+   *
+   * @param index The zero-based index of the target step.
+   */
+  goToStep(index: number) {
+    const steps = this.steps();
+    if (index < 0 || index >= steps.length) {
+      return;
+    }
+    if (steps[index].control.disabled) {
+      return;
+    }
+    this.stepper().selectedIndex = index;
+    this.currentStepIndex.set(index);
+  }
+
+  /**
+   * Navigates to a specific step by its unique key.
+   * Does nothing if the key is not found or the target step is disabled.
+   *
+   * @param key The unique key of the target step.
+   */
+  goToStepByKey(key: string) {
+    const index = this.steps().findIndex(step => step.key === key);
+    if (index >= 0) {
+      this.goToStep(index);
+    }
   }
 }

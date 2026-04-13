@@ -23,7 +23,6 @@ import {
   Directive,
   Injector,
   OnChanges,
-  Signal,
   TemplateRef,
   Type,
   ViewContainerRef,
@@ -38,36 +37,17 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { FormsFooterComponent } from '../forms-footer/forms-footer.component';
 import { DemisProcessStepperComponent, ProcessStep, StepChangeEvent } from '../process-stepper/process-stepper.component';
 import { SectionHeaderComponent } from '../section-header/section-header.component';
-
-/**
- * Abstract service interface for step navigation.
- * This class serves as a Dependency Injection token.
- * Content components can inject this service to access navigation methods.
- *
- * @injectable via SideNavigationComponent provider
- */
-export abstract class StepNavigationService {
-  abstract next(): void;
-  abstract previous(): void;
-  abstract reset(): void;
-  abstract readonly canGoToNext: Signal<boolean>;
-  abstract readonly canGoToPrevious: Signal<boolean>;
-}
+import { StepNavigationService } from '../../services/step-navigation.service';
 
 @Component({
   selector: 'gem-demis-side-navigation',
   imports: [NgTemplateOutlet, MatSidenavModule, FormsFooterComponent, DemisProcessStepperComponent, SectionHeaderComponent],
-  providers: [
-    {
-      provide: StepNavigationService,
-      useExisting: SideNavigationComponent,
-    },
-  ],
   templateUrl: './side-navigation.component.html',
   styleUrl: './side-navigation.component.scss',
 })
-export class SideNavigationComponent implements AfterViewInit, OnChanges, StepNavigationService {
+export class SideNavigationComponent implements AfterViewInit, OnChanges {
   private readonly injector = inject(Injector);
+  private readonly navigationService = inject(StepNavigationService);
   private readonly dynamicComponentContainer = viewChild<any, ViewContainerRef>('dynamicComponentContainer', { read: ViewContainerRef });
 
   sideNavTitle = input.required<string>();
@@ -83,6 +63,10 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges, StepNa
   private currentComponentRef: ComponentRef<StepContentComponent<any>> | null = null;
 
   ngAfterViewInit(): void {
+    const stepper = this.internalStepper();
+    if (stepper) {
+      this.navigationService.registerStepper(stepper);
+    }
     const firstStepContent = this.stepsMap().get(this.steps()[0]);
     this.setStepContent(firstStepContent);
   }
@@ -102,37 +86,6 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges, StepNa
     const resolvedStepContent = this.stepsMap().get(event.selectedStep);
     this.setStepContent(resolvedStepContent);
   }
-
-  /**
-   * Navigates to the next step in the internal stepper.
-   */
-  next() {
-    this.internalStepper()?.next();
-  }
-
-  /**
-   * Navigates to the previous step in the internal stepper.
-   */
-  previous() {
-    this.internalStepper()?.previous();
-  }
-
-  /**
-   * Resets the internal stepper to its initial state.
-   */
-  reset() {
-    this.internalStepper()?.reset();
-  }
-
-  /**
-   * Checks if navigation to the next step is possible.
-   */
-  readonly canGoToNext = computed(() => this.internalStepper()?.canGoToNext() ?? false);
-
-  /**
-   * Checks if navigation to the previous step is possible.
-   */
-  readonly canGoToPrevious = computed(() => this.internalStepper()?.canGoToPrevious() ?? false);
 
   /**
    * Sets the current step content component and its inputs based on the provided step content.
@@ -231,10 +184,12 @@ export function createStepContent<C extends Type<StepContentComponent<any>>>(con
  * - <ng-template #actionsLeft>...</ng-template>
  * - <ng-template #actionsRight>...</ng-template>
  *
- * These templates can inject StepNavigationService to access navigation methods:
+ * These templates can inject StepNavigation to access navigation methods:
  * - navigation.next()
  * - navigation.previous()
  * - navigation.reset()
+ * - navigation.goToStep(index)
+ * - navigation.goToStepByKey(key)
  * - navigation.canGoToNext()
  * - navigation.canGoToPrevious()
  */

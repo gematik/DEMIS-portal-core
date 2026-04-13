@@ -18,7 +18,8 @@
 import { Component, TemplateRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MockBuilder, MockRender, MockedComponentFixture, ngMocks } from 'ng-mocks';
-import { SideNavigationComponent, StepContentComponent, StepNavigationService, createStepContent } from './side-navigation.component';
+import { SideNavigationComponent, StepContentComponent, createStepContent } from './side-navigation.component';
+import { StepNavigationService } from '../../services/step-navigation.service';
 import { ProcessStep, DemisProcessStepperComponent, StepChangeEvent } from '../process-stepper/process-stepper.component';
 
 // Test component that extends StepContentComponent
@@ -76,7 +77,7 @@ describe('SideNavigationComponent', () => {
     },
   ];
 
-  beforeEach(() => MockBuilder(SideNavigationComponent).keep(DemisProcessStepperComponent, { shallow: true }));
+  beforeEach(() => MockBuilder(SideNavigationComponent).keep(DemisProcessStepperComponent, { shallow: true }).provide(StepNavigationService));
 
   describe('Component Creation and Initialization', () => {
     it('should create', () => {
@@ -154,7 +155,7 @@ describe('SideNavigationComponent', () => {
 
       const service = ngMocks.findInstance(StepNavigationService);
       expect(service).toBeTruthy();
-      expect(service).toBe(ngMocks.findInstance(SideNavigationComponent));
+      expect(service).toBeInstanceOf(StepNavigationService);
     });
   });
 
@@ -336,6 +337,8 @@ describe('SideNavigationComponent', () => {
   });
 
   describe('Navigation Methods (StepNavigationService)', () => {
+    let navigationService: StepNavigationService;
+
     beforeEach(() => {
       const steps = createMockSteps();
       const stepsMap = new Map();
@@ -348,94 +351,87 @@ describe('SideNavigationComponent', () => {
       });
 
       component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+      navigationService = ngMocks.findInstance(StepNavigationService);
     });
 
-    it('should delegate next() to internalStepper', () => {
+    it('should delegate next() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
         spyOn(stepper, 'next');
-        component.next();
+        navigationService.next();
         expect(stepper.next).toHaveBeenCalled();
       }
     });
 
-    it('should delegate previous() to internalStepper', () => {
+    it('should delegate previous() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
         spyOn(stepper, 'previous');
-        component.previous();
+        navigationService.previous();
         expect(stepper.previous).toHaveBeenCalled();
       }
     });
 
-    it('should delegate reset() to internalStepper', () => {
+    it('should delegate reset() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
         spyOn(stepper, 'reset');
-        component.reset();
+        navigationService.reset();
         expect(stepper.reset).toHaveBeenCalled();
       }
     });
 
-    it('should compute canGoToNext from internalStepper', () => {
+    it('should delegate goToStep() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'canGoToNext').and.returnValue(true);
-        expect(component.canGoToNext()).toBe(true);
+        spyOn(stepper, 'goToStep');
+        navigationService.goToStep(1);
+        expect(stepper.goToStep).toHaveBeenCalledWith(1);
       }
     });
 
-    it('should compute canGoToPrevious from internalStepper', () => {
+    it('should delegate goToStepByKey() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'canGoToPrevious').and.returnValue(false);
-        expect(component.canGoToPrevious()).toBe(false);
+        spyOn(stepper, 'goToStepByKey');
+        navigationService.goToStepByKey('step2');
+        expect(stepper.goToStepByKey).toHaveBeenCalledWith('step2');
       }
     });
 
-    it('should return false for canGoToNext when internalStepper is undefined', () => {
-      Object.defineProperty(component, 'internalStepper', {
-        value: () => undefined,
-        writable: true,
-      });
-
-      expect(component.canGoToNext()).toBe(false);
+    it('should return false for canGoToNext when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(freshService.canGoToNext()).toBe(false);
     });
 
-    it('should return false for canGoToPrevious when internalStepper is undefined', () => {
-      Object.defineProperty(component, 'internalStepper', {
-        value: () => undefined,
-        writable: true,
-      });
-
-      expect(component.canGoToPrevious()).toBe(false);
+    it('should return false for canGoToPrevious when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(freshService.canGoToPrevious()).toBe(false);
     });
 
-    it('should handle next() when internalStepper is undefined', () => {
-      Object.defineProperty(component, 'internalStepper', {
-        value: () => undefined,
-        writable: true,
-      });
-
-      expect(() => component.next()).not.toThrow();
+    it('should handle next() when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(() => freshService.next()).not.toThrow();
     });
 
-    it('should handle previous() when internalStepper is undefined', () => {
-      Object.defineProperty(component, 'internalStepper', {
-        value: () => undefined,
-        writable: true,
-      });
-
-      expect(() => component.previous()).not.toThrow();
+    it('should handle previous() when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(() => freshService.previous()).not.toThrow();
     });
 
-    it('should handle reset() when internalStepper is undefined', () => {
-      Object.defineProperty(component, 'internalStepper', {
-        value: () => undefined,
-        writable: true,
-      });
+    it('should handle reset() when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(() => freshService.reset()).not.toThrow();
+    });
 
-      expect(() => component.reset()).not.toThrow();
+    it('should handle goToStep() when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(() => freshService.goToStep(0)).not.toThrow();
+    });
+
+    it('should handle goToStepByKey() when stepper not registered', () => {
+      const freshService = new StepNavigationService();
+      expect(() => freshService.goToStepByKey('test')).not.toThrow();
     });
   });
 
