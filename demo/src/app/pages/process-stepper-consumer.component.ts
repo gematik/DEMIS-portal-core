@@ -43,7 +43,8 @@ import { StepperExample2Component } from '../code-snippets/process-stepper/examp
       <app-overview-section>
         <p>
           The Process Stepper component displays a vertical list of steps with visual states (completed, error, disabled, default) and supports keyboard
-          navigation. It is presentation-only: domain rules and step accessibility are provided by the consumer via inputs.
+          navigation. It provides built-in navigation methods and computed signals for controlling step flow. Domain rules and step accessibility are provided
+          by the consumer via inputs (AbstractControl states).
         </p>
 
         <app-subsection-title>Import</app-subsection-title>
@@ -64,12 +65,20 @@ import { StepperExample2Component } from '../code-snippets/process-stepper/examp
         <app-subsection-title>Types used by outputs</app-subsection-title>
         <app-code-snippet-box codeSnippetPath="code-snippets/process-stepper/step-change-event.snippet.ts" language="ts" />
 
+        <app-subsection-title>Navigation Methods</app-subsection-title>
+        <app-doc-table [dataSource]="methodsDocTableDataSource" />
+
+        <app-subsection-title>Computed Signals</app-subsection-title>
+        <app-doc-table [dataSource]="computedSignalsDocTableDataSource" />
+
         <app-subsection-title>Used CSS</app-subsection-title>
         <app-doc-table [dataSource]="cssDocTableDataSource" />
 
         <app-subsection-title>Notes</app-subsection-title>
         <ul>
-          <li>Use your app/router to react to <code>stepChange</code> and update fragments or state.</li>
+          <li>Use <code>stepChange</code> output or navigation methods (<code>next()</code>, <code>previous()</code>, etc.) to control step flow.</li>
+          <li>Call <code>reset()</code> to restore all step controls to their initial enabled/disabled and value state.</li>
+          <li>Disabled steps preserve their visual completed/error state from before being disabled.</li>
           <li>Icons rely on Angular Material. Ensure your theme includes Material icon styling.</li>
         </ul>
       </app-overview-section>
@@ -88,12 +97,53 @@ export class StepperConsumerComponent {
   inputsDocTableDataSource = [
     {
       name: '`steps: ProcessStep[]`',
-      description:
-        'InputSignal of an array of steps. Each step must carry a (Formly-backed) AbstractControl instance to reflect completed/error/disabled states.',
+      description: 'InputSignal of an array of steps. Each step must carry an AbstractControl instance to reflect completed/error/disabled states.',
     },
     {
       name: '`initStepIndex: number`',
       description: 'Zero-based index of the initially active step.',
+    },
+  ];
+
+  methodsDocTableDataSource = [
+    {
+      name: '`next()`',
+      description: 'Navigates to the next step if possible.',
+    },
+    {
+      name: '`previous()`',
+      description: 'Navigates to the previous step if possible.',
+    },
+    {
+      name: '`reset()`',
+      description: 'Resets the stepper to its initial state, restoring all step controls to their initial enabled/disabled and value state.',
+    },
+    {
+      name: '`goToStep(index)`',
+      description: 'Navigates directly to the step at the given zero-based index. Does nothing if the index is out of bounds or the target step is disabled.',
+    },
+    {
+      name: '`goToStepByKey(key)`',
+      description: 'Navigates directly to the step with the given unique key. Does nothing if the key is not found or the target step is disabled.',
+    },
+  ];
+
+  computedSignalsDocTableDataSource = [
+    {
+      name: '`canGoToNext`',
+      description: 'Computed signal indicating whether navigation to the next step is allowed (next step exists and is not disabled).',
+    },
+    {
+      name: '`canGoToPrevious`',
+      description: 'Computed signal indicating whether navigation to the previous step is allowed (previous step exists and is not disabled).',
+    },
+    {
+      name: '`currentStepIndex`',
+      description: 'Signal returning the zero-based index of the currently active step.',
+    },
+    {
+      name: '`currentStep`',
+      description: 'Computed signal returning the currently active ProcessStep, or undefined if the index is out of bounds.',
     },
   ];
 
@@ -106,20 +156,16 @@ export class StepperConsumerComponent {
 
   cssDocTableDataSource = [
     {
-      name: '`--gem-color-border-neutral`',
-      description: 'Border color used for the vertical line and separators.',
+      name: '`--color-primary`',
+      description: 'Primary color used for active step icons, labels, borders, and selected state backgrounds. Defined in portal-theme.',
     },
     {
-      name: '`--gem-color-primary-700`',
-      description: 'Primary color used for active icons/texts.',
+      name: '`--color-neutral-light`',
+      description: 'Neutral color used for the vertical line, separators, and disabled step icons/labels. Defined in portal-theme.',
     },
     {
-      name: '`--gem-color-danger-600`',
-      description: 'Color used for error state icons.',
-    },
-    {
-      name: '`--gem-color-success-600`',
-      description: 'Color used for completed state icons.',
+      name: '`--color-white`',
+      description: 'Background color for step icons. Defined in portal-theme.',
     },
   ];
 

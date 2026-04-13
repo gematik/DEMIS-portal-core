@@ -20,7 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
-import { StepContentComponent, StepNavigationService } from '@gematik/demis-portal-core-library';
+import { StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
 import { NotificationService } from './example-3-notification.service';
 import { MessageService } from './example-3-message.service';
 import { FieldConfigService } from './example-3-field-config.service';
@@ -41,7 +41,7 @@ export interface NotifiedPersonInput {
 export class Example3NotifyingPersonContentComponent extends StepContentComponent<void> {
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -53,7 +53,7 @@ export class Example3NotifyingPersonContentComponent extends StepContentComponen
 export class Example3NotifiedPersonContentComponent extends StepContentComponent<NotifiedPersonInput> {
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -65,7 +65,7 @@ export class Example3NotifiedPersonContentComponent extends StepContentComponent
 export class Example3DiseaseChoiceContentComponent extends StepContentComponent<void> {
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -77,12 +77,12 @@ export class Example3DiseaseChoiceContentComponent extends StepContentComponent<
 export class Example3ConditionContentComponent extends StepContentComponent<void> {
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 
   // Computed property to decide which fields to show based on disease choice
   readonly fieldsToShow = computed(() => {
-    const diseaseValue = this.notificationService.diseaseChoiceGroup.get('disease')?.value;
-    return diseaseValue === 'Erkältung' ? this.fieldConfig.conditionRadioFields : this.fieldConfig.conditionFields;
+    const diseaseValue = this.notificationService.diseaseChoiceGroup.get('code')?.value;
+    return diseaseValue === 'cvdd' ? this.fieldConfig.conditionRadioFields : this.fieldConfig.conditionFields;
   });
 }
 
@@ -95,7 +95,7 @@ export class Example3ConditionContentComponent extends StepContentComponent<void
 export class Example3CommonContentComponent extends StepContentComponent<void> {
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -107,6 +107,6 @@ export class Example3CommonContentComponent extends StepContentComponent<void> {
 export class Example3QuestionnaireContentComponent extends StepContentComponent<void> {
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }

@@ -33,6 +33,9 @@ export interface DocTableRowData {
   imports: [MatTableModule],
   providers: [MarkdownService],
   template: `
+    @if (title) {
+      <h3>{{ title }}</h3>
+    }
     <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -59,6 +62,13 @@ export interface DocTableRowData {
     </mat-table>
   `,
   styles: `
+    h3 {
+      font-size: 13px;
+      font-weight: 500;
+      margin: 12px 0 4px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
     :host ::ng-deep .mat-mdc-cell p {
       margin-top: 12px;
     }
@@ -71,6 +81,7 @@ export interface DocTableRowData {
   `,
 })
 export class DocTableComponent {
+  @Input() title?: string;
   @Input({ required: true }) dataSource!: DocTableRowData[];
 
   protected readonly markdownService = inject(MarkdownService);

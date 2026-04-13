@@ -2,8 +2,13 @@
 
 # Release Notes Portal-Core
 
+## Release 3.2.2
+
+- Reworked step navigation into a dedicated service architecture
+
 ## Release 3.2.1
-- added feature-flag support for error filtering
+
+- Added feature-flag support for error filtering
 
 
 ## Release 3.2.0

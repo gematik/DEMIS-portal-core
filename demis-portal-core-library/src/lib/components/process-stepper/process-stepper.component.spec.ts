@@ -309,6 +309,58 @@ describe('DemisProcessStepperComponent', () => {
 
       expect(customComponent.currentStepIndex()).toBe(1);
     });
+
+    it('should restore initially disabled controls when reset() is called', () => {
+      ngMocks.flushTestBed();
+      const stepsWithDisabled: ProcessStep[] = [
+        { key: 'a', label: 'A', control: new FormControl({ value: null, disabled: false }, Validators.required) },
+        { key: 'b', label: 'B', control: new FormControl({ value: null, disabled: true }, Validators.required) },
+        { key: 'c', label: 'C', control: new FormControl({ value: null, disabled: true }, Validators.required) },
+      ];
+      const disabledFixture = MockRender(`<gem-demis-process-stepper [steps]="steps" [initStepIndex]="initStepIndex"></gem-demis-process-stepper>`, {
+        steps: stepsWithDisabled,
+        initStepIndex: 0,
+      });
+      const disabledComponent = ngMocks.findInstance(disabledFixture.debugElement, DemisProcessStepperComponent);
+      const disabledMockStepper = createMockStepper({ methods: ['reset'] });
+      applyMockStepper(disabledComponent, disabledMockStepper);
+
+      // Simulate workflow: enable all controls (like a consumer would do during navigation)
+      stepsWithDisabled.forEach(step => step.control.enable());
+      expect(stepsWithDisabled[1].control.disabled).toBe(false);
+      expect(stepsWithDisabled[2].control.disabled).toBe(false);
+
+      // Reset should restore originally disabled controls
+      disabledComponent.reset();
+
+      expect(stepsWithDisabled[0].control.disabled).toBe(false);
+      expect(stepsWithDisabled[1].control.disabled).toBe(true);
+      expect(stepsWithDisabled[2].control.disabled).toBe(true);
+    });
+
+    it('should skip steps with unknown keys during restoreInitialControlStates', () => {
+      // Snapshot was taken for the original 3 steps during ngAfterViewInit.
+      // Now inject a 4th step that was never snapshotted.
+      const originalSteps = component.steps();
+      const extraStep: ProcessStep = {
+        key: 'unknown',
+        label: 'Unknown',
+        control: new FormControl('extra-value'),
+      };
+      const extendedSteps = [...originalSteps, extraStep];
+
+      // Override the steps signal to include the unknown step
+      Object.defineProperty(component, 'steps', {
+        value: () => extendedSteps,
+        writable: true,
+        configurable: true,
+      });
+
+      // reset() should not throw and should leave the unknown step untouched
+      component.reset();
+
+      expect(extraStep.control.value).toBe('extra-value');
+    });
   });
 
   describe('onSelectionChange', () => {
@@ -983,6 +1035,73 @@ describe('DemisProcessStepperComponent', () => {
 
         expect(mockStepper.reset).toHaveBeenCalled();
         expect(isolatedComponent.currentStepIndex()).toBe(0);
+      });
+
+      describe('goToStep', () => {
+        it('should navigate to valid step index', () => {
+          isolatedComponent.goToStep(2);
+
+          expect(mockStepper.selectedIndex).toBe(2);
+          expect(isolatedComponent.currentStepIndex()).toBe(2);
+        });
+
+        it('should do nothing when index is negative', () => {
+          isolatedComponent.currentStepIndex.set(0);
+
+          isolatedComponent.goToStep(-1);
+
+          expect(mockStepper.selectedIndex).toBe(0);
+          expect(isolatedComponent.currentStepIndex()).toBe(0);
+        });
+
+        it('should do nothing when index is out of bounds', () => {
+          isolatedComponent.currentStepIndex.set(0);
+
+          isolatedComponent.goToStep(99);
+
+          expect(mockStepper.selectedIndex).toBe(0);
+          expect(isolatedComponent.currentStepIndex()).toBe(0);
+        });
+
+        it('should do nothing when target step is disabled', () => {
+          const steps = isolatedComponent.steps();
+          steps[2].control.disable();
+          isolatedComponent.currentStepIndex.set(0);
+
+          isolatedComponent.goToStep(2);
+
+          expect(mockStepper.selectedIndex).toBe(0);
+          expect(isolatedComponent.currentStepIndex()).toBe(0);
+        });
+      });
+
+      describe('goToStepByKey', () => {
+        it('should navigate to step with matching key', () => {
+          isolatedComponent.goToStepByKey('step3');
+
+          expect(mockStepper.selectedIndex).toBe(2);
+          expect(isolatedComponent.currentStepIndex()).toBe(2);
+        });
+
+        it('should do nothing when key does not exist', () => {
+          isolatedComponent.currentStepIndex.set(0);
+
+          isolatedComponent.goToStepByKey('nonexistent');
+
+          expect(mockStepper.selectedIndex).toBe(0);
+          expect(isolatedComponent.currentStepIndex()).toBe(0);
+        });
+
+        it('should not navigate when key matches a disabled step', () => {
+          const steps = isolatedComponent.steps();
+          steps[2].control.disable();
+          isolatedComponent.currentStepIndex.set(0);
+
+          isolatedComponent.goToStepByKey('step3');
+
+          expect(mockStepper.selectedIndex).toBe(0);
+          expect(isolatedComponent.currentStepIndex()).toBe(0);
+        });
       });
     });
   });

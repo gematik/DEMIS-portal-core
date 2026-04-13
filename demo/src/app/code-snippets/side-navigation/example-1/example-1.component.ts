@@ -16,7 +16,7 @@
  */
 
 import { Component, computed } from '@angular/core';
-import { SideNavigationComponent, createStepContent } from '@gematik/demis-portal-core-library';
+import { SideNavigationComponent, provideStepNavigation, createStepContent } from '@gematik/demis-portal-core-library';
 import {
   Example1Step1ContentComponent,
   Example1Step2ContentComponent,
@@ -31,6 +31,7 @@ import { getStepData } from './example-1.step-data';
   selector: 'app-side-navigation-example-1',
   standalone: true,
   imports: [SideNavigationComponent],
+  providers: [provideStepNavigation()],
   templateUrl: './example-1.component.html',
   styles: [
     `

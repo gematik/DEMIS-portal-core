@@ -16,7 +16,7 @@
  */
 
 import { Component, computed, inject } from '@angular/core';
-import { SideNavigationComponent, createStepContent } from '@gematik/demis-portal-core-library';
+import { SideNavigationComponent, provideStepNavigation, createStepContent } from '@gematik/demis-portal-core-library';
 import {
   Example2Step1ContentComponent,
   Example2Step2ContentComponent,
@@ -33,7 +33,7 @@ import { getStepData } from './example-2.step-data';
   selector: 'app-side-navigation-example-2',
   standalone: true,
   imports: [SideNavigationComponent],
-  providers: [FormService, MessageService],
+  providers: [provideStepNavigation(), FormService, MessageService],
   templateUrl: './example-2.component.html',
   styles: [
     `

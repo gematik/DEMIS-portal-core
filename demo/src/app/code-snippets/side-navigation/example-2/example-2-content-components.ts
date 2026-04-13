@@ -20,7 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { StepContentComponent, StepNavigationService } from '@gematik/demis-portal-core-library';
+import { StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
 import { FormService } from './example-2-form.service';
 import { MessageService } from './example-2-message.service';
 
@@ -32,7 +32,7 @@ import { MessageService } from './example-2-message.service';
 })
 export class Example2Step1ContentComponent extends StepContentComponent<void> {
   protected formService = inject(FormService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }
 
@@ -44,7 +44,7 @@ export class Example2Step1ContentComponent extends StepContentComponent<void> {
 })
 export class Example2Step2ContentComponent extends StepContentComponent<void> {
   protected formService = inject(FormService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }
 
@@ -56,7 +56,7 @@ export class Example2Step2ContentComponent extends StepContentComponent<void> {
 })
 export class Example2Step3ContentComponent extends StepContentComponent<void> {
   protected formService = inject(FormService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }
 
@@ -68,7 +68,7 @@ export class Example2Step3ContentComponent extends StepContentComponent<void> {
 })
 export class Example2Step4ContentComponent extends StepContentComponent<void> {
   protected formService = inject(FormService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }
 
@@ -80,7 +80,7 @@ export class Example2Step4ContentComponent extends StepContentComponent<void> {
 })
 export class Example2Step5ContentComponent extends StepContentComponent<void> {
   protected formService = inject(FormService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }
 
@@ -92,6 +92,6 @@ export class Example2Step5ContentComponent extends StepContentComponent<void> {
 })
 export class Example2Step6ContentComponent extends StepContentComponent<void> {
   protected formService = inject(FormService);
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected messageService = inject(MessageService);
 }

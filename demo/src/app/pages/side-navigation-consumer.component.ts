@@ -52,39 +52,72 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
           accessibility via FormControls, and supports flexible action templates for each step.
         </p>
 
-        <app-subsection-title>Import</app-subsection-title>
-        <app-code-snippet-box language="ts" codeSnippetString='import { SideNavigationComponent } from "@gematik/demis-portal-core-library";' />
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- SideNavigationComponent                                    -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <app-subsection-title>SideNavigationComponent</app-subsection-title>
+        <p>
+          The main component that renders the side panel with the stepper and the dynamic content area. Uses Angular Material's <code>mat-drawer</code> for the
+          layout.
+        </p>
 
-        <app-subsection-title>Selector</app-subsection-title>
+        <app-code-snippet-box language="ts" codeSnippetString='import { SideNavigationComponent } from "@gematik/demis-portal-core-library";' />
         <app-code-snippet-box language="html" codeSnippetString="gem-demis-side-navigation" />
 
-        <app-subsection-title>Inputs</app-subsection-title>
-        <app-doc-table [dataSource]="inputsDocTableDataSource" />
+        <app-doc-table title="Inputs" [dataSource]="componentInputsDocTableDataSource" />
+        <app-doc-table title="Content Projection" [dataSource]="contentProjectionDocTableDataSource" />
 
-        <app-subsection-title>Content Projection</app-subsection-title>
-        <app-doc-table [dataSource]="contentProjectionDocTableDataSource" />
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- StepNavigation                                             -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <app-subsection-title>StepNavigation</app-subsection-title>
+        <p>
+          Abstract navigation interface for controlling step navigation. The host component must call
+          <code>provideStepNavigation()</code> in its <code>providers</code> array. The <code>SideNavigationComponent</code> registers its internal stepper
+          automatically. Both host and step content components inject <code>StepNavigation</code>.
+        </p>
 
-        <app-subsection-title>Public Methods</app-subsection-title>
-        <app-doc-table [dataSource]="methodsDocTableDataSource" />
+        <app-code-snippet-box language="ts" codeSnippetString='import { StepNavigation, provideStepNavigation } from "@gematik/demis-portal-core-library";' />
+        <app-code-snippet-box language="ts" codeSnippetString="providers: [provideStepNavigation()]" />
 
-        <app-subsection-title>Helper Types & Functions</app-subsection-title>
-        <app-doc-table [dataSource]="helperTypesDocTableDataSource" />
+        <app-doc-table title="Methods" [dataSource]="navigationMethodsDocTableDataSource" />
+        <app-doc-table title="Computed Signals" [dataSource]="navigationSignalsDocTableDataSource" />
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Step Content Development                                   -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <app-subsection-title>Step Content Development</app-subsection-title>
+        <p>
+          Each step's content is rendered as a dynamically created component. Step content components must extend
+          <code>StepContentComponent&lt;T&gt;</code> to receive typed input data and to expose action templates. Inject <code>StepNavigation</code> for
+          navigation controls.
+        </p>
+
+        <app-code-snippet-box
+          language="ts"
+          codeSnippetString='import { StepContentComponent, StepContent, createStepContent, ProcessStep, StepNavigation } from "@gematik/demis-portal-core-library";' />
+
+        <app-code-snippet-box
+          language="ts"
+          codeSnippetString="export class MyStepContentComponent extends StepContentComponent<void> {
+  protected navigation = inject(StepNavigation);
+}" />
+
+        <app-doc-table title="Types & Helpers" [dataSource]="stepContentDocTableDataSource" />
 
         <app-subsection-title>Notes</app-subsection-title>
         <ul>
-          <li>Step content components must extend <code>StepContentComponent&lt;T&gt;</code> to receive typed input data.</li>
           <li>
-            Step content components can inject <code>StepNavigationService</code> to access navigation methods (next, previous, reset) and computed signals
-            (canGoToNext, canGoToPrevious).
+            The host component must call <code>provideStepNavigation()</code> in its <code>providers</code> array. This sets up the navigation service and the
+            abstract <code>StepNavigation</code> token automatically.
           </li>
-          <li>Use <code>createStepContent()</code> for automatic TypeScript type inference when defining step contents.</li>
-          <li>The component uses Angular Material's <code>mat-drawer</code> for the side navigation layout.</li>
-          <li>Each step requires a <code>ProcessStep</code> with a FormControl for validation state tracking.</li>
+          <li>Each step requires a <code>ProcessStep</code> with an <code>AbstractControl</code> for validation state tracking (valid/invalid/disabled).</li>
           <li>
             Action templates (buttons, etc.) are defined in the step content component template as <code>&lt;ng-template #actionsLeft&gt;</code> and
-            <code>&lt;ng-template #actionsRight&gt;</code>.
+            <code>&lt;ng-template #actionsRight&gt;</code>. They are rendered in the footer area below the main content.
           </li>
-          <li>The internal stepper validates step accessibility based on FormControl states (valid/invalid/disabled).</li>
+          <li>Use <code>createStepContent()</code> for automatic TypeScript type inference when defining step contents.</li>
+          <li>Disabled steps preserve their visual completed/error state from before being disabled.</li>
         </ul>
       </app-overview-section>
 
@@ -103,7 +136,9 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
   `,
 })
 export class SideNavigationConsumerComponent {
-  inputsDocTableDataSource = [
+  // ── SideNavigationComponent ──────────────────────────────────────
+
+  componentInputsDocTableDataSource = [
     {
       name: '`sideNavTitle: string`',
       description: 'Required. The title displayed at the top of the side navigation panel.',
@@ -125,7 +160,9 @@ export class SideNavigationConsumerComponent {
     },
   ];
 
-  methodsDocTableDataSource = [
+  // ── StepNavigation ────────────────────────────────────────
+
+  navigationMethodsDocTableDataSource = [
     {
       name: '`next()`',
       description: 'Navigates to the next step if possible.',
@@ -136,40 +173,58 @@ export class SideNavigationConsumerComponent {
     },
     {
       name: '`reset()`',
-      description: 'Resets the stepper to the first step.',
+      description: 'Resets the stepper to the first step and restores all controls to their initial state.',
     },
     {
-      name: '`canGoToNext()`',
-      description: 'Returns a computed signal indicating whether navigation to the next step is allowed.',
+      name: '`goToStep(index)`',
+      description: 'Navigates directly to the step at the given zero-based index. Does nothing if the index is out of bounds or the target step is disabled.',
     },
     {
-      name: '`canGoToPrevious()`',
-      description: 'Returns a computed signal indicating whether navigation to the previous step is allowed.',
+      name: '`goToStepByKey(key)`',
+      description: 'Navigates directly to the step with the given unique key. Does nothing if the key is not found or the target step is disabled.',
     },
   ];
 
-  helperTypesDocTableDataSource = [
+  navigationSignalsDocTableDataSource = [
     {
-      name: '`StepNavigationService`',
-      description:
-        'Abstract service interface that provides navigation methods for step content components. Content components can inject this service to access next(), previous(), reset(), canGoToNext(), and canGoToPrevious(). The SideNavigationComponent implements and provides this service.',
+      name: '`canGoToNext()`',
+      description: 'Computed signal indicating whether navigation to the next step is allowed.',
     },
     {
-      name: '`StepContent<C>`',
-      description: 'Interface defining step content with component and optional inputData. Generic C is the component type for automatic type inference.',
+      name: '`canGoToPrevious()`',
+      description: 'Computed signal indicating whether navigation to the previous step is allowed.',
     },
+    {
+      name: '`currentStepIndex()`',
+      description: 'Computed signal returning the zero-based index of the currently active step.',
+    },
+    {
+      name: '`currentStep()`',
+      description: 'Computed signal returning the currently active ProcessStep, or undefined.',
+    },
+  ];
+
+  // ── Step Content Development ─────────────────────────────────────
+
+  stepContentDocTableDataSource = [
     {
       name: '`StepContentComponent<T>`',
       description:
-        'Abstract base class for step content components. Provides an inputData signal of type T for receiving data from the parent, and viewChild references (actionsLeft, actionsRight) for action templates defined in the component template.',
+        'Abstract base class that step content components must extend. Provides an inputData signal of type T for receiving data from the parent, and viewChild references (actionsLeft, actionsRight) for action templates.',
     },
     {
-      name: '`createStepContent(content)`',
-      description: 'Helper function to create StepContent with automatic TypeScript type inference for inputData based on the component type.',
+      name: '`StepContent<C>`',
+      description:
+        'Interface defining step content with a component class and optional inputData. Generic C is the component type for automatic type inference.',
+    },
+    {
+      name: '`createStepContent(config)`',
+      description:
+        'Helper function to create StepContent with automatic TypeScript type inference for inputData based on the component type. Always prefer this over manual object creation.',
     },
     {
       name: '`ProcessStep`',
-      description: 'Type from ProcessStepper component defining a step with key, label, and FormControl for validation.',
+      description: 'Type defining a step with key, label, optional description, and an AbstractControl for validation state.',
     },
   ];
 

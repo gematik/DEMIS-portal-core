@@ -136,7 +136,7 @@ export class NotificationService {
    * This method is public so it can be called from valueChanges subscriptions in components.
    */
   updateStepAvailability(): void {
-    const diseaseValue = this.diseaseChoiceModel.disease || this.diseaseChoiceGroup.value?.disease;
+    const diseaseValue = this.diseaseChoiceModel.code || this.diseaseChoiceGroup.value?.code;
 
     if (diseaseValue && diseaseValue !== null) {
       // Enable steps 4, 5, 6 when disease is selected

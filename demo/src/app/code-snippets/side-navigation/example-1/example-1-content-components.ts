@@ -17,7 +17,7 @@
 
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { StepContentComponent, StepNavigationService } from '@gematik/demis-portal-core-library';
+import { StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
 
 /**
  * Input data structure for step 2 to demonstrate data passing.
@@ -33,7 +33,7 @@ export interface Step2Input {
   templateUrl: './example-1-step1-content.component.html',
 })
 export class Example1Step1ContentComponent extends StepContentComponent<void> {
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -43,7 +43,7 @@ export class Example1Step1ContentComponent extends StepContentComponent<void> {
   templateUrl: './example-1-step2-content.component.html',
 })
 export class Example1Step2ContentComponent extends StepContentComponent<Step2Input> {
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -53,7 +53,7 @@ export class Example1Step2ContentComponent extends StepContentComponent<Step2Inp
   templateUrl: './example-1-step3-content.component.html',
 })
 export class Example1Step3ContentComponent extends StepContentComponent<void> {
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -63,7 +63,7 @@ export class Example1Step3ContentComponent extends StepContentComponent<void> {
   templateUrl: './example-1-step4-content.component.html',
 })
 export class Example1Step4ContentComponent extends StepContentComponent<void> {
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -73,7 +73,7 @@ export class Example1Step4ContentComponent extends StepContentComponent<void> {
   templateUrl: './example-1-step5-content.component.html',
 })
 export class Example1Step5ContentComponent extends StepContentComponent<void> {
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
 
 @Component({
@@ -83,5 +83,5 @@ export class Example1Step5ContentComponent extends StepContentComponent<void> {
   templateUrl: './example-1-step6-content.component.html',
 })
 export class Example1Step6ContentComponent extends StepContentComponent<void> {
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
 }
