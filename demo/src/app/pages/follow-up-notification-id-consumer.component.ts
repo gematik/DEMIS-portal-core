@@ -136,10 +136,6 @@ export class FollowUpNotificationIdConsumerComponent {
       name: '`NOT_VALIDATED`',
       description: ['NotificationId entered to input field was not yet validated.'],
     },
-    {
-      name: '`UNSUPPORTED_NOTIFICATION_CATEGORY`',
-      description: ['Notification category was found in backend service but is not supported by calling service.'],
-    },
   ];
 
   openDialogDocTableDataSource: DocTableRowData[] = [
@@ -172,10 +168,6 @@ export class FollowUpNotificationIdConsumerComponent {
     {
       name: '`pathToDestinationLookup:string`',
       description: ['Absolute path to destination lookup service depending on environment.'],
-    },
-    {
-      name: '`errorUnsupportedNotificationCategory?:string`',
-      description: ['`[optional]`Error message in case that notificationCategory from id does not match notificationCategories'],
     },
   ];
 

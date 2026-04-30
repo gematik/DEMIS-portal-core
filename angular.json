@@ -3,7 +3,11 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": false
+    "analytics": false,
+    "cache": {
+      "enabled": true,
+      "environment": "all"
+    }
   },
   "newProjectRoot": ".",
   "projects": {
@@ -83,7 +87,7 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/highlight.js/styles/foundation.min.css",
               "node_modules/@gematik/demis-portal-theme-library/demis-theme.css",
               "demo/src/styles.scss"
@@ -151,7 +155,7 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "demo/src/styles.scss"
             ],
             "scripts": []

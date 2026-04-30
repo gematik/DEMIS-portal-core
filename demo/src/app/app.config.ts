@@ -24,7 +24,7 @@ import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { MAT_CARD_CONFIG } from '@angular/material/card';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { FormlyDatepickerComponent, FormlyRepeaterComponent, DATEPICKER_VALIDATION_MESSAGES } from '@gematik/demis-portal-core-library';
+import { withDemisFormlyCore } from '@gematik/demis-portal-core-library';
 import { provideFormlyCore } from '@ngx-formly/core';
 import { withFormlyMaterial } from '@ngx-formly/material';
 import { de } from 'date-fns/locale';
@@ -40,19 +40,9 @@ export const appConfig: ApplicationConfig = {
     provideFormlyCore([
       ...withFormlyMaterial(),
       {
-        validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }, ...DATEPICKER_VALIDATION_MESSAGES],
-        types: [
-          {
-            name: 'repeat',
-            component: FormlyRepeaterComponent,
-          },
-          {
-            name: 'datepicker',
-            component: FormlyDatepickerComponent,
-            wrappers: ['form-field'],
-          },
-        ],
+        validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }],
       },
+      ...withDemisFormlyCore(),
     ]),
     provideHttpClient(),
     { provide: MAT_CARD_CONFIG, useValue: { appearance: 'outlined' } },

@@ -49,7 +49,7 @@ export class ErrorDialogWithSearchInKbComponent {
   }
 
   get closeButtonLabel(): string {
-    return this.redirectToHome ? 'Zurück zur Hauptseite' : 'Schließen';
+    return this.redirectToHome ? 'Zurück zur Startseite' : 'Schließen';
   }
 
   displayedColumns(): string[] {
@@ -68,11 +68,10 @@ export class ErrorDialogWithSearchInKbComponent {
     return this.dataSource.some(error => error.queryString);
   }
 
-  async onClose() {
+  onClose() {
+    this.dialogRef.close();
     if (this.redirectToHome) {
-      await this.router.navigate(['/']);
-    } else {
-      this.dialogRef.close();
+      this.router.navigate(['/']);
     }
   }
 }

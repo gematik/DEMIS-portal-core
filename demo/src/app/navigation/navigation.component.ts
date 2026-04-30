@@ -49,7 +49,7 @@ import { routes as appRoutes } from '../app.routes';
 })
 export class NavigationComponent {
   activeComponentTitle: WritableSignal<string | Type<Resolve<string>> | ResolveFn<string> | undefined> = signal('');
-  routeGroups = ['components', 'services', 'directives', 'pipes', 'functions'];
+  routeGroups = ['components', 'formly', 'services', 'directives', 'pipes', 'functions'];
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly router = inject(Router);
 
@@ -71,7 +71,12 @@ export class NavigationComponent {
   getRoutes(routesGroup: string) {
     return appRoutes
       .filter(route => route.component && route.path?.startsWith(`${routesGroup}/`))
-      .sort((a, b) => a.title?.toString().localeCompare(b.title?.toString() ?? '') ?? 0);
+      .sort((a, b) => {
+        const orderA = (a.data as any)?.sortOrder ?? Number.MAX_SAFE_INTEGER;
+        const orderB = (b.data as any)?.sortOrder ?? Number.MAX_SAFE_INTEGER;
+        if (orderA !== orderB) return orderA - orderB;
+        return a.title?.toString().localeCompare(b.title?.toString() ?? '') ?? 0;
+      });
   }
 
   onActivateRoute(event: any) {

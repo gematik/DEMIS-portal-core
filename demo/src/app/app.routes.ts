@@ -27,6 +27,8 @@ import { SideNavigationConsumerComponent } from './pages/side-navigation-consume
 import { FormsFooterConsumerComponent } from './pages/forms-footer-consumer.component';
 import { FollowUpMixedCodesConsumerComponent } from './pages/follow-up-mixed-codes-consumer.component';
 import { FollowUpNotificationIdConsumerComponent } from './pages/follow-up-notification-id-consumer.component';
+import { FormlyFilterableSelectConsumerComponent } from './pages/formly-filterable-select-consumer.component';
+import { FormlyGettingStartedConsumerComponent } from './pages/formly-getting-started-consumer.component';
 
 function prefixRoutes(prefix: string, routes: Routes): Routes {
   return routes.map(route => ({ ...route, path: `${prefix}/${route.path}` }));
@@ -47,18 +49,6 @@ const componentConsumerRoutes: Routes = [
     component: PasteBoxConsumerComponent,
   },
   {
-    path: 'formly-repeater',
-    title: 'Formly Repeater',
-    pathMatch: 'full',
-    component: FormlyRepeaterConsumerComponent,
-  },
-  {
-    path: 'formly-datepicker',
-    title: 'Formly Datepicker ',
-    pathMatch: 'full',
-    component: FormlyDatepickerConsumerComponent,
-  },
-  {
     path: 'process-stepper',
     title: 'Process Stepper',
     pathMatch: 'full',
@@ -75,6 +65,35 @@ const componentConsumerRoutes: Routes = [
     title: 'Side Navigation ',
     pathMatch: 'full',
     component: SideNavigationConsumerComponent,
+  },
+];
+
+// Routes for the formly types
+const formlyConsumerRoutes: Routes = [
+  {
+    path: 'getting-started',
+    title: 'Getting Started',
+    pathMatch: 'full',
+    component: FormlyGettingStartedConsumerComponent,
+    data: { sortOrder: 0 },
+  },
+  {
+    path: 'datepicker',
+    title: 'Datepicker',
+    pathMatch: 'full',
+    component: FormlyDatepickerConsumerComponent,
+  },
+  {
+    path: 'repeater',
+    title: 'Repeater',
+    pathMatch: 'full',
+    component: FormlyRepeaterConsumerComponent,
+  },
+  {
+    path: 'filterable-select',
+    title: 'Filterable Select',
+    pathMatch: 'full',
+    component: FormlyFilterableSelectConsumerComponent,
   },
 ];
 
@@ -118,6 +137,7 @@ export const routes: Routes = [
     component: HomeComponent,
   },
   ...prefixRoutes('components', componentConsumerRoutes),
+  ...prefixRoutes('formly', formlyConsumerRoutes),
   ...prefixRoutes('services', serviceConsumerRoutes),
   ...prefixRoutes('directives', directiveConsumerRoutes),
   ...prefixRoutes('pipes', pipeConsumerRoutes),

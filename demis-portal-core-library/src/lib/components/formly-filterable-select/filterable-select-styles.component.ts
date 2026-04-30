@@ -15,25 +15,13 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject } from '@angular/core';
-import { FollowUpMixedCodesService } from '@gematik/demis-portal-core-library';
-import { MatButton } from '@angular/material/button';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: 'app-follow-up-mixed-codes-example-1',
+  selector: 'gem-demis-util-filterable-select-styles',
   standalone: true,
-  imports: [MatButton],
-  templateUrl: './example-1.component.html',
+  template: `<!-- ONLY USED FOR GLOBAL STYLES! DO NOT EXPORT! -->`,
+  styleUrl: './filterable-select-styles.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-export class FollowUpMixedCodesExample1Component {
-  private readonly followUpMixedService = inject(FollowUpMixedCodesService);
-
-  mixedCodesList = [
-    { code: 'invp', display: 'Influenzavirus' },
-    { code: 'tubk', display: 'Tuberkulosebakterium' },
-  ];
-
-  showFollowUpMixedCodesDialog() {
-    this.followUpMixedService.openDialog(this.mixedCodesList);
-  }
-}
+export class FilterableSelectStylesComponent {}

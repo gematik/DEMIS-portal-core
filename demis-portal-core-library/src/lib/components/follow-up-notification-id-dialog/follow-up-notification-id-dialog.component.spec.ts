@@ -102,14 +102,6 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       expect(component.getInputClass()).toBe('initial-notification-id-input-field-invalid');
     });
 
-    it('sets error "unsupportedNotificationCategory" if status is UNSUPPORTED_NOTIFICATION_CATEGORY', () => {
-      validationStatusMock.set(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
-      fixture.detectChanges();
-
-      expect(component.initialNotificationIdControl.errors).toEqual(jasmine.objectContaining({ unsupportedNotificationCategory: true }));
-      expect(component.getValidationStyle()).toBe('invalid');
-    });
-
     it('sets no errors if status is VALID', () => {
       validationStatusMock.set(ValidationStatus.VALID);
       fixture.detectChanges();
@@ -237,19 +229,6 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       validationStatusMock.set(ValidationStatus.VALID);
       fixture.detectChanges();
       expect(announceSpy).toHaveBeenCalledTimes(2);
-    });
-
-    it('does not announce for invalid states', () => {
-      const liveAnnouncer = fixture.point.injector.get(LiveAnnouncer);
-      const announceSpy = spyOn(liveAnnouncer, 'announce').and.callThrough();
-
-      validationStatusMock.set(ValidationStatus.NOT_FOUND);
-      fixture.detectChanges();
-
-      validationStatusMock.set(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
-      fixture.detectChanges();
-
-      expect(announceSpy).not.toHaveBeenCalled();
     });
 
     it('moves focus to the "Weiter" button once validation becomes VALID', async () => {

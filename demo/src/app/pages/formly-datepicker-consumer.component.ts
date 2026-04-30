@@ -50,7 +50,7 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         <p>
           You need to import the Formly Datepicker component and bind it to the custom type declared in your Formly config. For an example of how to configure
           custom types in general, see
-          <a routerLink="/components/formly-repeater">this example</a>.
+          <a routerLink="/formly/repeater">this example</a>.
         </p>
 
         <app-subsection-title>Properties</app-subsection-title>

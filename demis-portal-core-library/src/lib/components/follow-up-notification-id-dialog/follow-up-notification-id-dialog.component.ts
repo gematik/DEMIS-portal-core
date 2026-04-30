@@ -67,8 +67,6 @@ export class FollowUpNotificationIdDialogComponent {
 
       if (status === ValidationStatus.NOT_FOUND) {
         this.initialNotificationIdControl.setErrors({ invalid: true });
-      } else if (status === ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY) {
-        this.initialNotificationIdControl.setErrors({ unsupportedNotificationCategory: true });
       } else {
         this.initialNotificationIdControl.setErrors(null);
       }
@@ -94,7 +92,7 @@ export class FollowUpNotificationIdDialogComponent {
       return 'valid';
     } else if (status === ValidationStatus.NOT_VALIDATED || !this.initialNotificationIdControl.errors) {
       return 'notvalidated';
-    } else if (status === ValidationStatus.NOT_FOUND || status === ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY) {
+    } else if (status === ValidationStatus.NOT_FOUND) {
       return 'invalid';
     }
     return '';

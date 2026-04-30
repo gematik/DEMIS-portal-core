@@ -25,45 +25,35 @@ export enum ValidationStatus {
   VALID = 'VALID',
   NOT_FOUND = 'NOT_FOUND',
   NOT_VALIDATED = 'NOT_VALIDATED',
-  UNSUPPORTED_NOTIFICATION_CATEGORY = 'UNSUPPORTED_NOTIFICATION_CATEGORY',
 }
 
 export interface FollowUpDialogData {
   routerLink: string;
   linkTextContent: string;
   pathToDestinationLookup: string;
-  errorUnsupportedNotificationCategory?: string;
 }
 
 export interface FollowUpServiceDialogData {
   dialogData: FollowUpDialogData;
-  notificationCategoryCodes?: string[];
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class FollowUpNotificationIdService {
-  set isMixedCodesActive(value: boolean) {
-    this._isMixedCodesActive = value;
-  }
   private readonly dialog = inject(MatDialog);
   private readonly fhirCoreNotificationService = inject(FhirCoreNotificationService);
-  private notificationCategoryCodes: string[] | undefined;
 
   readonly validatedNotificationId = signal<string | undefined>(undefined);
   readonly validationStatus = signal<ValidationStatus>(ValidationStatus.NOT_VALIDATED);
   readonly hasValidNotificationId = signal<boolean | undefined>(false);
   readonly followUpNotificationCategory = signal<string | undefined>(undefined);
 
-  private _isMixedCodesActive = false;
-
   readonly hasValidNotificationId$ = toObservable(this.hasValidNotificationId);
 
   private dialogRef: MatDialogRef<FollowUpNotificationIdDialogComponent> | null = null;
 
   openDialog(followUpServiceDialogData: FollowUpServiceDialogData): void {
-    this.notificationCategoryCodes = followUpServiceDialogData.notificationCategoryCodes;
     if (this.dialogRef) {
       return;
     }
@@ -91,13 +81,7 @@ export class FollowUpNotificationIdService {
     this.validationStatus.set(ValidationStatus.NOT_VALIDATED);
     this.fhirCoreNotificationService.fetchFollowUpNotificationCategory(id, pathToDestinationLookup).subscribe({
       next: (response: FollowUpNotificationCategory) => {
-        if (this._isMixedCodesActive) {
-          this.setValidState(id, response.notificationCategory);
-        } else if (this.isSupportedNotificationCategory(response.notificationCategory)) {
-          this.setValidState(id, response.notificationCategory);
-        } else {
-          this.setInvalidState(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
-        }
+        this.setValidState(id, response.notificationCategory);
       },
       error: () => {
         this.setInvalidState(ValidationStatus.NOT_FOUND);
@@ -121,13 +105,5 @@ export class FollowUpNotificationIdService {
   resetState(): void {
     this.validatedNotificationId.set(undefined);
     this.validationStatus.set(ValidationStatus.NOT_VALIDATED);
-  }
-
-  private isSupportedNotificationCategory(notificationCategory: string): boolean {
-    if (this.notificationCategoryCodes && this.notificationCategoryCodes.length > 0) {
-      return this.notificationCategoryCodes.includes(notificationCategory);
-    } else {
-      return true;
-    }
   }
 }

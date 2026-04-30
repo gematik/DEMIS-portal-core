@@ -2,6 +2,18 @@
 
 # Release Notes Portal-Core
 
+## Release 4.1.0
+
+- Introduced generic filterable select as formly field type
+- Introduced withDemisFormlyCore convenience function
+- Restructured Demo App navigation to highlight formly parts
+
+## Release 4.0.0
+
+- Fixed multi line bug in ErrorDialog
+- Fixed non closable error dialog bug, when called from the home page with redirectToHome enabled
+- Removed unsupported notification category handling from follow-up notification components 
+
 ## Release 3.2.2
 
 - Reworked step navigation into a dedicated service architecture
