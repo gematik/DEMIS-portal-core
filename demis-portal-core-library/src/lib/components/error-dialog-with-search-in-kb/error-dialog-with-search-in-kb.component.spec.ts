@@ -219,7 +219,7 @@ describe('UploadErrorsComponent', () => {
       await TestBed.configureTestingModule({
         imports: [MatDialogModule, ErrorDialogWithSearchInKbComponent],
         providers: [
-          { provide: MatDialogRef, useValue: {} },
+          { provide: MatDialogRef, useValue: jasmine.createSpyObj('MatDialogRef', ['close']) },
           {
             provide: MAT_DIALOG_DATA,
             useValue: {
@@ -243,15 +243,16 @@ describe('UploadErrorsComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should redirect to homepage when clicking the close button', async () => {
+    it('should close the dialog and redirect to homepage when clicking the close button', () => {
       const navigateSpy = spyOn(router, 'navigate');
-      await component.onClose();
+      component.onClose();
+      expect(component.dialogRef.close).toHaveBeenCalled();
       expect(navigateSpy).toHaveBeenCalledWith(['/']);
     });
 
     it('check label of close button', () => {
       const closeButtonLabel = component.closeButtonLabel;
-      expect(closeButtonLabel).toBe('Zurück zur Hauptseite');
+      expect(closeButtonLabel).toBe('Zurück zur Startseite');
     });
   });
 
@@ -281,9 +282,9 @@ describe('UploadErrorsComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should close the dialog when clicking the close button', async () => {
+    it('should close the dialog when clicking the close button', () => {
       const closeSpy = spyOn(TestBed.inject(MatDialogRef<ErrorDialogWithSearchInKbComponent>), 'close');
-      await component.onClose();
+      component.onClose();
       expect(closeSpy).toHaveBeenCalled();
     });
   });

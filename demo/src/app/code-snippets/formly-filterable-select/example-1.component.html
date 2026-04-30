@@ -1,0 +1,8 @@
+<form [formGroup]="form">
+  <formly-form [form]="form" [model]="model" [fields]="fields" />
+  <div>
+    <p>Ausgewählter Wert:</p>
+    <pre>{{ model['disease'] | json }}</pre>
+    <p>Status: {{ form.get('disease')?.valid ? 'gültig' : 'ungültig' }}</p>
+  </div>
+</form>

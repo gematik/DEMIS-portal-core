@@ -1,0 +1,69 @@
+<gem-demis-util-filterable-select-styles />
+
+@if (multiple()) {
+  <div class="filterable-select-chip-area">
+    <mat-chip-set class="filterable-select-chip-set">
+      @for (selected of selectedValues(); track selected[optionValueKey()]) {
+        <mat-chip (removed)="removeChip(selected)">
+          <span>{{ displayFn(selected) }}</span>
+          <button matChipRemove [attr.aria-label]="'Eintrag entfernen: ' + displayFn(selected)" (click)="$event.stopPropagation()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </mat-chip-set>
+  </div>
+}
+
+<mat-select
+  [id]="field.id!"
+  [formControl]="formControl"
+  [formlyAttributes]="field"
+  [multiple]="multiple()"
+  [compareWith]="compareFn"
+  [errorStateMatcher]="errorStateMatcher"
+  [placeholder]="props['placeholder'] || ''"
+  (openedChange)="$event ? null : onPanelClose()"
+  panelClass="filterable-select-panel">
+
+  @if (hasValue() && !multiple()) {
+    <mat-select-trigger>
+      {{ triggerDisplay() }}
+      @if (descriptionFn(currentValue())) {
+        <span class="option-description"> - {{ descriptionFn(currentValue()) }}</span>
+      }
+    </mat-select-trigger>
+  }
+  @if (multiple()) {
+    <mat-select-trigger>&nbsp;</mat-select-trigger>
+  }
+
+  <mat-option (keydown)="onSearchKeydown($event)">
+    <ngx-mat-select-search
+      [formControl]="searchControl"
+      [placeholderLabel]="searchPlaceholder()"
+      [noEntriesFoundLabel]="noEntriesFoundLabel()"
+      [ariaLabel]="searchPlaceholder()"
+      [disableScrollToActiveOnOptionsChanged]="true">
+    </ngx-mat-select-search>
+  </mat-option>
+
+  @for (option of filteredOptions(); track option[optionValueKey()]) {
+    <mat-option [value]="option" [id]="field.id + '-opt-' + option[optionValueKey()]" [class]="'opt-' + option[optionValueKey()]">
+      {{ displayFn(option) }}
+      @if (descriptionFn(option)) {
+        <span class="option-description"> - {{ descriptionFn(option) }}</span>
+      }
+    </mat-option>
+  }
+</mat-select>
+
+@if (clearable() && hasValue()) {
+  <button
+    mat-icon-button
+    aria-label="Auswahl löschen"
+    (click)="clearSelection($event)"
+    class="clear-button">
+    <mat-icon>close</mat-icon>
+  </button>
+}

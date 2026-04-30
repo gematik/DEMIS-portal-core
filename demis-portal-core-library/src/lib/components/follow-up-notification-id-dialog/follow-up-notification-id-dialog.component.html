@@ -37,10 +37,6 @@
         Alternativ setzen Sie bitte die Meldung namentlich ab.
       </mat-error>
     }
-    @if (initialNotificationIdControl.hasError('unsupportedNotificationCategory')) {
-      <mat-error>{{followUpDialogData.errorUnsupportedNotificationCategory}}
-      </mat-error>
-    }
   </mat-form-field>
   <p [id]="(getValidationStyle() === 'invalid') ? 'final-dialog-paragraph-error' : 'final-dialog-paragraph'">
     <span aria-hidden="true">Alternativ hier die Meldung </span>

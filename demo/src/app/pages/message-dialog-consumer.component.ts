@@ -26,6 +26,7 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 import { MessageDialogExample2Component } from '../code-snippets/message-dialog-service/example-2.component';
 import { MessageDialogExample3Component } from '../code-snippets/message-dialog-service/example-3.component';
 import { MessageDialogExample4Component } from '../code-snippets/message-dialog-service/example-4.component';
+import { MessageDialogExample5Component } from '../code-snippets/message-dialog-service/example-5.component';
 
 @Component({
   selector: 'app-message-dialog',
@@ -40,6 +41,7 @@ import { MessageDialogExample4Component } from '../code-snippets/message-dialog-
     MessageDialogExample2Component,
     MessageDialogExample3Component,
     MessageDialogExample4Component,
+    MessageDialogExample5Component,
   ],
   template: `
     <app-expandable-sections>
@@ -50,6 +52,7 @@ import { MessageDialogExample4Component } from '../code-snippets/message-dialog-
         </p>
 
         <p>See the examples below for the different ways to use the message dialog service.</p>
+        <p>Error messages support multi-line text via newline characters (<code>\\n</code>). The dialog preserves line breaks when rendering.</p>
 
         <app-subsection-title>Import</app-subsection-title>
         <app-code-snippet-box language="ts" codeSnippetString='import { MessageDialogService } from "@gematik/demis-portal-core-library";' />
@@ -78,6 +81,9 @@ import { MessageDialogExample4Component } from '../code-snippets/message-dialog-
         <app-subsection-title>Interface ErrorMessage - Properties</app-subsection-title>
         <app-doc-table [dataSource]="errorMessageDocTableDataSource" />
 
+        <app-subsection-title>Enum SeverityEnum - Values</app-subsection-title>
+        <app-doc-table [dataSource]="severityEnumDocTableDataSource" />
+
         <app-subsection-title>Interface DialogStyle - Properties</app-subsection-title>
         <app-doc-table [dataSource]="dialogStyleDocTableDataSource" />
       </app-overview-section>
@@ -93,6 +99,9 @@ import { MessageDialogExample4Component } from '../code-snippets/message-dialog-
       </app-code-example-box>
       <app-code-example-box [options]="examples[3]">
         <app-message-dialog-example-4 />
+      </app-code-example-box>
+      <app-code-example-box [options]="examples[4]">
+        <app-message-dialog-example-5 />
       </app-code-example-box>
     </app-expandable-sections>
   `,
@@ -155,8 +164,22 @@ export class MessageDialogConsumerComponent {
       name: '`errors: ErrorMessage[]`',
       description: 'The array of error messages to be displayed in the error dialog.',
     },
-    { name: '`clipboardContent?: string`', description: '`[optional]`' },
+    { name: '`clipboardContent?: string`', description: '`[optional]` Content to be copied to the clipboard when the user clicks the copy button.' },
     { name: '`errorTitle?: string`', description: '`[optional]` Overwrites the default dialog title.' },
+    {
+      name: '`redirectToHome?: boolean`',
+      description:
+        '`[optional]` If true, the close button navigates to the home page instead of just closing the dialog. Also sets disableClose on the Material Dialog.',
+    },
+    {
+      name: '`logFilteringEnabled?: boolean`',
+      description:
+        '`[optional]` Temporary feature flag that activates severity-based filtering of error messages. When enabled, only errors meeting the `minSeverityLevel` threshold are shown. This property will be removed once the corresponding feature flag (`FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING`) is retired.',
+    },
+    {
+      name: '`minSeverityLevel?: SeverityEnum`',
+      description: '`[optional]` The minimum severity level to display when filtering is enabled. Defaults to `SeverityEnum.ERROR`.',
+    },
   ];
 
   submitDialogPropsDocTableDataSource: DocTableRowData[] = [
@@ -175,10 +198,15 @@ export class MessageDialogConsumerComponent {
   ];
 
   errorMessageDocTableDataSource: DocTableRowData[] = [
-    { name: '`text: string`', description: 'The error text message to be displayed in the error dialog.' },
+    { name: '`text: string`', description: 'The error text message to be displayed in the error dialog. Supports multi-line text via newline characters.' },
     {
       name: '`queryString?: string`',
       description: '`[optional]` A search string that will trigger a button to direct the user to the DEMIS Knowledge Base.',
+    },
+    {
+      name: '`severity?: SeverityEnum`',
+      description:
+        '`[optional]` The severity level of the error message. Used for filtering when `logFilteringEnabled` is set. Defaults to `ERROR` if not specified.',
     },
   ];
 
@@ -195,6 +223,13 @@ export class MessageDialogConsumerComponent {
       name: '`maxWidth?: string`',
       description: '`[optional]` Overwrites the maxWidth config values of the Material Dialog used.',
     },
+  ];
+
+  severityEnumDocTableDataSource: DocTableRowData[] = [
+    { name: '`FATAL`', description: 'Highest severity. Value: `"fatal"`.' },
+    { name: '`ERROR`', description: 'Standard error severity. Value: `"error"`. This is the default when no severity is specified.' },
+    { name: '`WARNING`', description: 'Warning severity. Value: `"warning"`.' },
+    { name: '`INFORMATION`', description: 'Lowest severity. Value: `"information"`.' },
   ];
 
   examples: CodeExampleBoxComponentOptions[] = [
@@ -257,6 +292,22 @@ export class MessageDialogConsumerComponent {
         },
         {
           fileName: 'example-4.component.ts',
+          language: 'ts',
+          codeSnippetPath: 'code-snippets/message-dialog-service',
+        },
+      ],
+    },
+    {
+      expanderTitle: 'Example 5',
+      expanderDescription: 'An error dialog with multi-line error messages',
+      codeSnippets: [
+        {
+          fileName: 'example-5.component.html',
+          language: 'html',
+          codeSnippetPath: 'code-snippets/message-dialog-service',
+        },
+        {
+          fileName: 'example-5.component.ts',
           language: 'ts',
           codeSnippetPath: 'code-snippets/message-dialog-service',
         },

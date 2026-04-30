@@ -17,7 +17,7 @@
 
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { FollowUpNotificationIdService } from '../../../../../demis-portal-core-library/src/lib/services/follow-up-notification-id.service';
+import { FollowUpNotificationIdService } from '@gematik/demis-portal-core-library';
 
 @Component({
   selector: 'app-follow-up-notification-id-example-1',
@@ -33,10 +33,7 @@ export class FollowUpNotificationIdExample1Component {
         routerLink: '/pathogen-notification/7.1',
         linkTextContent: 'eines namentlichen Erregernachweises nach §7.1 IfSG',
         pathToDestinationLookup: '/destination-lookup/v1',
-        errorUnsupportedNotificationCategory:
-          'Aktuell sind Nichtnamentliche Folgemeldungen eines Erregernachweises gemäß § 7 Abs. 1 IfSG nur für eine § 7 Abs. 1 IfSG Initialmeldung möglich.',
       },
-      notificationCategoryCodes: ['invp'],
     });
   }
 }

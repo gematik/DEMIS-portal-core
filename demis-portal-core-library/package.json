@@ -1,6 +1,6 @@
 {
   "name": "@gematik/demis-portal-core-library",
-  "version": "3.2.2",
+  "version": "4.1.0",
   "peerDependencies": {
     "@angular/animations": "21.2.4",
     "@angular/cdk": "21.2.2",
@@ -18,7 +18,8 @@
     "ngx-logger": "5.0.12",
     "rxjs": "7.8.2",
     "zone.js": "0.16.1",
-    "date-fns": "4.1.0"
+    "date-fns": "4.1.0",
+    "ngx-mat-select-search": "8.0.4"
   },
   "dependencies": {
     "tslib": "2.8.1"

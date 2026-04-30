@@ -72,7 +72,6 @@ describe('FollowUpNotificationIdService', () => {
         routerLink: '/abc-notification/xyz',
         linkTextContent: 'eines namentlichen abc Nachweises nach xyz',
         pathToDestinationLookup: '/destination-lookup',
-        errorUnsupportedNotificationCategory: 'Fehler! abc Folgemeldungen werden nicht unterstützt.',
       },
       notificationCategoryCodes: ['invp', 'abvp'],
     };
@@ -92,7 +91,6 @@ describe('FollowUpNotificationIdService', () => {
           routerLink: dialogData.dialogData.routerLink,
           linkTextContent: dialogData.dialogData.linkTextContent,
           pathToDestinationLookup: dialogData.dialogData.pathToDestinationLookup,
-          errorUnsupportedNotificationCategory: dialogData.dialogData.errorUnsupportedNotificationCategory,
         })
       );
     });
@@ -123,7 +121,6 @@ describe('FollowUpNotificationIdService', () => {
           routerLink: '/abc-notification/xyz',
           linkTextContent: 'eines namentlichen abc Nachweises nach xyz',
           pathToDestinationLookup: '/destination-lookup',
-          errorUnsupportedNotificationCategory: 'Fehler! abc Folgemeldungen werden nicht unterstützt.',
         },
       });
       const closeSpy = spyOn(dialogRefMock, 'close').and.callThrough();
@@ -186,7 +183,6 @@ describe('FollowUpNotificationIdService', () => {
           routerLink: '/abc-notification/xyz',
           linkTextContent: 'eines namentlichen abc Nachweises nach xyz',
           pathToDestinationLookup: '/destination-lookup',
-          errorUnsupportedNotificationCategory: 'Fehler! abc Folgemeldungen werden nicht unterstützt.',
         },
       });
       service.validateNotificationId(id, path);
@@ -195,32 +191,6 @@ describe('FollowUpNotificationIdService', () => {
       expect(service.validatedNotificationId()).toBe(id);
       expect(service.followUpNotificationCategory()).toBe('abvp');
       expect(service.hasValidNotificationId()).toBe(true);
-    });
-
-    it('unsupported category sets validationStatus UNSUPPORTED_NOTIFICATION_CATEGORY', () => {
-      const response: FollowUpNotificationCategory = { notificationCategory: 'invd' };
-      spyOn(fhirService, 'fetchFollowUpNotificationCategory').and.returnValue(of(response));
-
-      service.openDialog({
-        dialogData: {
-          routerLink: '/abc-notification/xyz',
-          linkTextContent: 'eines namentlichen abc Nachweises nach xyz',
-          pathToDestinationLookup: '/destination-lookup',
-          errorUnsupportedNotificationCategory: 'Fehler! abc Folgemeldungen werden nicht unterstützt.',
-        },
-        notificationCategoryCodes: ['invp', 'abvp'],
-      });
-      // Set a different state before to check for change
-      service.validationStatus.set(ValidationStatus.VALID);
-      service.validatedNotificationId.set('prev');
-      service.followUpNotificationCategory.set('prevCat');
-
-      service.validateNotificationId(id, path);
-
-      expect(service.validationStatus()).toBe(ValidationStatus.UNSUPPORTED_NOTIFICATION_CATEGORY);
-      expect(service.validatedNotificationId()).toBeUndefined();
-      expect(service.followUpNotificationCategory()).toBeUndefined();
-      expect(service.hasValidNotificationId()).toBe(false);
     });
 
     it('accepts any category if no codes are set', () => {

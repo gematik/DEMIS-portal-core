@@ -1,0 +1,55 @@
+@use '@angular/material' as mat;
+
+.filterable-select-panel {
+  @include mat.option-overrides((
+    selected-state-layer-color: transparent,
+    selected-state-label-text-color: var(--color-black),
+    focus-state-layer-color: transparent,
+    hover-state-layer-color: var(--color-secondary-light40),
+  ));
+
+  @include mat.pseudo-checkbox-overrides((
+    full-selected-icon-color: var(--color-primary),
+    full-selected-checkmark-color: var(--color-white),
+    full-unselected-icon-color: var(--color-primary),
+  ));
+
+  // Selected option: bold text
+  .mat-mdc-option.mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text {
+    font-weight: 700;
+  }
+
+  // Keyboard-focused option: black outline, no background
+  .mat-mdc-option.mat-mdc-option.mat-mdc-option-active.mat-mdc-option-active {
+    outline: 2px solid var(--color-black);
+    outline-offset: -2px;
+    background-color: transparent;
+  }
+
+  // Disable Material focus indicator pseudo-element
+  .mat-mdc-option.mat-mdc-option .mat-mdc-focus-indicator::before {
+    display: none;
+  }
+
+  // Remove state layer background on focus
+  .mat-mdc-option.mat-mdc-option.mat-mdc-option-active .mdc-list-item__ripple::before,
+  .mat-mdc-option.mat-mdc-option.mat-mdc-option-active .mdc-list-item__ripple::after,
+  .mat-mdc-option.mat-mdc-option.mat-mdc-option-active .mat-mdc-option-ripple {
+    opacity: 0;
+  }
+}
+
+// Chip text label: full black without alpha
+gem-demis-filterable-select .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
+  color: var(--color-black);
+}
+
+// Chip remove button: blue icon, no background
+gem-demis-filterable-select .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mat-mdc-chip-remove {
+  color: var(--color-primary);
+  opacity: 1;
+
+  .mat-icon {
+    color: var(--color-primary);
+  }
+}

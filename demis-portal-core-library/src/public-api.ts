@@ -29,6 +29,9 @@ export * from './lib/components/file-select/file-select.component';
 export * from './lib/components/formly-datepicker/datepicker-validation-messages';
 export * from './lib/components/formly-datepicker/formly-datepicker.component';
 export * from './lib/components/formly-repeater/formly-repeater.component';
+export * from './lib/components/formly-filterable-select/formly-filterable-select.component';
+export { filterableSelectField } from './lib/components/formly-filterable-select/filterable-select-shared';
+export type { SelectOption } from './lib/components/formly-filterable-select/filterable-select-shared';
 export * from './lib/components/forms-footer/forms-footer.component';
 export * from './lib/components/max-height-content-container/max-height-content-container.component';
 export * from './lib/components/paste-box/paste-box.component';
@@ -53,6 +56,7 @@ export * from './lib/pipes/file-size.pipe';
 export * from './lib/formly/commons';
 export * from './lib/formly/notified-person-anonymous.config';
 export * from './lib/formly/notified-person-not-by-name.config';
+export * from './lib/formly/with-demis-formly-core';
 
 /***********************************************
  * SERVICES

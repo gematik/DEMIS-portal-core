@@ -1,0 +1,102 @@
+@use '@angular/material' as mat;
+
+:host {
+  display: block;
+  position: relative;
+  --mat-list-list-item-label-text-color: var(--color-black);
+
+  @include mat.select-overrides((
+    enabled-arrow-color: var(--color-primary),
+    focused-arrow-color: var(--color-primary),
+  ));
+
+  @include mat.icon-button-overrides((
+    icon-color: var(--color-primary),
+    focus-state-layer-opacity: 0,
+    hover-state-layer-opacity: 0,
+    pressed-state-layer-opacity: 0,
+  ));
+}
+
+.filterable-select-chip-area {
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  padding-right: 60px;
+  pointer-events: none;
+
+  mat-chip-set, mat-chip, button {
+    pointer-events: auto;
+  }
+}
+
+.filterable-select-chip-set {
+  margin-bottom: 0;
+
+  mat-chip {
+    font-size: 13px;
+
+    &.mat-mdc-chip.mat-mdc-chip {
+      background-color: transparent;
+      border: 1px solid var(--color-neutral-dark);
+      color: var(--color-black);
+    }
+
+    button[matChipRemove] {
+      color: var(--color-primary);
+      background: none;
+      border: none;
+      opacity: 1;
+
+      &:focus-visible {
+        outline: 2px solid var(--color-black);
+        outline-offset: 2px;
+        border-radius: 50%;
+      }
+    }
+
+    // Custom focus indicator for the chip itself (keyboard navigation via arrow keys)
+    &.mat-mdc-chip.cdk-keyboard-focused,
+    &.mat-mdc-chip:focus-visible {
+      outline: 2px solid var(--color-black);
+      outline-offset: 2px;
+    }
+
+    // Suppress Material's default focus overlay so our outline is the sole indicator
+    .mat-mdc-chip-focus-overlay {
+      display: none;
+    }
+  }
+}
+
+// Only collapse mat-select when chips are actually present
+:host:has(mat-chip) {
+  mat-select {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    transform: translateY(-50%);
+  }
+}
+
+.clear-button {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-black);
+    outline-offset: 2px;
+  }
+}
+
+.option-description {
+  font-size: 12px;
+  color: var(--color-neutral-dark);
+}
