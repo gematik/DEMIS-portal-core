@@ -79,3 +79,4 @@ export * from './lib/demis-portal-shared.module';
 export * from './lib/utils/apply-recursivly.function';
 export * from './lib/utils/clone-object.function';
 export * from './lib/utils/trim-strings.function';
+export * from './lib/utils/configure-logger.function';
