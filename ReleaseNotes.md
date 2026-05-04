@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.0
+
+- Added logger configuration functionality
+
 ## Release 4.1.0
 
 - Introduced generic filterable select as formly field type
