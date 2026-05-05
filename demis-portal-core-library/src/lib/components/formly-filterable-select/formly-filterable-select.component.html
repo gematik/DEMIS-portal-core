@@ -30,7 +30,7 @@
     <mat-select-trigger>
       {{ triggerDisplay() }}
       @if (descriptionFn(currentValue())) {
-        <span class="option-description"> - {{ descriptionFn(currentValue()) }}</span>
+        <span class="option-description">&nbsp;-&nbsp;{{ descriptionFn(currentValue()) }}</span>
       }
     </mat-select-trigger>
   }
@@ -52,7 +52,7 @@
     <mat-option [value]="option" [id]="field.id + '-opt-' + option[optionValueKey()]" [class]="'opt-' + option[optionValueKey()]">
       {{ displayFn(option) }}
       @if (descriptionFn(option)) {
-        <span class="option-description"> - {{ descriptionFn(option) }}</span>
+        <span class="option-description">&nbsp;-&nbsp;{{ descriptionFn(option) }}</span>
       }
     </mat-option>
   }

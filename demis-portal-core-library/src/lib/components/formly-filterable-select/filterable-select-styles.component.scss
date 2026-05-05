@@ -53,3 +53,34 @@ gem-demis-filterable-select .mat-mdc-standard-chip:not(.mdc-evolution-chip--disa
     color: var(--color-primary);
   }
 }
+
+// Long trigger values used to be truncated with an ellipsis (Material default).
+// We allow them to wrap instead so no information is lost.
+//
+// Two layers matter here:
+//   .mat-mdc-select-value      -> the flex container; reserves space on the
+//                                 right for the dropdown arrow + clear button
+//                                 via padding-right.
+//   .mat-mdc-select-value-text -> the actual text node; Material applies
+//                                 `white-space: nowrap` here, which we have to
+//                                 override or the text will simply overflow
+//                                 past the padding.
+gem-demis-filterable-select {
+  .mat-mdc-select-value {
+    padding-right: 56px;
+  }
+
+  .mat-mdc-select-value-text {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+}
+
+// Apply the same wrapping behaviour inside the options panel so the open
+// dropdown shows the same content as the trigger.
+.filterable-select-panel .mat-mdc-option .mdc-list-item__primary-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}

@@ -172,7 +172,49 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
         if (this.multiple() && event.shiftKey && keyManager.activeItem && keyManager.activeItem !== previouslyActiveItem) {
           keyManager.activeItem._selectViaInteraction();
         }
+        // Material's CDK ListKeyManager scrolls the active option into view by
+        // setting panel.scrollTop directly, which ignores `scroll-margin-top`.
+        // The first mat-option in the panel is the ngx-mat-select-search input,
+        // sticky-positioned at the top — so without correction the focused
+        // option ends up visually hidden behind it. We re-align scrollTop after
+        // the key manager has moved.
+        this.ensureActiveOptionBelowStickySearch();
       }
+    }
+  }
+
+  private ensureActiveOptionBelowStickySearch(): void {
+    const select = this.matSelectRef();
+    if (!select.panelOpen) {
+      return;
+    }
+    const options = select.options?.toArray() ?? [];
+    const activeIndex = options.findIndex(option => option.active);
+    if (activeIndex < 0) {
+      return;
+    }
+    // Locate the panel via any rendered option's host element (option index 0
+    // is always present — the sticky search wrapper).
+    const firstOptionEl = document.querySelector('.mat-mdc-select-panel .mat-mdc-option') as HTMLElement | null;
+    const panelEl = firstOptionEl?.closest('.mat-mdc-select-panel') as HTMLElement | null;
+    if (!panelEl) {
+      return;
+    }
+    const optionEls = panelEl.querySelectorAll<HTMLElement>('.mat-mdc-option');
+    const optionEl = optionEls.item(activeIndex);
+    if (!optionEl) {
+      return;
+    }
+    // optionEls.item(0) is guaranteed non-null here: panelEl was derived via
+    // `closest()` from a matching first option, so the panel must contain at
+    // least that one option. `|| 48` covers both an unexpected 0 height and
+    // forms a single, fully-testable branch.
+    const stickyHeight = (optionEls.item(0) as HTMLElement).offsetHeight || 48;
+    const optionRect = optionEl.getBoundingClientRect();
+    const panelRect = panelEl.getBoundingClientRect();
+    const optionTopWithinPanel = optionRect.top - panelRect.top + panelEl.scrollTop;
+    if (optionTopWithinPanel - panelEl.scrollTop < stickyHeight) {
+      panelEl.scrollTop = Math.max(0, optionTopWithinPanel - stickyHeight);
     }
   }
 }
