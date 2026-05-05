@@ -437,6 +437,109 @@ describe('FormlyFilterableSelectComponent', () => {
       expect(value?.length).toBeGreaterThan(0);
     });
   });
+
+  describe('ensureActiveOptionBelowStickySearch', () => {
+    function getComponent(): FormlyFilterableSelectComponent {
+      return fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent))[1].componentInstance as FormlyFilterableSelectComponent;
+    }
+
+    function callHelper(component: FormlyFilterableSelectComponent): void {
+      (component as any).ensureActiveOptionBelowStickySearch();
+    }
+
+    function stubSelect(component: FormlyFilterableSelectComponent, fake: unknown): void {
+      Object.defineProperty(component, 'matSelectRef', { value: () => fake, configurable: true });
+    }
+
+    it('should return early when the panel is closed', () => {
+      const component = getComponent();
+      // Panel was never opened -> panelOpen is false
+      expect(() => callHelper(component)).not.toThrow();
+    });
+
+    it('should fall back to an empty options array when select.options is undefined', () => {
+      const component = getComponent();
+      stubSelect(component, { panelOpen: true, options: undefined });
+      expect(() => callHelper(component)).not.toThrow();
+    });
+
+    it('should return early when no option is active', () => {
+      const component = getComponent();
+      stubSelect(component, {
+        panelOpen: true,
+        options: { toArray: () => [{ active: false }, { active: false }] },
+      });
+      expect(() => callHelper(component)).not.toThrow();
+    });
+
+    it('should return early when the panel element cannot be located', () => {
+      const component = getComponent();
+      stubSelect(component, {
+        panelOpen: true,
+        options: { toArray: () => [{ active: false }, { active: true }] },
+      });
+      spyOn(document, 'querySelector').and.returnValue(null);
+      expect(() => callHelper(component)).not.toThrow();
+    });
+
+    it('should return early when the option element index has no DOM counterpart', async () => {
+      const selects = await loader.getAllHarnesses(MatSelectHarness);
+      await selects[1].open();
+
+      const component = getComponent();
+      // Real panel exists, but report a far out-of-range active index
+      stubSelect(component, {
+        panelOpen: true,
+        options: { toArray: () => Array.from({ length: 999 }, (_, i) => ({ active: i === 998 })) },
+      });
+      expect(() => callHelper(component)).not.toThrow();
+    });
+
+    it('should fall back to a default sticky height when offsetHeight is falsy', () => {
+      const component = getComponent();
+      // Build a synthetic panel with two options directly in the DOM
+      const panel = document.createElement('div');
+      panel.classList.add('mat-mdc-select-panel');
+      const stickyOption = document.createElement('div');
+      stickyOption.classList.add('mat-mdc-option');
+      const dataOption = document.createElement('div');
+      dataOption.classList.add('mat-mdc-option');
+      panel.appendChild(stickyOption);
+      panel.appendChild(dataOption);
+      document.body.appendChild(panel);
+      // Force offsetHeight to 0 so the `?? 48` fallback branch fires
+      spyOnProperty(stickyOption, 'offsetHeight', 'get').and.returnValue(0);
+
+      stubSelect(component, {
+        panelOpen: true,
+        options: { toArray: () => [{ active: false }, { active: true }] },
+      });
+      try {
+        expect(() => callHelper(component)).not.toThrow();
+      } finally {
+        document.body.removeChild(panel);
+      }
+    });
+
+    it('should adjust scrollTop when the active option sits behind the sticky search', async () => {
+      const selects = await loader.getAllHarnesses(MatSelectHarness);
+      await selects[1].open();
+
+      const component = getComponent();
+      const realPanel = document.querySelector('.mat-mdc-select-panel') as HTMLElement;
+      const realOptions = realPanel.querySelectorAll<HTMLElement>('.mat-mdc-option');
+      // Pretend the panel is scrolled past the top so the second option visually overlaps the sticky search
+      realPanel.scrollTop = 1000;
+
+      stubSelect(component, {
+        panelOpen: true,
+        options: { toArray: () => Array.from({ length: realOptions.length }, (_, i) => ({ active: i === 1 })) },
+      });
+      callHelper(component);
+
+      expect(realPanel.scrollTop).toBeLessThan(1000);
+    });
+  });
 });
 
 describe('filterable-select-shared utilities', () => {

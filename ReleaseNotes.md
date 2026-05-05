@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.1
+
+- Fixed visual appearance of the (selected) options in the filterable select component
+- Fixed hidden focussed select option in filterable select component
+
 ## Release 4.2.0
 
 - Added logger configuration functionality
