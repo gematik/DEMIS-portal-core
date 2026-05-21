@@ -51,7 +51,6 @@ export class MessageDialogExample4Component {
           severity: SeverityEnum.INFORMATION,
         },
       ],
-      logFilteringEnabled: true,
       minSeverityLevel: SeverityEnum.WARNING, //If not set defaults to SeverityEnum.ERROR
     };
     this.messageDialogService.showErrorDialog(errorsDialogProps);

@@ -33,6 +33,7 @@ import { format, isValid, setDate } from 'date-fns';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { FormlyDatepickerMockComponent } from '../../../test/utils/formly-datepicker.mock.component';
 import { getButton, getDatepicker } from '../../../test/utils/test-utils';
+import { DatePrecision } from './datepicker-shared';
 import { FormlyDatepickerComponent } from './formly-datepicker.component';
 import { DatepickerHeaderComponent } from './header/datepicker-header.component';
 
@@ -382,43 +383,89 @@ describe('FormlyDatepickerComponent', () => {
     });
 
     it('should process various date formats through programmatic value setting', () => {
-      const control = component.form.get('datepickerAllPrecisionLevels');
-      const testCases = [
-        '15.06.2025',
-        '06.2025',
-        '2025', // German formats
-        '2025-06-15',
-        '2025-06', // ISO formats
-        '15062025',
-        '062025', // German without dots
-        'invalid-date',
-        '',
-        null,
-        123, // Invalid inputs
-        '15.06',
-        '06',
-        '202',
-        '1506202',
-        '06202', // Edge cases
+      const control = component.form.get('datepickerAllPrecisionLevels')!;
+
+      // Each case asserts the resulting model value and whether an invalidDate
+      // error is reported, exercising the full detect/convert/apply pipeline.
+      const validCases: Array<{ input: string; expectedModel: string }> = [
+        { input: '15.06.2025', expectedModel: '2025-06-15' }, // German day
+        { input: '06.2025', expectedModel: '2025-06' }, // German month
+        { input: '2025', expectedModel: '2025' }, // Year (matches German regex first)
+        { input: '2025-06-15', expectedModel: '2025-06-15' }, // ISO day
+        { input: '2025-06', expectedModel: '2025-06' }, // ISO month
       ];
 
-      testCases.forEach(value => {
-        control!.setValue(value);
+      validCases.forEach(({ input, expectedModel }) => {
+        control.setValue(input);
         fixture.detectChanges();
+        expect(component.model['datepickerAllPrecisionLevels']).withContext(`input=${input}`).toEqual(expectedModel);
+        expect(control.hasError('invalidDate')).withContext(`input=${input}`).toBeFalse();
       });
+
+      // German formats without dots are detected and converted to ISO, but
+      // because inputStringToDate only accepts the dotted German format, the
+      // post-conversion validation flags them as invalidDate. The model still
+      // reflects the converted ISO value.
+      const noDotCases: Array<{ input: string; expectedModel: string }> = [
+        { input: '15062025', expectedModel: '2025-06-15' },
+        { input: '062025', expectedModel: '2025-06' },
+      ];
+
+      noDotCases.forEach(({ input, expectedModel }) => {
+        control.setValue(input);
+        fixture.detectChanges();
+        expect(component.model['datepickerAllPrecisionLevels']).withContext(`input=${input}`).toEqual(expectedModel);
+        expect(control.hasError('invalidDate')).withContext(`input=${input}`).toBeTrue();
+      });
+
+      // Inputs that cannot be matched to any supported precision must yield invalidDate.
+      const invalidStringInputs = ['invalid-date', '15.06', '06', '202', '1506202', '06202', ''];
+      invalidStringInputs.forEach(input => {
+        control.setValue(input);
+        fixture.detectChanges();
+        expect(control.hasError('invalidDate')).withContext(`input=${input}`).toBeTrue();
+      });
+
+      // Non-string values are ignored by the precision detection logic and
+      // therefore must not raise the invalidDate error.
+      control.setValue(null);
+      fixture.detectChanges();
+      expect(control.hasError('invalidDate')).toBeFalse();
+
+      control.setValue(123 as unknown as string);
+      fixture.detectChanges();
+      expect(control.hasError('invalidDate')).toBeFalse();
     });
 
     it('should trigger German format detection through user input processing', () => {
-      const testInputs = [
-        { value: '15.06.2025', precision: 'day' },
-        { value: '06.2025', precision: 'month' },
-        { value: '2025', precision: 'year' },
-        { value: '15062025', precision: 'day' },
-        { value: '062025', precision: 'month' },
+      const control = component.form.get('datepickerAllPrecisionLevels')!;
+      // Each input is fed directly into processPrecisionValue with format=GERMAN
+      // to exercise the German-only branches. We assert on the side effects:
+      // the form control value (after ISO conversion for day/month) and the
+      // resulting currentPrecision. For inputs without dots the conversion
+      // succeeds but the post-conversion validation still reports invalidDate.
+      const testInputs: Array<{
+        value: string;
+        precision: DatePrecision;
+        expectedControlValue: string | null;
+        expectInvalidDate: boolean;
+      }> = [
+        { value: '15.06.2025', precision: 'day', expectedControlValue: '2025-06-15', expectInvalidDate: false },
+        { value: '06.2025', precision: 'month', expectedControlValue: '2025-06', expectInvalidDate: false },
+        { value: '2025', precision: 'year', expectedControlValue: null, expectInvalidDate: false }, // year short-circuits, no conversion
+        { value: '15062025', precision: 'day', expectedControlValue: '2025-06-15', expectInvalidDate: true },
+        { value: '062025', precision: 'month', expectedControlValue: '2025-06', expectInvalidDate: true },
       ];
 
-      testInputs.forEach(({ value, precision }) => {
-        component['processPrecisionValue'](value, precision as any, 'GERMAN');
+      testInputs.forEach(({ value, precision, expectedControlValue, expectInvalidDate }) => {
+        control.setValue(null, { emitEvent: false });
+        component['processPrecisionValue'](value, precision, 'GERMAN');
+
+        if (expectedControlValue !== null) {
+          expect(control.value).withContext(`input=${value}`).toBe(expectedControlValue);
+        }
+        expect(component['currentPrecision']).withContext(`input=${value}`).toBe(precision);
+        expect(control.hasError('invalidDate')).withContext(`input=${value}`).toBe(expectInvalidDate);
       });
     });
   });

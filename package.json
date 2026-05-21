@@ -1,6 +1,6 @@
 {
   "name": "portal-core",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "overrides": {
     "ng-mocks": {
       "@angular/common": "$@angular/common",
@@ -22,9 +22,12 @@
     "build": "ng build @gematik/demis-portal-core-library",
     "build:dev": "npm run clean && npm run build && npm pack dist/gematik/demis-portal-core-library --pack-destination dist",
     "build:schematics": "npm run build --prefix schematics",
-    "watch": "ng build @gematik/demis-portal-core-library --watch --configuration production",
+    "watch": "ng build @gematik/demis-portal-core-library --watch --configuration development",
+    "watch:prod": "ng build @gematik/demis-portal-core-library --watch --configuration production",
     "start": "wait-on dist/gematik/demis-portal-core-library/package.json && ng serve --port 4299",
-    "dev": "npm run clean && npm-run-all --parallel watch start",
+    "dev": "npm-run-all --parallel watch start",
+    "dev:fresh": "npm run clean && npm-run-all --parallel watch start",
+    "dev:prod": "npm run clean && npm-run-all --parallel watch:prod start",
     "test-local": "ng test @gematik/demis-portal-core-library --karma-config karma.conf.js",
     "test": "ng test @gematik/demis-portal-core-library --karma-config karma.single-run.conf.js",
     "test:coverage": "ng test @gematik/demis-portal-core-library --karma-config karma.coverage.conf.js",
@@ -63,7 +66,7 @@
     "zone.js": "0.16.1"
   },
   "devDependencies": {
-    "@angular/build": "21.2.2",
+    "@angular/build": "21.2.11",
     "@angular/cli": "21.2.2",
     "@angular/compiler-cli": "21.2.4",
     "@types/jasmine": "6.0.0",

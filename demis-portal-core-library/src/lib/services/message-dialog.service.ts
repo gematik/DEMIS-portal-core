@@ -27,10 +27,6 @@ export interface ErrorsDialogProps {
   clipboardContent?: string;
   errorTitle?: string;
   redirectToHome?: boolean;
-  // Even though logFilteringEnabled and minSeverityLevel belong together, they are kept separate because
-  // logFilteringEnabled is only required as long as we use the feature flag FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING
-  // Props can be consolidated once FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING is removed.
-  logFilteringEnabled?: boolean;
   minSeverityLevel?: SeverityEnum;
 }
 
@@ -95,15 +91,13 @@ export class MessageDialogService {
   }
 
   showErrorDialog(data: ErrorsDialogProps, style?: DialogStyle): void {
-    const dialogData = data.logFilteringEnabled
-      ? {
-          ...data,
-          errors: this.filterBySeverityLevel(data),
-        }
-      : data;
+    const dialogData = {
+      ...data,
+      errors: this.filterBySeverityLevel(data),
+    };
 
     this.matDialog.open(ErrorDialogWithSearchInKbComponent, {
-      data: data.logFilteringEnabled ? dialogData : data,
+      data: dialogData,
       height: style?.height ?? '600px',
       width: style?.width ?? '800px',
       maxWidth: style?.maxWidth ?? '800px',
