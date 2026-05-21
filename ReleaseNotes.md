@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.2
+
+- Fixed Datepicker tests
+- Removed feature switch logFilteringEnabled (FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING)
+
 ## Release 4.2.1
 
 - Fixed visual appearance of the (selected) options in the filterable select component

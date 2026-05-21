@@ -93,7 +93,16 @@ describe('MessageDialogService', () => {
     it('case 1: user wants error dialog to be closable', () => {
       const openSpy = spyOn(matDialog, 'open');
       service.showErrorDialog(data);
-      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, { data, ...defaultStyle });
+
+      const expectedFilteredData = {
+        ...data,
+        errors: [
+          { text: 'error1', queryString: 'query1' },
+          { text: 'error2', queryString: 'query2' },
+        ],
+      };
+
+      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, { data: expectedFilteredData, ...defaultStyle });
     });
 
     it('case 2: user wants to force a redirect to homepage', () => {
@@ -108,8 +117,17 @@ describe('MessageDialogService', () => {
       };
       const openSpy = spyOn(matDialog, 'open');
       service.showErrorDialog(dataWithRedirect);
+
+      const expectedFilteredData = {
+        ...dataWithRedirect,
+        errors: [
+          { text: 'error1', queryString: 'query1' },
+          { text: 'error2', queryString: 'query2' },
+        ],
+      };
+
       expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
-        data: dataWithRedirect,
+        data: expectedFilteredData,
         ...defaultStyleWithCloseDisabled,
       });
     });
@@ -127,24 +145,12 @@ describe('MessageDialogService', () => {
       ],
     } as ErrorsDialogProps;
 
-    it('should not filter out when filtering off', () => {
+    it('should filter out errors below the default log level', () => {
       const openSpy = spyOn(matDialog, 'open');
       service.showErrorDialog(data);
 
-      expect(openSpy).toHaveBeenCalledWith(ErrorDialogWithSearchInKbComponent, {
-        data: data,
-        ...defaultStyle,
-      });
-    });
-
-    it('should filter out errors below the default log level', () => {
-      const openSpy = spyOn(matDialog, 'open');
-
-      service.showErrorDialog({ ...data, logFilteringEnabled: true });
-
       const expectedFilteredData = {
         ...data,
-        logFilteringEnabled: true,
         errors: [
           { text: 'errorErrorLevel', severity: SeverityEnum.ERROR },
           { text: 'errorFatalLevel', severity: SeverityEnum.FATAL },
@@ -163,13 +169,11 @@ describe('MessageDialogService', () => {
       const customLogLevel = SeverityEnum.WARNING;
       service.showErrorDialog({
         ...data,
-        logFilteringEnabled: true,
         minSeverityLevel: customLogLevel,
       });
 
       const expectedFilteredData = {
         ...data,
-        logFilteringEnabled: true,
         minSeverityLevel: customLogLevel,
         errors: [
           { text: 'errorWarningLevel', severity: SeverityEnum.WARNING },
@@ -197,12 +201,10 @@ describe('MessageDialogService', () => {
             severity: 'unexpectedValue' as unknown as SeverityEnum,
           },
         ],
-        logFilteringEnabled: true,
       });
 
       const expectedFilteredData = {
         ...data,
-        logFilteringEnabled: true,
         errors: [{ text: 'errorWithUnexpectedLogLevel', severity: 'unexpectedValue' }],
       };
 

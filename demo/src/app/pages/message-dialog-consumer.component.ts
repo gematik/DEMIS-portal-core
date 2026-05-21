@@ -172,13 +172,8 @@ export class MessageDialogConsumerComponent {
         '`[optional]` If true, the close button navigates to the home page instead of just closing the dialog. Also sets disableClose on the Material Dialog.',
     },
     {
-      name: '`logFilteringEnabled?: boolean`',
-      description:
-        '`[optional]` Temporary feature flag that activates severity-based filtering of error messages. When enabled, only errors meeting the `minSeverityLevel` threshold are shown. This property will be removed once the corresponding feature flag (`FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING`) is retired.',
-    },
-    {
       name: '`minSeverityLevel?: SeverityEnum`',
-      description: '`[optional]` The minimum severity level to display when filtering is enabled. Defaults to `SeverityEnum.ERROR`.',
+      description: '`[optional]` The minimum severity level to display. Only errors meeting this threshold are shown. Defaults to `SeverityEnum.ERROR`.',
     },
   ];
 
@@ -205,8 +200,7 @@ export class MessageDialogConsumerComponent {
     },
     {
       name: '`severity?: SeverityEnum`',
-      description:
-        '`[optional]` The severity level of the error message. Used for filtering when `logFilteringEnabled` is set. Defaults to `ERROR` if not specified.',
+      description: '`[optional]` The severity level of the error message. Used for filtering. Defaults to `ERROR` if not specified.',
     },
   ];
 
