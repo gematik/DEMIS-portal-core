@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.3
+- Improved release pipeline
+- Fixed styling errors for different spacings and diversity problems
+
 ## Release 4.2.2
 
 - Fixed Datepicker tests
