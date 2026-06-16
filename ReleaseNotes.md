@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.4
+- Updated dependencies to latest compatible versions
+
 ## Release 4.2.3
 - Improved release pipeline
 - Fixed styling errors for different spacings and diversity problems
