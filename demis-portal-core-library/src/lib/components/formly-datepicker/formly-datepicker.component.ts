@@ -344,6 +344,13 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
     this.datepickerStateService.setCurrentPrecision(defaultPrecision);
   }
 
+  onBlur(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.value?.trim()) {
+      this.formControl.markAsTouched();
+    }
+  }
+
   private setCurrentPrecision(precision: DatePrecision | null): void {
     this.currentPrecision = precision;
     if (precision && VALID_FORMATS.has(precision)) {

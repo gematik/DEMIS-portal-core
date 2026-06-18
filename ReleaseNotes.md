@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.5
+- Fixed datepicker validation for two-digit inputs
+
 ## Release 4.2.4
 - Updated dependencies to latest compatible versions
 
