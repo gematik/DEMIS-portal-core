@@ -40,19 +40,19 @@ export interface DocTableRowData {
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element" [innerHtml]="markdownService.convertToSanitizedHtml(element.name)" />
+        <mat-cell *matCellDef="let element" [innerHtml]="markdownService.convertToSanitizedHtml(asRowData(element).name)" />
       </ng-container>
 
       <!-- Description Column -->
       <ng-container matColumnDef="description">
         <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          @if (isArray(element.description)) {
-            @for (desc of element.description; track desc) {
+          @if (isArray(asRowData(element).description)) {
+            @for (desc of $any(asRowData(element).description); track desc) {
               <div [innerHtml]="markdownService.convertToSanitizedHtml(desc)"></div>
             }
           } @else {
-            <div [innerHtml]="markdownService.convertToSanitizedHtml(element.description)"></div>
+            <div [innerHtml]="markdownService.convertToSanitizedHtml($any(asRowData(element).description))"></div>
           }
         </mat-cell>
       </ng-container>
@@ -86,7 +86,11 @@ export class DocTableComponent {
 
   protected readonly markdownService = inject(MarkdownService);
 
-  isArray(value: any): boolean {
+  protected asRowData(element: unknown): DocTableRowData {
+    return element as DocTableRowData;
+  }
+
+  isArray(value: unknown): boolean {
     return Array.isArray(value);
   }
 }

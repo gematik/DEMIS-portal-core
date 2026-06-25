@@ -2,8 +2,13 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.6
+- Update portal-theme to 1.3.0 for text field label font size increase 
+- Fix type errors caused by stricter Angular Material template typing after update to v21.2.14 (incl. TypeScript 5.9.3)
+
 ## Release 4.2.5
 - Fixed datepicker validation for two-digit inputs
+- Removed feature flag FEATURE_FLAG_PORTAL_ACCESSIBILITY
 
 ## Release 4.2.4
 - Updated dependencies to latest compatible versions
