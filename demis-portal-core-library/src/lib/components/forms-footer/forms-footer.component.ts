@@ -25,8 +25,7 @@ import { Component, input } from '@angular/core';
   styleUrl: './forms-footer.component.css',
 })
 
-//can be removed when FEATURE_FLAG_PORTAL_ACCESSIBILITY and FEATURE_FLAG_FOOTER_LINKS_CORRECTION is removed
+//can be removed when FEATURE_FLAG_FOOTER_LINKS_CORRECTION is removed
 export class FormsFooterComponent {
-  featureFlagPortal = input.required<boolean>();
   featureFlagFooterLink = input.required<boolean>();
 }

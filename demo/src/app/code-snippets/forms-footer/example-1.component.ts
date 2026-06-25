@@ -25,6 +25,5 @@ import { FormsFooterComponent } from '@gematik/demis-portal-core-library';
   templateUrl: './example-1.component.html',
 })
 export class FormsFooterExample1Component {
-  featureFlagPortal = true;
   featureFlagFooterLink = true;
 }
