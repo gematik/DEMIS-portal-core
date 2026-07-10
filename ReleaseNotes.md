@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.7
+- optimize side navigation: trigger validation when switching to next step
+
 ## Release 4.2.6
 - Update portal-theme to 1.3.0 for text field label font size increase 
 - Fix type errors caused by stricter Angular Material template typing after update to v21.2.14 (incl. TypeScript 5.9.3)

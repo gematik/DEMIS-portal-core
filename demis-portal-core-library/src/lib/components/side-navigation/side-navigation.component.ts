@@ -84,6 +84,7 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
    */
   onStepChanged(event: StepChangeEvent) {
     const resolvedStepContent = this.stepsMap().get(event.selectedStep);
+    event.previouslySelectedStep?.control.markAllAsTouched();
     this.setStepContent(resolvedStepContent);
   }
 
