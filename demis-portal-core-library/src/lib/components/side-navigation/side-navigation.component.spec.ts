@@ -17,10 +17,10 @@
 
 import { Component, TemplateRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MockBuilder, MockRender, MockedComponentFixture, ngMocks } from 'ng-mocks';
-import { SideNavigationComponent, StepContentComponent, createStepContent } from './side-navigation.component';
+import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from 'ng-mocks';
+import { createStepContent, SideNavigationComponent, StepContentComponent } from './side-navigation.component';
 import { StepNavigationService } from '../../services/step-navigation.service';
-import { ProcessStep, DemisProcessStepperComponent, StepChangeEvent } from '../process-stepper/process-stepper.component';
+import { DemisProcessStepperComponent, ProcessStep, StepChangeEvent } from '../process-stepper/process-stepper.component';
 
 // Test component that extends StepContentComponent
 @Component({
@@ -256,6 +256,57 @@ describe('SideNavigationComponent', () => {
       const secondInstance = component.currentComponentInstance();
       expect(secondInstance).toBeTruthy();
       expect(secondInstance).not.toBe(firstInstance);
+    });
+
+    it('should mark previously selected step control as touched on step change', () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentNoActionsComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const markAllAsTouchedSpy = spyOn(steps[0].control, 'markAllAsTouched').and.callThrough();
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+      };
+
+      component.onStepChanged(event);
+
+      expect(markAllAsTouchedSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not throw when previouslySelectedStep is undefined on step change', () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentNoActionsComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: undefined,
+      };
+
+      expect(() => component.onStepChanged(event)).not.toThrow();
+      expect(component.currentComponentInstance()).toBeInstanceOf(TestStepContentNoActionsComponent);
     });
 
     it('should handle undefined step content gracefully', () => {
