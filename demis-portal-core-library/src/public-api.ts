@@ -67,6 +67,7 @@ export * from './lib/services/markdown.service';
 export * from './lib/services/message-dialog.service';
 export * from './lib/services/step-navigation';
 export * from './lib/services/provide-step-navigation';
+export * from './lib/services/deep-merge.service';
 
 /***********************************************
  * MODULES
