@@ -1,7 +1,9 @@
+<gem-demis-side-navigation-styles />
+
 <mat-drawer-container class="drawer-container demis-drawer-container">
   <mat-drawer mode="side" [opened]="true" [disableClose]="true" [autoFocus]="true" class="drawer-sidenav" style="transition: none !important">
     <div class="drawer-sidenav-wrapper">
-      <div class="drawer-sidenav-content">
+      <nav id="side-nav-step-navigation" class="drawer-sidenav-content" aria-label="Step navigation" tabindex="-1">
         <gem-demis-section-header [titleText]="sideNavTitle()">
           @if (sideNavSubtitle(); as subtitle) {
             <ng-container *ngTemplateOutlet="subtitle" />
@@ -10,12 +12,13 @@
         @if (steps()) {
           <gem-demis-process-stepper #internalStepper [steps]="steps()" (stepChange)="onStepChanged($event)" />
         }
+        <button type="button" class="skip-link" (click)="focusSection('side-nav-main-content')">Zum Formular wechseln</button>
         @if (additionalSideNavActions(); as actions) {
           <div class="additional-sidenav-actions">
             <ng-container *ngTemplateOutlet="actions" />
           </div>
         }
-      </div>
+      </nav>
       <div class="drawer-sidenav-footer">
         <gem-demis-forms-footer [featureFlagFooterLink]="true" />
       </div>
@@ -24,9 +27,9 @@
 
   <mat-drawer-content class="drawer-content" style="transition: none !important">
     <div class="drawer-content-wrapper">
-      <div class="drawer-content-main">
+      <main id="side-nav-main-content" #mainContent class="drawer-content-main" tabindex="-1">
         <ng-container #dynamicComponentContainer />
-      </div>
+      </main>
       @if (currentActionsLeft() || currentActionsRight()) {
         <div class="drawer-content-footer">
           <ng-container actions-left *ngTemplateOutlet="currentActionsLeft()" />
@@ -36,6 +39,13 @@
           <ng-container actions-right *ngTemplateOutlet="currentActionsRight()" />
         </div>
       }
+      <button
+        type="button"
+        class="skip-link"
+        (click)="focusSection('side-nav-step-navigation')"
+      >
+        Zur Schrittnavigation wechseln
+      </button>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>

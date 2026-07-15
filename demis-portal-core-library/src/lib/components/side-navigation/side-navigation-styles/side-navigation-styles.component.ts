@@ -15,25 +15,31 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { NavigationComponent } from './navigation/navigation.component';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
-  imports: [NavigationComponent, RouterOutlet],
-  template: `
-    @if (isStandaloneExampleRoute()) {
-      <router-outlet />
-    } @else {
-      <app-navigation />
+  selector: 'gem-demis-side-navigation-styles',
+  imports: [],
+  template: `<!-- ONLY USED FOR GLOBAL STYLES! DO NOT EXPORT! -->`,
+  styles: `
+    gem-demis-side-navigation {
+      nav.drawer-sidenav-content {
+        gem-demis-section-header .gem-demis-section-header {
+          padding: 0px 24px;
+
+          .section-header {
+            .section-header-title.section-header-title.section-header-title {
+              font-weight: 400;
+            }
+          }
+
+          .section-header-subtitle {
+            color: var(--color-primary);
+          }
+        }
+      }
     }
   `,
+  encapsulation: ViewEncapsulation.None, // <-- Applies styles globally!
 })
-export class AppComponent {
-  private readonly router = inject(Router);
-
-  isStandaloneExampleRoute(): boolean {
-    return this.router.url.startsWith('/examples/');
-  }
-}
+export class SideNavigationStylesComponent {}

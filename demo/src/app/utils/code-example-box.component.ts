@@ -17,11 +17,12 @@
 
 import { NgClass } from '@angular/common';
 import { Component, input, signal } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { RouterLink } from '@angular/router';
 import { CodeSnippetBoxComponent } from './code-snippet-box.component';
 
 export interface CodeSnippet {
@@ -34,16 +35,27 @@ export interface CodeExampleBoxComponentOptions {
   expanderTitle: string;
   expanderDescription: string;
   codeSnippets: CodeSnippet[];
+  standalonePath?: string;
 }
 
 @Component({
   selector: 'app-code-example-box',
-  imports: [MatExpansionModule, MatGridListModule, MatTabsModule, MatButton, MatIcon, CodeSnippetBoxComponent, NgClass],
+  imports: [MatExpansionModule, MatGridListModule, MatTabsModule, MatButton, MatIcon, CodeSnippetBoxComponent, NgClass, RouterLink, MatIconButton],
   template: `
     <mat-expansion-panel [expanded]="true" class="outlined-panel">
       <mat-expansion-panel-header>
         <mat-panel-title>{{ options().expanderTitle }}</mat-panel-title>
         <mat-panel-description>{{ options().expanderDescription }}</mat-panel-description>
+        @if (options().standalonePath) {
+          <button
+            mat-icon-button
+            [routerLink]="options().standalonePath"
+            title="Open standalone view"
+            aria-label="Open standalone view"
+            (click)="$event.stopPropagation()">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        }
       </mat-expansion-panel-header>
 
       <div class="row">

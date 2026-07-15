@@ -15,25 +15,25 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { NavigationComponent } from './navigation/navigation.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-@Component({
-  selector: 'app-root',
-  imports: [NavigationComponent, RouterOutlet],
-  template: `
-    @if (isStandaloneExampleRoute()) {
-      <router-outlet />
-    } @else {
-      <app-navigation />
-    }
-  `,
-})
-export class AppComponent {
-  private readonly router = inject(Router);
+import { SideNavigationStylesComponent } from './side-navigation-styles.component';
 
-  isStandaloneExampleRoute(): boolean {
-    return this.router.url.startsWith('/examples/');
-  }
-}
+describe('SideNavigationStylesComponent', () => {
+  let component: SideNavigationStylesComponent;
+  let fixture: ComponentFixture<SideNavigationStylesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SideNavigationStylesComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SideNavigationStylesComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

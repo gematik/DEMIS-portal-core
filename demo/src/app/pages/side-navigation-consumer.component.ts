@@ -239,6 +239,7 @@ export class SideNavigationConsumerComponent {
     {
       expanderTitle: 'Example 1',
       expanderDescription: 'Basic 6-step process with simple navigation and input data passing demonstration',
+      standalonePath: '/examples/components/side-navigation/example-1',
       codeSnippets: [
         {
           fileName: 'example-1.component.html',
@@ -295,6 +296,7 @@ export class SideNavigationConsumerComponent {
     {
       expanderTitle: 'Example 2',
       expanderDescription: 'Form-based 6-step process with validation, reactive forms and data submission',
+      standalonePath: '/examples/components/side-navigation/example-2',
       codeSnippets: [
         {
           fileName: 'example-2.component.html',
@@ -361,6 +363,7 @@ export class SideNavigationConsumerComponent {
     {
       expanderTitle: 'Example 3',
       expanderDescription: 'Complex example with ngx-formly, nested FormGroups, conditional step activation and PasteBox integration',
+      standalonePath: '/examples/components/side-navigation/example-3',
       codeSnippets: [
         {
           fileName: 'example-3.component.html',

@@ -29,6 +29,10 @@ import { FollowUpMixedCodesConsumerComponent } from './pages/follow-up-mixed-cod
 import { FollowUpNotificationIdConsumerComponent } from './pages/follow-up-notification-id-consumer.component';
 import { FormlyFilterableSelectConsumerComponent } from './pages/formly-filterable-select-consumer.component';
 import { FormlyGettingStartedConsumerComponent } from './pages/formly-getting-started-consumer.component';
+import { SideNavigationExample1Component } from './code-snippets/side-navigation/example-1/example-1.component';
+import { SideNavigationExample2Component } from './code-snippets/side-navigation/example-2/example-2.component';
+import { SideNavigationExample3Component } from './code-snippets/side-navigation/example-3/example-3.component';
+import { ExampleStandaloneComponent } from './pages/example-standalone.component';
 
 function prefixRoutes(prefix: string, routes: Routes): Routes {
   return routes.map(route => ({ ...route, path: `${prefix}/${route.path}` }));
@@ -128,6 +132,42 @@ const pipeConsumerRoutes: Routes = [];
 // Routes for the functions
 const functionConsumerRoutes: Routes = [];
 
+const standaloneExampleRoutes: Routes = [
+  {
+    path: 'examples/components/side-navigation/example-1',
+    title: 'Side Navigation Example 1',
+    pathMatch: 'full',
+    component: ExampleStandaloneComponent,
+    data: {
+      exampleComponent: SideNavigationExample1Component,
+      fullViewport: true,
+      consumerPath: '/components/side-navigation',
+    },
+  },
+  {
+    path: 'examples/components/side-navigation/example-2',
+    title: 'Side Navigation Example 2',
+    pathMatch: 'full',
+    component: ExampleStandaloneComponent,
+    data: {
+      exampleComponent: SideNavigationExample2Component,
+      fullViewport: true,
+      consumerPath: '/components/side-navigation',
+    },
+  },
+  {
+    path: 'examples/components/side-navigation/example-3',
+    title: 'Side Navigation Example 3',
+    pathMatch: 'full',
+    component: ExampleStandaloneComponent,
+    data: {
+      exampleComponent: SideNavigationExample3Component,
+      fullViewport: true,
+      consumerPath: '/components/side-navigation',
+    },
+  },
+];
+
 // Build the main routes
 export const routes: Routes = [
   {
@@ -136,6 +176,7 @@ export const routes: Routes = [
     pathMatch: 'full',
     component: HomeComponent,
   },
+  ...standaloneExampleRoutes,
   ...prefixRoutes('components', componentConsumerRoutes),
   ...prefixRoutes('formly', formlyConsumerRoutes),
   ...prefixRoutes('services', serviceConsumerRoutes),

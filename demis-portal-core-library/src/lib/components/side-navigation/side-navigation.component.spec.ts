@@ -616,4 +616,30 @@ describe('SideNavigationComponent', () => {
       expect(component.currentComponentInstance()).toBeNull();
     });
   });
+
+  describe('Focus and Skip Links', () => {
+    it('should focus the target section and ignore missing targets', () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      expect(() => component.focusSection('does-not-exist')).not.toThrow();
+
+      const mainContent = fixture.point.nativeElement.querySelector('#side-nav-main-content') as HTMLElement;
+      const scrollIntoViewSpy = spyOn(mainContent, 'scrollIntoView').and.stub();
+      const focusSpy = spyOn(mainContent, 'focus').and.stub();
+
+      component.focusSection('side-nav-main-content');
+
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'center', inline: 'nearest' });
+      expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+    });
+  });
 });

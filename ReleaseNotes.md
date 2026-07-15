@@ -2,7 +2,8 @@
 
 # Release Notes Portal-Core
 
-## Release 4.2.8
+## Release 4.2.9
+- Enhanced side navigation from design perspective
 
 ## Release 4.2.8
 - Added deep merge service for merging complex data objects
