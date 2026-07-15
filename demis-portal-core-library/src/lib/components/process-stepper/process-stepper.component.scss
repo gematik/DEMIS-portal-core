@@ -1,36 +1,57 @@
 @use '@angular/material' as mat;
 
 .gem-demis-stepper {
-  @include mat.stepper-overrides((
-    header-label-text-size: 14px,
-    header-label-text-color: var(--color-primary),
-    line-color: var(--color-neutral-light),
-    header-icon-foreground-color: var(--color-primary),
-    header-icon-background-color: var(--color-white),
-    header-selected-state-icon-background-color: var(--color-white),
-    header-selected-state-icon-foreground-color: var(--color-primary),
-    header-error-state-icon-foreground-color: var(--color-primary),
-    header-error-state-label-text-color: var(--color-primary),
-    header-error-state-label-text-size: 14px,
-    header-selected-state-label-text-weight: bold,
-  ));
+  @include mat.stepper-overrides(
+    (
+      header-label-text-size: 14px,
+      header-label-text-color: var(--color-primary),
+      line-color: var(--color-neutral-light),
+      header-icon-foreground-color: var(--color-primary),
+      header-icon-background-color: var(--color-white),
+      header-selected-state-icon-background-color: var(--color-white),
+      header-selected-state-icon-foreground-color: var(--color-primary),
+      header-error-state-icon-foreground-color: var(--color-primary),
+      header-error-state-label-text-color: var(--color-primary),
+      header-error-state-label-text-size: 14px,
+      header-selected-state-label-text-weight: bold,
+      header-focus-state-layer-color: transparent,
+    )
+  );
+
+  .mat-step.mat-step.mat-step:has(mat-step-header.cdk-focused.cdk-keyboard-focused:focus-visible) {
+    outline-color: currentcolor;
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
 
   .step-disabled {
     .mat-step-header {
       pointer-events: none;
-      
+
       * {
         pointer-events: none;
       }
 
       .mat-step-icon {
-        border-color: var(--color-neutral-light) !important;
+        border-color: var(--color-neutral-medium) !important;
         background-color: var(--color-white) !important;
-        
+
         // Override Material state colors
-        &.mat-step-icon-state-done,
         &.mat-step-icon-state-error {
           background-color: var(--color-white) !important;
+        }
+
+        &.mat-step-icon-state-done, &:has(.mat-icon.step-valid) {
+          background-color: var(--color-neutral-medium) !important;
+          border-style: solid !important;
+
+          .mat-step-icon-content {
+            mat-icon,
+            .mat-icon {
+              color: var(--color-white) !important;
+            }
+          }
         }
       }
 
@@ -38,19 +59,19 @@
       .mat-step-label,
       .step-label,
       .step-description {
-        color: var(--color-neutral-light) !important;
+        color: var(--color-neutral-medium) !important;
       }
 
       // Target step number
       .step-number {
-        color: var(--color-neutral-light) !important;
+        color: var(--color-neutral-medium) !important;
       }
 
       // Target mat-icon with all possible class combinations
       .mat-step-icon-content {
         mat-icon,
         .mat-icon {
-          color: var(--color-neutral-light) !important;
+          color: var(--color-neutral-medium) !important;
         }
       }
 
@@ -59,13 +80,13 @@
       mat-icon.step-invalid,
       .mat-icon.step-valid,
       .mat-icon.step-invalid {
-        color: var(--color-neutral-light) !important;
+        color: var(--color-neutral-medium) !important;
       }
 
       // Catch-all for any mat-icon element within disabled step header
-      mat-icon[class*="step-"],
-      .mat-icon[class*="step-"] {
-        color: var(--color-neutral-light) !important;
+      mat-icon[class*='step-'],
+      .mat-icon[class*='step-'] {
+        color: var(--color-neutral-medium) !important;
       }
     }
   }
@@ -84,18 +105,19 @@
     border-width: 1px;
     border-style: dashed;
     border-color: var(--color-primary);
-    
+
     &.mat-step-icon-state-edit {
       background-color: var(--color-white);
       color: var(--color-primary);
       border-style: solid;
     }
-    
+
     &.mat-step-icon-state-done {
       background-color: var(--color-primary);
     }
 
-    &-selected.mat-step-icon-state-number, &.mat-step-icon-state-error {
+    &-selected.mat-step-icon-state-number,
+    &.mat-step-icon-state-error {
       border-style: solid;
     }
 
@@ -114,10 +136,9 @@
 
   .step-label {
     color: var(--color-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
+    text-wrap-mode: wrap;
   }
-  
+
   .step-description {
     color: var(--color-primary);
     font-size: 11px;

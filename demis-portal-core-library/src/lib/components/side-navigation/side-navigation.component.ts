@@ -21,6 +21,7 @@ import {
   Component,
   ComponentRef,
   Directive,
+  ElementRef,
   Injector,
   OnChanges,
   TemplateRef,
@@ -38,14 +39,16 @@ import { FormsFooterComponent } from '../forms-footer/forms-footer.component';
 import { DemisProcessStepperComponent, ProcessStep, StepChangeEvent } from '../process-stepper/process-stepper.component';
 import { SectionHeaderComponent } from '../section-header/section-header.component';
 import { StepNavigationService } from '../../services/step-navigation.service';
+import { SideNavigationStylesComponent } from './side-navigation-styles/side-navigation-styles.component';
 
 @Component({
   selector: 'gem-demis-side-navigation',
-  imports: [NgTemplateOutlet, MatSidenavModule, FormsFooterComponent, DemisProcessStepperComponent, SectionHeaderComponent],
+  imports: [NgTemplateOutlet, MatSidenavModule, FormsFooterComponent, DemisProcessStepperComponent, SectionHeaderComponent, SideNavigationStylesComponent],
   templateUrl: './side-navigation.component.html',
   styleUrl: './side-navigation.component.scss',
 })
 export class SideNavigationComponent implements AfterViewInit, OnChanges {
+  private readonly hostElement = inject(ElementRef<HTMLElement>);
   private readonly injector = inject(Injector);
   private readonly navigationService = inject(StepNavigationService);
   private readonly dynamicComponentContainer = viewChild<any, ViewContainerRef>('dynamicComponentContainer', { read: ViewContainerRef });
@@ -86,6 +89,17 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
     const resolvedStepContent = this.stepsMap().get(event.selectedStep);
     event.previouslySelectedStep?.control.markAllAsTouched();
     this.setStepContent(resolvedStepContent);
+  }
+
+  focusSection(targetId: string): void {
+    const targetElement = this.hostElement.nativeElement.querySelector(`#${targetId}`) as HTMLElement | null;
+
+    if (!targetElement) {
+      return;
+    }
+
+    targetElement.scrollIntoView({ block: 'center', inline: 'nearest' });
+    targetElement.focus({ preventScroll: true });
   }
 
   /**
