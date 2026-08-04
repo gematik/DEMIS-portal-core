@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.10
+- Updated portal-theme to 1.3.1 for contrast improvements
+- Upgraded dependencies to latest compatible versions
+
 ## Release 4.2.9
 - Enhanced side navigation from design perspective
 

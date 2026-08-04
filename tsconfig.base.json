@@ -23,6 +23,10 @@
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
     "importHelpers": true,
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "target": "ES2022",
     "module": "ES2022"
   },
