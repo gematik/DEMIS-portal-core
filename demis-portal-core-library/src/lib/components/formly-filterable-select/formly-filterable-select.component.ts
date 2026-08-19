@@ -100,6 +100,7 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
     this.optionLabelKey.set(props.optionLabelKey ?? 'label');
     this.optionDescriptionKey.set(props.optionDescriptionKey ?? 'description');
     this.allOptions.set(props.options ?? []);
+    this.applySingleOptionDefault();
 
     this.currentValue.set(this.formControl.value);
     this.formControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
@@ -133,6 +134,22 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
 
   onPanelClose(): void {
     this.searchControl.setValue('');
+  }
+
+  private applySingleOptionDefault(): void {
+    const options = this.allOptions();
+    if (options.length !== 1) {
+      return;
+    }
+
+    const currentValue = this.formControl.value;
+    const hasExistingValue = this.multiple() ? Array.isArray(currentValue) && currentValue.length > 0 : currentValue != null;
+    if (hasExistingValue) {
+      return;
+    }
+
+    const defaultValue = this.multiple() ? [options[0]] : options[0];
+    this.formControl.setValue(defaultValue);
   }
 
   private repositionOverlay(): void {

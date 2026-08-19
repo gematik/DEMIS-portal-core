@@ -27,6 +27,7 @@ export const MOCK_OPTIONS: SelectOption[] = [
   { value: 'OPT4', label: 'Delta Element', description: 'Kategorie > Unterkategorie' },
   { value: 'OPT5', label: 'Epsilon Eintrag' },
 ];
+export const SINGLE_OPTION: SelectOption = { value: 'ONLY', label: 'Only Option' };
 
 @Component({
   selector: 'app-test-filterable-select-form',
@@ -40,7 +41,10 @@ export const MOCK_OPTIONS: SelectOption[] = [
 })
 export class FormlyFilterableSelectMockComponent {
   form: FormGroup<any> = new FormGroup({});
-  model: Record<string, any> = {};
+  model: Record<string, any> = {
+    prefilledSingleOptionSelect: MOCK_OPTIONS[0],
+    prefilledSingleOptionMultiSelect: [MOCK_OPTIONS[0]],
+  };
   fields: FormlyFieldConfig[] = [
     {
       id: 'singleSelect',
@@ -80,6 +84,44 @@ export class FormlyFilterableSelectMockComponent {
         label: 'Pflichtauswahl',
         options: MOCK_OPTIONS,
         required: true,
+      },
+    },
+    {
+      id: 'singleOptionSelect',
+      key: 'singleOptionSelect',
+      type: 'filterable-select',
+      props: {
+        label: 'Single Option',
+        options: [SINGLE_OPTION],
+      },
+    },
+    {
+      id: 'prefilledSingleOptionSelect',
+      key: 'prefilledSingleOptionSelect',
+      type: 'filterable-select',
+      props: {
+        label: 'Prefilled Single Option',
+        options: [SINGLE_OPTION],
+      },
+    },
+    {
+      id: 'singleOptionMultiSelect',
+      key: 'singleOptionMultiSelect',
+      type: 'filterable-select',
+      props: {
+        label: 'Single Option Multi',
+        options: [SINGLE_OPTION],
+        multiple: true,
+      },
+    },
+    {
+      id: 'prefilledSingleOptionMultiSelect',
+      key: 'prefilledSingleOptionMultiSelect',
+      type: 'filterable-select',
+      props: {
+        label: 'Prefilled Single Option Multi',
+        options: [SINGLE_OPTION],
+        multiple: true,
       },
     },
     {
