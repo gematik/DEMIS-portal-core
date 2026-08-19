@@ -1,6 +1,6 @@
 {
   "name": "portal-core",
-  "version": "4.2.11",
+  "version": "4.3.0",
   "overrides": {
     "ajv": "^8.18.0",
     "browserslist": "4.28.7",

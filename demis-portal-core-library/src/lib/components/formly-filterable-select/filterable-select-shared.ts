@@ -74,14 +74,37 @@ export function formatOptionDisplay(option: any, showValue: boolean, labelKey: s
   return showValue ? `${label} | ${getOptionValue(option, valueKey)}` : label;
 }
 
+function isExplicitDefaultValueInOptions<T>(defaultValue: T | T[], options: T[], valueKey: string): boolean {
+  const defaultValues = Array.isArray(defaultValue) ? defaultValue : [defaultValue];
+  return defaultValues.every(defaultOption => options.some(option => compareOptions(option, defaultOption, valueKey)));
+}
+
+function resolveDefaultValue<T>(
+  options: T[],
+  multiple: boolean | undefined,
+  hasExplicitDefaultValue: boolean,
+  defaultValue: T | T[] | undefined
+): T | T[] | undefined {
+  if (hasExplicitDefaultValue) {
+    return defaultValue;
+  }
+
+  if (options.length !== 1) {
+    return undefined;
+  }
+
+  return multiple ? [options[0]] : options[0];
+}
+
 // ---------------------------------------------------------------------------
 // Type-safe field config builder
 // ---------------------------------------------------------------------------
 
-interface FilterableSelectBaseFieldConfig {
+interface FilterableSelectBaseFieldConfig<TOption> {
   id?: string;
   key: string;
   label: string;
+  defaultValue?: TOption | TOption[];
   required?: boolean;
   multiple?: boolean;
   showValue?: boolean;
@@ -92,8 +115,8 @@ interface FilterableSelectBaseFieldConfig {
 }
 
 type FilterableSelectFieldConfig<T> = T extends SelectOption
-  ? FilterableSelectBaseFieldConfig & { options: T[] }
-  : FilterableSelectBaseFieldConfig & {
+  ? FilterableSelectBaseFieldConfig<T> & { options: T[] }
+  : FilterableSelectBaseFieldConfig<T> & {
       options: T[];
       optionValueKey: keyof T & string;
       optionLabelKey: keyof T & string;
@@ -101,7 +124,13 @@ type FilterableSelectFieldConfig<T> = T extends SelectOption
     };
 
 export function filterableSelectField<T>(config: FilterableSelectFieldConfig<T>): FormlyFieldConfig {
-  const { id, key, label, options, required, multiple, showValue, clearable, searchPlaceholder, noEntriesFoundLabel, ...extra } = config;
+  const { id, key, label, defaultValue, options, required, multiple, showValue, clearable, searchPlaceholder, noEntriesFoundLabel, ...extra } = config;
+  const hasExplicitDefaultValue = Object.hasOwn(config, 'defaultValue');
+  const optionValueKey = 'optionValueKey' in config ? config.optionValueKey : 'value';
+
+  if (hasExplicitDefaultValue && defaultValue !== undefined && !isExplicitDefaultValueInOptions(defaultValue, options, optionValueKey)) {
+    throw new Error('filterableSelectField defaultValue must match one of the provided options.');
+  }
 
   const props: Record<string, any> = { label, options, ...extra };
   if (required != null) props['required'] = required;
@@ -111,8 +140,11 @@ export function filterableSelectField<T>(config: FilterableSelectFieldConfig<T>)
   if (searchPlaceholder != null) props['searchPlaceholder'] = searchPlaceholder;
   if (noEntriesFoundLabel != null) props['noEntriesFoundLabel'] = noEntriesFoundLabel;
 
+  const resolvedDefaultValue = resolveDefaultValue(options, multiple, hasExplicitDefaultValue, defaultValue);
+
   return {
     ...(id ? { id } : {}),
+    ...(hasExplicitDefaultValue || resolvedDefaultValue !== undefined ? { defaultValue: resolvedDefaultValue } : {}),
     key,
     type: 'filterable-select',
     props,

@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.3.0
+- Added default value handling for in filterable-select component
+
 ## Release 4.2.11
 - Switched to vitest/playwright as testing framework
 - A11y updates for the side navigation

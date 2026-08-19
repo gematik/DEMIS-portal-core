@@ -29,7 +29,7 @@ import { FormlyMaterialModule } from '@ngx-formly/material';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
 import { FormlyFilterableSelectComponent } from './formly-filterable-select.component';
-import { FormlyFilterableSelectMockComponent, MOCK_OPTIONS } from '../../../test/utils/formly-filterable-select.mock.component';
+import { FormlyFilterableSelectMockComponent, MOCK_OPTIONS, SINGLE_OPTION } from '../../../test/utils/formly-filterable-select.mock.component';
 import { compareOptions, filterableSelectField, filterOptions, formatOptionDisplay, getOptionDescription, SelectOption } from './filterable-select-shared';
 
 describe('FormlyFilterableSelectComponent', () => {
@@ -71,6 +71,14 @@ describe('FormlyFilterableSelectComponent', () => {
   });
 
   describe('Single select', () => {
+    it('should auto-select the only available option', () => {
+      expect(mockComponent.form.get('singleOptionSelect')?.value).toEqual(SINGLE_OPTION as any);
+    });
+
+    it('should not overwrite an existing value when applying the single-option default', () => {
+      expect(mockComponent.form.get('prefilledSingleOptionSelect')?.value).toEqual(MOCK_OPTIONS[0] as any);
+    });
+
     it('should allow selecting an option', async () => {
       const selects = await loader.getAllHarnesses(MatSelectHarness);
       const select = selects[0];
@@ -96,6 +104,14 @@ describe('FormlyFilterableSelectComponent', () => {
   });
 
   describe('Multi select', () => {
+    it('should auto-select the only available option as an array in multi-select mode', () => {
+      expect(mockComponent.form.get('singleOptionMultiSelect')?.value).toEqual([SINGLE_OPTION] as any);
+    });
+
+    it('should not overwrite existing multi-select values when applying the single-option default', () => {
+      expect(mockComponent.form.get('prefilledSingleOptionMultiSelect')?.value).toEqual([MOCK_OPTIONS[0]] as any);
+    });
+
     it('should allow selecting multiple options', async () => {
       const selects = await loader.getAllHarnesses(MatSelectHarness);
       const multiSelect = selects[1];
@@ -115,7 +131,9 @@ describe('FormlyFilterableSelectComponent', () => {
       mockComponent.form.get('multiSelect')!.setValue([MOCK_OPTIONS[0], MOCK_OPTIONS[1]]);
       fixture.detectChanges();
 
-      const chips = fixture.debugElement.queryAll(By.css('mat-chip'));
+      const filterableSelects = fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent));
+      const multiSelectHost = filterableSelects[1];
+      const chips = multiSelectHost.queryAll(By.css('mat-chip'));
       expect(chips.length).toBe(2);
     });
 
@@ -123,7 +141,9 @@ describe('FormlyFilterableSelectComponent', () => {
       mockComponent.form.get('multiSelect')!.setValue([MOCK_OPTIONS[0], MOCK_OPTIONS[1]]);
       fixture.detectChanges();
 
-      const removeButtons = fixture.debugElement.queryAll(By.css('mat-chip button'));
+      const filterableSelects = fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent));
+      const multiSelectHost = filterableSelects[1];
+      const removeButtons = multiSelectHost.queryAll(By.css('mat-chip button'));
       expect(removeButtons.length).toBe(2);
 
       removeButtons[0].nativeElement.click();
@@ -695,6 +715,64 @@ describe('filterable-select-shared utilities', () => {
       expect(result.props!['clearable']).toBeUndefined();
       expect(result.props!['searchPlaceholder']).toBeUndefined();
       expect(result.props!['noEntriesFoundLabel']).toBeUndefined();
+    });
+
+    it('should infer defaultValue when exactly one option exists in single-select mode', () => {
+      const options: SelectOption[] = [{ value: 'ONLY', label: 'Only option' }];
+      const result = filterableSelectField<SelectOption>({ key: 'test', label: 'Test', options });
+
+      expect(result.defaultValue).toEqual(options[0]);
+    });
+
+    it('should infer defaultValue as array when exactly one option exists in multi-select mode', () => {
+      const options: SelectOption[] = [{ value: 'ONLY', label: 'Only option' }];
+      const result = filterableSelectField<SelectOption>({ key: 'test', label: 'Test', options, multiple: true });
+
+      expect(result.defaultValue).toEqual([options[0]]);
+    });
+
+    it('should use explicit defaultValue when it matches one of the provided options', () => {
+      const options: SelectOption[] = [
+        { value: 'first', label: 'first option' },
+        { value: 'second', label: 'second option' },
+      ];
+      const explicitDefault: SelectOption = { value: 'first', label: 'first option' };
+      const result = filterableSelectField<SelectOption>({ key: 'test', label: 'Test', options, defaultValue: explicitDefault });
+
+      expect(result.defaultValue).toEqual(explicitDefault);
+    });
+
+    it('should accept an explicit multi-select defaultValue when all values match provided options', () => {
+      const options: SelectOption[] = [
+        { value: 'first', label: 'first option' },
+        { value: 'second', label: 'second option' },
+      ];
+      const explicitDefaults: SelectOption[] = [
+        { value: 'first', label: 'first option' },
+        { value: 'second', label: 'second option' },
+      ];
+      const result = filterableSelectField<SelectOption>({
+        key: 'test',
+        label: 'Test',
+        options,
+        multiple: true,
+        defaultValue: explicitDefaults,
+      });
+
+      expect(result.defaultValue).toEqual(explicitDefaults);
+    });
+
+    it('should throw when explicit defaultValue does not match one of the provided options', () => {
+      const options: SelectOption[] = [{ value: 'ONLY', label: 'Only option' }];
+
+      expect(() =>
+        filterableSelectField<SelectOption>({
+          key: 'test',
+          label: 'Test',
+          options,
+          defaultValue: { value: 'EXPLICIT', label: 'Explicit default' },
+        })
+      ).toThrow('filterableSelectField defaultValue must match one of the provided options.');
     });
 
     it('should work with custom domain objects using explicit keys', () => {
