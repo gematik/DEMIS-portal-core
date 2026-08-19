@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -173,17 +174,17 @@ describe('FormlyFilterableSelectComponent', () => {
 
       const selects = await loader.getAllHarnesses(MatSelectHarness);
       const multiSelect = selects[1];
-      expect(await multiSelect.isOpen()).toBeTrue();
+      expect(await multiSelect.isOpen()).toBe(true);
     });
 
     it('should open the panel when called programmatically', async () => {
       const component = fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent))[0].componentInstance as FormlyFilterableSelectComponent;
-      expect(component.matSelectRef().panelOpen).toBeFalse();
+      expect(component.matSelectRef().panelOpen).toBe(false);
 
       component.openSelect();
       fixture.detectChanges();
 
-      expect(component.matSelectRef().panelOpen).toBeTrue();
+      expect(component.matSelectRef().panelOpen).toBe(true);
     });
 
     it('should not re-open the panel if it is already open', async () => {
@@ -191,9 +192,9 @@ describe('FormlyFilterableSelectComponent', () => {
 
       component.openSelect();
       fixture.detectChanges();
-      expect(component.matSelectRef().panelOpen).toBeTrue();
+      expect(component.matSelectRef().panelOpen).toBe(true);
 
-      const openSpy = spyOn(component.matSelectRef(), 'open');
+      const openSpy = vi.spyOn(component.matSelectRef(), 'open');
       component.openSelect();
       fixture.detectChanges();
 
@@ -211,7 +212,7 @@ describe('FormlyFilterableSelectComponent', () => {
       const matSelect = component.matSelectRef();
       const overlayRef = (matSelect as any)._overlayDir?.overlayRef;
       if (overlayRef) {
-        spyOn(overlayRef, 'updatePosition');
+        vi.spyOn(overlayRef, 'updatePosition');
       }
 
       // Trigger valueChanges while panel is open
@@ -254,7 +255,7 @@ describe('FormlyFilterableSelectComponent', () => {
   describe('edge case branches', () => {
     it('should return empty trigger display when multiple is true and value is empty array', () => {
       const component = fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent))[1].componentInstance as FormlyFilterableSelectComponent;
-      expect(component.multiple()).toBeTrue();
+      expect(component.multiple()).toBe(true);
       component.formControl.setValue([]);
       fixture.detectChanges();
       expect(component.triggerDisplay()).toBe('');
@@ -262,7 +263,7 @@ describe('FormlyFilterableSelectComponent', () => {
 
     it('should return "x ausgewählt" trigger display when multiple is true and values are selected', () => {
       const component = fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent))[1].componentInstance as FormlyFilterableSelectComponent;
-      expect(component.multiple()).toBeTrue();
+      expect(component.multiple()).toBe(true);
       component.formControl.setValue([MOCK_OPTIONS[0], MOCK_OPTIONS[1]]);
       fixture.detectChanges();
       expect(component.triggerDisplay()).toBe('2 ausgewählt');
@@ -302,7 +303,7 @@ describe('FormlyFilterableSelectComponent', () => {
       component.onSearchKeydown(enterEvent);
       fixture.detectChanges();
 
-      expect(enterEvent.defaultPrevented).toBeTrue();
+      expect(enterEvent.defaultPrevented).toBe(true);
       const value = mockComponent.form.get('multiSelect')?.value;
       expect(value).toEqual([MOCK_OPTIONS[0]] as any);
     });
@@ -328,7 +329,7 @@ describe('FormlyFilterableSelectComponent', () => {
       const spaceEvent = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
       component.onSearchKeydown(spaceEvent);
 
-      expect(spaceEvent.defaultPrevented).toBeFalse();
+      expect(spaceEvent.defaultPrevented).toBe(false);
     });
 
     it('should navigate exactly one step on ArrowDown', async () => {
@@ -381,7 +382,7 @@ describe('FormlyFilterableSelectComponent', () => {
       const component = fixture.debugElement.queryAll(By.directive(FormlyFilterableSelectComponent))[1].componentInstance as FormlyFilterableSelectComponent;
 
       const arrowDownEvent = new KeyboardEvent('keydown', { key: 'ArrowDown', keyCode: 40, bubbles: true, cancelable: true } as KeyboardEventInit);
-      const stopSpy = spyOn(arrowDownEvent, 'stopPropagation');
+      const stopSpy = vi.spyOn(arrowDownEvent, 'stopPropagation');
       component.onSearchKeydown(arrowDownEvent);
 
       expect(stopSpy).toHaveBeenCalled();
@@ -478,7 +479,7 @@ describe('FormlyFilterableSelectComponent', () => {
         panelOpen: true,
         options: { toArray: () => [{ active: false }, { active: true }] },
       });
-      spyOn(document, 'querySelector').and.returnValue(null);
+      vi.spyOn(document, 'querySelector').mockReturnValue(null);
       expect(() => callHelper(component)).not.toThrow();
     });
 
@@ -508,7 +509,7 @@ describe('FormlyFilterableSelectComponent', () => {
       panel.appendChild(dataOption);
       document.body.appendChild(panel);
       // Force offsetHeight to 0 so the `?? 48` fallback branch fires
-      spyOnProperty(stickyOption, 'offsetHeight', 'get').and.returnValue(0);
+      vi.spyOn(stickyOption, 'offsetHeight', 'get').mockReturnValue(0);
 
       stubSelect(component, {
         panelOpen: true,
@@ -551,20 +552,20 @@ describe('filterable-select-shared utilities', () => {
 
   describe('compareOptions', () => {
     it('should return true for same value', () => {
-      expect(compareOptions({ value: 'A', label: 'X' }, { value: 'A', label: 'Y' }, 'value')).toBeTrue();
+      expect(compareOptions({ value: 'A', label: 'X' }, { value: 'A', label: 'Y' }, 'value')).toBe(true);
     });
 
     it('should return false for different values', () => {
-      expect(compareOptions({ value: 'A', label: 'X' }, { value: 'B', label: 'X' }, 'value')).toBeFalse();
+      expect(compareOptions({ value: 'A', label: 'X' }, { value: 'B', label: 'X' }, 'value')).toBe(false);
     });
 
     it('should handle null/undefined gracefully', () => {
-      expect(compareOptions(null as any, { value: 'A', label: 'X' }, 'value')).toBeFalse();
+      expect(compareOptions(null as any, { value: 'A', label: 'X' }, 'value')).toBe(false);
     });
 
     it('should work with custom valueKey', () => {
-      expect(compareOptions({ code: 'X' }, { code: 'X' }, 'code')).toBeTrue();
-      expect(compareOptions({ code: 'X' }, { code: 'Y' }, 'code')).toBeFalse();
+      expect(compareOptions({ code: 'X' }, { code: 'X' }, 'code')).toBe(true);
+      expect(compareOptions({ code: 'X' }, { code: 'Y' }, 'code')).toBe(false);
     });
   });
 
@@ -677,10 +678,10 @@ describe('filterable-select-shared utilities', () => {
         noEntriesFoundLabel: 'None',
       });
 
-      expect(result.props!['required']).toBeTrue();
-      expect(result.props!['multiple']).toBeTrue();
-      expect(result.props!['showValue']).toBeTrue();
-      expect(result.props!['clearable']).toBeFalse();
+      expect(result.props!['required']).toBe(true);
+      expect(result.props!['multiple']).toBe(true);
+      expect(result.props!['showValue']).toBe(true);
+      expect(result.props!['clearable']).toBe(false);
       expect(result.props!['searchPlaceholder']).toBe('Find...');
       expect(result.props!['noEntriesFoundLabel']).toBe('None');
     });

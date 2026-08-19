@@ -31,7 +31,7 @@ export class FormlyRepeaterExample3Component {
     {
       id: 'emails',
       key: 'emails',
-      type: 'repeat',
+      type: 'repeater',
       props: {
         addButtonLabel: 'E-Mail hinzufügen',
       },
@@ -60,7 +60,7 @@ export class FormlyRepeaterExample3Component {
     {
       id: 'phoneNumbers',
       key: 'phoneNumbers',
-      type: 'repeat',
+      type: 'repeater',
       props: {
         addButtonLabel: 'Telefonnummer hinzufügen',
       },

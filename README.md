@@ -91,12 +91,32 @@ npm run build
 
 ### Tests
 
-From the IDE, if you are using JetBrains ones, you can run the tests by downloading the [Karma Plugin](https://plugins.jetbrains.com/plugin/7287-karma).
+The project uses Vitest as the test runner and Playwright as the browser provider.
 
-You can run all unit tests once with the following command:
+In JetBrains IDEs, navigate to Settings > Languages & Frameworks > JavaScript > Vitest and disable Vite configuration detection. Then, under Run/Debug Configurations, add a new Vitest configuration with the vitest package path set to node_modules/vitest.
+
+Run all tests once (CI-like run with coverage and junit output):
 
 ```sh
 npm run test
+```
+
+Run tests locally in watch mode:
+
+```sh
+npm run test-local
+```
+
+Run browser tests locally with a visible Chromium window:
+
+```sh
+npm run test-local-browser
+```
+
+Run schematics tests:
+
+```sh
+npm run test --prefix schematics
 ```
 
 ## Usage

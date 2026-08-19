@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ProcessStepperComponent, Step } from './process-stepper.component';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { MatIconModule } from '@angular/material/icon';

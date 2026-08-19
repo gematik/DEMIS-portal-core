@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type MockedObject, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 
 import {
@@ -75,7 +76,7 @@ describe('MessageDialogService', () => {
       errorTitle: signal('Test Error'),
       errors: signal([new Error('Something went wrong')]),
     } as ErrorDialogData;
-    const openSpy = spyOn(matDialog, 'open');
+    const openSpy = vi.spyOn(matDialog, 'open');
     service.error(data);
     expect(openSpy).toHaveBeenCalledWith(ErrorDialogComponent, { data });
   });
@@ -91,7 +92,7 @@ describe('MessageDialogService', () => {
     } as ErrorsDialogProps;
 
     it('case 1: user wants error dialog to be closable', () => {
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showErrorDialog(data);
 
       const expectedFilteredData = {
@@ -115,7 +116,7 @@ describe('MessageDialogService', () => {
         ...defaultStyle,
         disableClose: true,
       };
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showErrorDialog(dataWithRedirect);
 
       const expectedFilteredData = {
@@ -146,7 +147,7 @@ describe('MessageDialogService', () => {
     } as ErrorsDialogProps;
 
     it('should filter out errors below the default log level', () => {
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showErrorDialog(data);
 
       const expectedFilteredData = {
@@ -165,7 +166,7 @@ describe('MessageDialogService', () => {
     });
 
     it('should filter out error below the specified log level', () => {
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       const customLogLevel = SeverityEnum.WARNING;
       service.showErrorDialog({
         ...data,
@@ -190,7 +191,7 @@ describe('MessageDialogService', () => {
     });
 
     it('unexpected log level is handled as error', () => {
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showErrorDialog({
         ...data,
         errors: [
@@ -217,7 +218,7 @@ describe('MessageDialogService', () => {
 
   describe('should call specific dialog for specific use case', () => {
     it('call dialog for error occurring during data import from clipboard', () => {
-      const serviceSpy = spyOn(service, 'showErrorDialog');
+      const serviceSpy = vi.spyOn(service, 'showErrorDialog');
       service.showErrorDialogInsertDataFromClipboard();
       expect(serviceSpy).toHaveBeenCalledWith(ErrorDialogInsertDataFromClipboard);
       expect(serviceSpy).toHaveBeenCalledTimes(1);
@@ -296,7 +297,7 @@ describe('MessageDialogService', () => {
     } as SubmitDialogProps;
 
     it('should open the MatDialog with SubmitDialogComponent and default style', () => {
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showSubmitDialog(submitData);
       expect(openSpy).toHaveBeenCalledWith(SubmitDialogComponent, {
         data: submitData,
@@ -315,16 +316,16 @@ describe('MessageDialogService', () => {
         width: '700px',
         disableClose: true,
       };
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showSubmitDialog(submitData, customStyle);
       expect(openSpy).toHaveBeenCalledWith(SubmitDialogComponent, expectedConfig);
     });
 
     it('should always set disableClose to true to prevent closing the dialog', () => {
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showSubmitDialog(submitData);
 
-      const calledConfig = openSpy.calls.mostRecent().args[1];
+      const calledConfig = vi.mocked(openSpy).mock.lastCall[1];
       expect(calledConfig!.disableClose).toBe(true);
     });
 
@@ -333,10 +334,10 @@ describe('MessageDialogService', () => {
         height: '500px',
         width: '700px',
       } as DialogStyle;
-      const openSpy = spyOn(matDialog, 'open');
+      const openSpy = vi.spyOn(matDialog, 'open');
       service.showSubmitDialog(submitData, customStyle);
 
-      const calledConfig = openSpy.calls.mostRecent().args[1];
+      const calledConfig = vi.mocked(openSpy).mock.lastCall[1];
       expect(calledConfig!.disableClose).toBe(true);
     });
   });
@@ -346,14 +347,16 @@ describe('MessageDialogService', () => {
       message: 'Meldung wird verarbeitet',
     } as SpinnerDialogProps;
 
-    let mockDialogRef: jasmine.SpyObj<MatDialogRef<SpinnerDialogComponent>>;
+    let mockDialogRef: MockedObject<MatDialogRef<SpinnerDialogComponent>>;
 
     beforeEach(() => {
-      mockDialogRef = jasmine.createSpyObj('MatDialogRef', ['close']);
+      mockDialogRef = {
+        close: vi.fn().mockName('MatDialogRef.close'),
+      };
     });
 
     it('should open the MatDialog with SpinnerDialogComponent and default style', () => {
-      const openSpy = spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
       service.showSpinnerDialog(spinnerData);
 
       expect(openSpy).toHaveBeenCalledWith(SpinnerDialogComponent, {
@@ -375,22 +378,22 @@ describe('MessageDialogService', () => {
         disableClose: true,
       };
 
-      const openSpy = spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
       service.showSpinnerDialog(spinnerData, customStyle);
 
       expect(openSpy).toHaveBeenCalledWith(SpinnerDialogComponent, expectedConfig);
     });
 
     it('should always set disableClose to true for spinner dialog', () => {
-      const openSpy = spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
       service.showSpinnerDialog(spinnerData);
 
-      const calledConfig = openSpy.calls.mostRecent().args[1];
+      const calledConfig = vi.mocked(openSpy).mock.lastCall[1];
       expect(calledConfig!.disableClose).toBe(true);
     });
 
     it('should store the dialog reference for later closing', () => {
-      spyOn(matDialog, 'open').and.returnValue(mockDialogRef);
+      vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
       service.showSpinnerDialog(spinnerData);
 
       service.closeSpinnerDialog();

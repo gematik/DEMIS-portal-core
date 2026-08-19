@@ -162,7 +162,7 @@ export function consumerPageFor(options: any): Rule {
     const dasherizedName = strings
       .dasherize(options.name)
       .toLowerCase()
-      .replace(/[-|\.]component$/, '');
+      .replace(/[-|.]component$/, '');
     const classifiedName = strings.classify(dasherizedName);
     const titleCaseName = kebabToTitleCase(dasherizedName);
     const consumerComponentFileNamePrefix = `${dasherizedName}-consumer`;

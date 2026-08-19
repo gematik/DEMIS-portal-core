@@ -15,28 +15,11 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
-import { ActionsBarComponent } from './actions-bar.component';
-import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
+import '@angular/compiler';
+import '@analogjs/vitest-angular/setup-zone';
+import { setupTestBed } from '@analogjs/vitest-angular/setup-testbed';
 
-describe('ActionsBarComponent', () => {
-  let component: ActionsBarComponent;
-  let fixture: MockedComponentFixture<ActionsBarComponent, ActionsBarComponent>;
-
-  beforeEach(() => MockBuilder(ActionsBarComponent));
-
-  beforeEach(() => {
-    fixture = MockRender(ActionsBarComponent);
-    component = fixture.point.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create the component', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should have the correct host class', () => {
-    const hostElement: HTMLElement = fixture.point.nativeElement;
-    expect(hostElement.classList.contains('mat-app-background')).toBe(true);
-  });
+setupTestBed({
+  zoneless: false,
+  teardown: { destroyAfterEach: true },
 });

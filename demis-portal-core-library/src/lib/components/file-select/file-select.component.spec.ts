@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { FileSelectComponent, FILE_SELECT_DEFAULTS } from './file-select.component';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +27,7 @@ describe('FileSelectComponent', () => {
       .mock(MatIconModule)
       .provide({
         provide: NGXLogger,
-        useValue: { error: jasmine.createSpy('error'), debug: jasmine.createSpy('debug') },
+        useValue: { error: vi.fn(), debug: vi.fn() },
       })
   );
 
@@ -87,7 +88,7 @@ describe('FileSelectComponent', () => {
     dataTransfer.items.add(file);
 
     // Spy on the output signal emit method
-    const emitSpy = spyOn(component.onFileSelected, 'emit');
+    const emitSpy = vi.spyOn(component.onFileSelected, 'emit');
 
     const fileInput = fixture.point.nativeElement.querySelector('input');
     fileInput.files = dataTransfer.files;
@@ -108,7 +109,7 @@ describe('FileSelectComponent', () => {
     dataTransfer.items.add(file2);
 
     // Spy on the output signal emit method
-    const emitSpy = spyOn(component.onFileSelected, 'emit');
+    const emitSpy = vi.spyOn(component.onFileSelected, 'emit');
 
     const fileInput = fixture.point.nativeElement.querySelector('input');
     fileInput.files = dataTransfer.files;
@@ -122,7 +123,7 @@ describe('FileSelectComponent', () => {
     const component = fixture.point.componentInstance;
 
     // Spy on the output signal emit method
-    const emitSpy = spyOn(component.onFileSelected, 'emit');
+    const emitSpy = vi.spyOn(component.onFileSelected, 'emit');
 
     const event = { target: { files: new DataTransfer().files } } as any;
     component.onChange(event);
@@ -142,7 +143,7 @@ describe('FileSelectComponent', () => {
     fileInput.files = dataTransfer.files;
 
     // Spy on the value setter to verify it gets called
-    const valueSetter = spyOnProperty(fileInput, 'value', 'set');
+    const valueSetter = vi.spyOn(fileInput, 'value', 'set');
 
     fileInput.dispatchEvent(new Event('change'));
 
@@ -155,7 +156,7 @@ describe('FileSelectComponent', () => {
     const component = fixture.point.componentInstance;
     const mockLogger = fixture.componentRef.injector.get(NGXLogger);
 
-    const emitSpy = spyOn(component.onFileSelected, 'emit');
+    const emitSpy = vi.spyOn(component.onFileSelected, 'emit');
 
     // Test with no target
     component.onChange({ target: null } as any);
@@ -163,8 +164,8 @@ describe('FileSelectComponent', () => {
     expect(emitSpy).toHaveBeenCalledWith(null);
 
     // Reset spies
-    (mockLogger.error as jasmine.Spy).calls.reset();
-    emitSpy.calls.reset();
+    (mockLogger.error as Mock).mockClear();
+    emitSpy.mockClear();
 
     // Test with non-input target
     component.onChange({ target: document.createElement('div') } as any);

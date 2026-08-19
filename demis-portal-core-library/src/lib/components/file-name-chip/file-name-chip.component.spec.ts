@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MatIconModule } from '@angular/material/icon';
 import { FileNameChipComponent, FILE_NAME_CHIP_DEFAULTS } from './file-name-chip.component';
 import { MockBuilder, MockRender } from 'ng-mocks';
@@ -63,8 +64,8 @@ describe('FileNameChipComponent', () => {
     const loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
 
-    const onDeleteClickedSpy = spyOn(component, 'onDeleteClicked').and.callThrough();
-    const emitSpy = spyOn(component.fileDeleted, 'emit');
+    const onDeleteClickedSpy = vi.spyOn(component, 'onDeleteClicked');
+    const emitSpy = vi.spyOn(component.fileDeleted, 'emit');
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '#file-delete-button' }));
     expect(deleteButton).toBeDefined();
     await deleteButton.click();
@@ -79,8 +80,8 @@ describe('FileNameChipComponent', () => {
     const loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
 
-    const onDeleteClickedSpy = spyOn(component, 'onDeleteClicked').and.callThrough();
-    const emitSpy = spyOn(component.fileDeleted, 'emit');
+    const onDeleteClickedSpy = vi.spyOn(component, 'onDeleteClicked');
+    const emitSpy = vi.spyOn(component.fileDeleted, 'emit');
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '#file-delete-button' }));
     expect(deleteButton).toBeDefined();
     await deleteButton.click();

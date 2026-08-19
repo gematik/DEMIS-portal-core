@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 4.2.11
+- Switched to vitest/playwright as testing framework
+- A11y updates for the side navigation
+- Fixed a bug in the filterable select component that caused forms being autosubmitted when the user hits enter anywhere in the form
+
 ## Release 4.2.10
 - Updated portal-theme to 1.3.1 for contrast improvements
 - Upgraded dependencies to latest compatible versions

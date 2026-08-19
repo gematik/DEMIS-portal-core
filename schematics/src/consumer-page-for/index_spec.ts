@@ -15,17 +15,46 @@
     find details in the "Readme" file.
  */
 
+import { describe, it, expect } from 'vitest';
 import { Tree } from '@angular-devkit/schematics';
-import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
-import * as path from 'path';
+import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
+import * as path from 'node:path';
 
 const collectionPath = path.join(__dirname, '../collection.json');
 
-describe('consumer-page', () => {
-  it('works', async () => {
-    const runner = new SchematicTestRunner('schematics', collectionPath);
-    const tree = await runner.runSchematic('consumer-page', {}, Tree.empty());
+const ANGULAR_JSON = JSON.stringify({
+  version: 1,
+  projects: {
+    demo: {
+      projectType: 'application',
+      schematics: { '@schematics/angular:component': { style: 'scss' } },
+      root: 'demo',
+      sourceRoot: 'demo/src',
+      prefix: 'app',
+      architect: {
+        build: { builder: '@angular/build:application', options: { tsConfig: 'demo/tsconfig.app.json' } },
+      },
+    },
+  },
+});
 
-    expect(tree.files).toEqual([]);
+const APP_ROUTES_STUB = `import { Routes } from '@angular/router';
+
+export const componentConsumerRoutes: Routes = [];
+`;
+
+function createTestTree(): UnitTestTree {
+  const tree = new UnitTestTree(Tree.empty());
+  tree.create('angular.json', ANGULAR_JSON);
+  tree.create('demo/src/app/app.routes.ts', APP_ROUTES_STUB);
+  return tree;
+}
+
+describe('consumer-page-for', () => {
+  it('generates files for a given name', async () => {
+    const runner = new SchematicTestRunner('schematics', collectionPath);
+    const tree = await runner.runSchematic('consumer-page-for', { name: 'test' }, createTestTree());
+
+    expect(tree.files.length).toBeGreaterThan(0);
   });
 });

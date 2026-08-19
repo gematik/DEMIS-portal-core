@@ -3,7 +3,7 @@
 <mat-drawer-container class="drawer-container demis-drawer-container">
   <mat-drawer mode="side" [opened]="true" [disableClose]="true" [autoFocus]="true" class="drawer-sidenav" style="transition: none !important">
     <div class="drawer-sidenav-wrapper">
-      <nav id="side-nav-step-navigation" class="drawer-sidenav-content" aria-label="Step navigation" tabindex="-1">
+      <nav id="side-nav-step-navigation" class="drawer-sidenav-content" aria-label="{{ sideNavTitle() }} - Schritte" tabindex="-1">
         <gem-demis-section-header [titleText]="sideNavTitle()">
           @if (sideNavSubtitle(); as subtitle) {
             <ng-container *ngTemplateOutlet="subtitle" />
@@ -12,7 +12,14 @@
         @if (steps()) {
           <gem-demis-process-stepper #internalStepper [steps]="steps()" (stepChange)="onStepChanged($event)" />
         }
-        <button type="button" class="skip-link" (click)="focusSection('side-nav-main-content')">Zum Formular wechseln</button>
+        <button
+          id="a-to-skip-to-main-content"
+          type="button"
+          class="skip-link"
+          (click)="focusSection('side-nav-main-content')"
+        >
+          Zum Formular wechseln
+        </button>
         @if (additionalSideNavActions(); as actions) {
           <div class="additional-sidenav-actions">
             <ng-container *ngTemplateOutlet="actions" />
@@ -40,6 +47,7 @@
         </div>
       }
       <button
+        id="a-to-skip-to-nav"
         type="button"
         class="skip-link"
         (click)="focusSection('side-nav-step-navigation')"
