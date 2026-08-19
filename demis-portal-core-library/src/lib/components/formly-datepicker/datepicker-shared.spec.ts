@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import {
   detectPrecisionFromDateInGermanFormat,
   detectPrecisionFromIso,
@@ -132,11 +133,11 @@ describe('datepicker-shared', () => {
 
   describe('convertNonIsoFormats', () => {
     let formControl: FormControl;
-    let setValueSpy: jasmine.Spy;
+    let setValueSpy: Mock;
 
     beforeEach(() => {
       formControl = new FormControl();
-      setValueSpy = spyOn(formControl, 'setValue');
+      setValueSpy = vi.spyOn(formControl, 'setValue');
     });
 
     it('should convert German formats to ISO', () => {
@@ -145,17 +146,17 @@ describe('datepicker-shared', () => {
       expect(setValueSpy).toHaveBeenCalledWith('2025-05-15');
 
       // Month format with dot
-      setValueSpy.calls.reset();
+      setValueSpy.mockClear();
       convertNonIsoFormats(formControl, '05.2025', 'month', 'GERMAN');
       expect(setValueSpy).toHaveBeenCalledWith('2025-05');
 
       // Day format without dots
-      setValueSpy.calls.reset();
+      setValueSpy.mockClear();
       convertNonIsoFormats(formControl, '15052025', 'day', 'GERMAN');
       expect(setValueSpy).toHaveBeenCalledWith('2025-05-15');
 
       // Month format without dot
-      setValueSpy.calls.reset();
+      setValueSpy.mockClear();
       convertNonIsoFormats(formControl, '052025', 'month', 'GERMAN');
       expect(setValueSpy).toHaveBeenCalledWith('2025-05');
     });
@@ -166,18 +167,21 @@ describe('datepicker-shared', () => {
       expect(setValueSpy).not.toHaveBeenCalled();
 
       // ISO format
-      setValueSpy.calls.reset();
+      setValueSpy.mockClear();
       convertNonIsoFormats(formControl, '2025-05-15', 'day', 'ISO');
       expect(setValueSpy).not.toHaveBeenCalled();
 
       // Null input
-      setValueSpy.calls.reset();
+      setValueSpy.mockClear();
       convertNonIsoFormats(formControl, null as any, 'day', 'GERMAN');
       expect(setValueSpy).not.toHaveBeenCalled();
     });
 
     it('should handle invalid inputs with null conversion', () => {
-      const testCases: Array<{ input: any; precision: DatePrecision }> = [
+      const testCases: Array<{
+        input: any;
+        precision: DatePrecision;
+      }> = [
         { input: 'invalid-date', precision: 'day' },
         { input: '', precision: 'day' },
         { input: 123, precision: 'day' },
@@ -192,7 +196,7 @@ describe('datepicker-shared', () => {
       ];
 
       testCases.forEach(({ input, precision }) => {
-        setValueSpy.calls.reset();
+        setValueSpy.mockClear();
         convertNonIsoFormats(formControl, input, precision, 'GERMAN');
         expect(setValueSpy).toHaveBeenCalledWith(null);
       });

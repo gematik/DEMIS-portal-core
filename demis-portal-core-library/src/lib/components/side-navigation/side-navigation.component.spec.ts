@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Component, TemplateRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from 'ng-mocks';
@@ -52,7 +53,9 @@ class TestStepContentNoActionsComponent extends StepContentComponent<any> {}
   template: '<div>{{ inputData()?.name }}</div>',
   standalone: true,
 })
-class TestStepContentWithDataComponent extends StepContentComponent<{ name: string }> {}
+class TestStepContentWithDataComponent extends StepContentComponent<{
+  name: string;
+}> {}
 
 describe('SideNavigationComponent', () => {
   let component: SideNavigationComponent;
@@ -271,7 +274,7 @@ describe('SideNavigationComponent', () => {
 
       component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
 
-      const markAllAsTouchedSpy = spyOn(steps[0].control, 'markAllAsTouched').and.callThrough();
+      const markAllAsTouchedSpy = vi.spyOn(steps[0].control, 'markAllAsTouched');
 
       const event: StepChangeEvent = {
         selectedIndex: 1,
@@ -408,7 +411,7 @@ describe('SideNavigationComponent', () => {
     it('should delegate next() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'next');
+        vi.spyOn(stepper, 'next');
         navigationService.next();
         expect(stepper.next).toHaveBeenCalled();
       }
@@ -417,7 +420,7 @@ describe('SideNavigationComponent', () => {
     it('should delegate previous() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'previous');
+        vi.spyOn(stepper, 'previous');
         navigationService.previous();
         expect(stepper.previous).toHaveBeenCalled();
       }
@@ -426,7 +429,7 @@ describe('SideNavigationComponent', () => {
     it('should delegate reset() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'reset');
+        vi.spyOn(stepper, 'reset');
         navigationService.reset();
         expect(stepper.reset).toHaveBeenCalled();
       }
@@ -435,7 +438,7 @@ describe('SideNavigationComponent', () => {
     it('should delegate goToStep() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'goToStep');
+        vi.spyOn(stepper, 'goToStep');
         navigationService.goToStep(1);
         expect(stepper.goToStep).toHaveBeenCalledWith(1);
       }
@@ -444,7 +447,7 @@ describe('SideNavigationComponent', () => {
     it('should delegate goToStepByKey() to internalStepper via service', () => {
       const stepper = component.internalStepper();
       if (stepper) {
-        spyOn(stepper, 'goToStepByKey');
+        vi.spyOn(stepper, 'goToStepByKey');
         navigationService.goToStepByKey('step2');
         expect(stepper.goToStepByKey).toHaveBeenCalledWith('step2');
       }
@@ -633,8 +636,8 @@ describe('SideNavigationComponent', () => {
       expect(() => component.focusSection('does-not-exist')).not.toThrow();
 
       const mainContent = fixture.point.nativeElement.querySelector('#side-nav-main-content') as HTMLElement;
-      const scrollIntoViewSpy = spyOn(mainContent, 'scrollIntoView').and.stub();
-      const focusSpy = spyOn(mainContent, 'focus').and.stub();
+      const scrollIntoViewSpy = vi.spyOn(mainContent, 'scrollIntoView').mockImplementation(() => {});
+      const focusSpy = vi.spyOn(mainContent, 'focus').mockImplementation(() => {});
 
       component.focusSection('side-nav-main-content');
 

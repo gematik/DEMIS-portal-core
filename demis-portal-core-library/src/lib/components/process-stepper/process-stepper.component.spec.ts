@@ -15,9 +15,9 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, type MockedObject, vi } from 'vitest';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ElementRef, QueryList } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, Validators } from '@angular/forms';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { MockBuilder, MockRender, MockedComponentFixture, ngMocks } from 'ng-mocks';
@@ -55,10 +55,16 @@ describe('DemisProcessStepperComponent', () => {
       steps?: any[];
       methods?: string[];
     } = {}
-  ): jasmine.SpyObj<MatStepper> => {
+  ): MockedObject<MatStepper> => {
     const { selectedIndex = 0, steps = [{ state: 'number' }, { state: 'number' }, { state: 'number' }], methods = ['next', 'previous', 'reset'] } = options;
 
-    const mockStepper = jasmine.createSpyObj('MatStepper', methods);
+    const mockStepper = methods.reduce(
+      (stepper, methodName) => {
+        stepper[methodName] = vi.fn();
+        return stepper;
+      },
+      {} as Record<string, Mock>
+    ) as MockedObject<MatStepper>;
 
     Object.defineProperty(mockStepper, 'selectedIndex', {
       value: selectedIndex,
@@ -100,7 +106,7 @@ describe('DemisProcessStepperComponent', () => {
 
   // Helper function to apply mock stepper to a component
   // Since stepper is a signal (viewChild.required), we need to mock it as a function that returns the mock
-  const applyMockStepper = (component: DemisProcessStepperComponent, mockStepper: jasmine.SpyObj<MatStepper>): void => {
+  const applyMockStepper = (component: DemisProcessStepperComponent, mockStepper: MockedObject<MatStepper>): void => {
     Object.defineProperty(component, 'stepper', {
       value: () => mockStepper,
       writable: true,
@@ -114,8 +120,8 @@ describe('DemisProcessStepperComponent', () => {
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -142,8 +148,8 @@ describe('DemisProcessStepperComponent', () => {
       ngMocks.flushTestBed();
       const customFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -180,8 +186,8 @@ describe('DemisProcessStepperComponent', () => {
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -245,13 +251,13 @@ describe('DemisProcessStepperComponent', () => {
   });
 
   describe('Navigation Methods', () => {
-    let mockStepper: jasmine.SpyObj<MatStepper>;
+    let mockStepper: MockedObject<MatStepper>;
 
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -289,8 +295,8 @@ describe('DemisProcessStepperComponent', () => {
       ngMocks.flushTestBed();
       const customFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -364,14 +370,14 @@ describe('DemisProcessStepperComponent', () => {
   });
 
   describe('onSelectionChange', () => {
-    let stepChangeEmitSpy: jasmine.Spy;
-    let mockStepper: jasmine.SpyObj<MatStepper>;
+    let stepChangeEmitSpy: Mock;
+    let mockStepper: MockedObject<MatStepper>;
 
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -382,7 +388,7 @@ describe('DemisProcessStepperComponent', () => {
       );
       component = ngMocks.findInstance(fixture.debugElement, DemisProcessStepperComponent);
 
-      stepChangeEmitSpy = spyOn(component.stepChange, 'emit');
+      stepChangeEmitSpy = vi.spyOn(component.stepChange, 'emit');
       mockStepper = createMockStepper({ methods: ['next', 'previous', 'reset'] });
       applyMockStepper(component, mockStepper);
     });
@@ -406,15 +412,15 @@ describe('DemisProcessStepperComponent', () => {
       expect(component.currentStepIndex()).toBe(1);
     });
 
-    it('should prevent navigation to disabled step and revert to previous step', fakeAsync(() => {
+    it('should prevent navigation to disabled step and revert to previous step', async () => {
       const steps = createMockSteps();
       steps[1].control.disable();
 
       ngMocks.flushTestBed();
       const disabledFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -425,7 +431,7 @@ describe('DemisProcessStepperComponent', () => {
       );
       const disabledComponent = ngMocks.findInstance(disabledFixture.debugElement, DemisProcessStepperComponent);
 
-      const disabledStepChangeEmitSpy = spyOn(disabledComponent.stepChange, 'emit');
+      const disabledStepChangeEmitSpy = vi.spyOn(disabledComponent.stepChange, 'emit');
       const disabledMockStepper = createMockStepper({ methods: ['next', 'previous', 'reset'] });
       applyMockStepper(disabledComponent, disabledMockStepper);
 
@@ -438,13 +444,13 @@ describe('DemisProcessStepperComponent', () => {
 
       disabledComponent.onSelectionChange(event);
 
-      // Wait for Promise.resolve()
-      tick();
+      // Wait for Promise.resolve() microtask
+      await Promise.resolve();
 
       expect(disabledMockStepper.selectedIndex).toBe(0);
       expect(disabledComponent.currentStepIndex()).toBe(0);
       expect(disabledStepChangeEmitSpy).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should not emit event when navigating from disabled step', () => {
       const steps = createMockSteps();
@@ -453,8 +459,8 @@ describe('DemisProcessStepperComponent', () => {
       ngMocks.flushTestBed();
       const disabledFromFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -465,7 +471,7 @@ describe('DemisProcessStepperComponent', () => {
       );
       const disabledFromComponent = ngMocks.findInstance(disabledFromFixture.debugElement, DemisProcessStepperComponent);
 
-      const disabledFromStepChangeEmitSpy = spyOn(disabledFromComponent.stepChange, 'emit');
+      const disabledFromStepChangeEmitSpy = vi.spyOn(disabledFromComponent.stepChange, 'emit');
 
       const event: StepperSelectionEvent = {
         selectedIndex: 1,
@@ -505,7 +511,7 @@ describe('DemisProcessStepperComponent', () => {
       component.onSelectionChange(event);
 
       expect(stepChangeEmitSpy).toHaveBeenCalledWith(
-        jasmine.objectContaining({
+        expect.objectContaining({
           selectedIndex: 1,
           selectedStep: component.steps()[1],
           previouslySelectedIndex: -1,
@@ -516,8 +522,8 @@ describe('DemisProcessStepperComponent', () => {
 
   describe('Step Processing and DOM Manipulation', () => {
     let mockElementRef: ElementRef<HTMLElement>;
-    let mockStepper: jasmine.SpyObj<MatStepper>;
-    let mockSteps: jasmine.SpyObj<MatStep>[];
+    let mockStepper: MockedObject<MatStepper>;
+    let mockSteps: MockedObject<MatStep>[];
     let testPostProcess: () => void;
 
     const nullQueryCallback = () => null;
@@ -526,8 +532,8 @@ describe('DemisProcessStepperComponent', () => {
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -552,7 +558,7 @@ describe('DemisProcessStepperComponent', () => {
       const querySelectorAllCallback = (index: number) => mockStepElements[index];
 
       // Mock querySelectorAll
-      spyOn(mockContainer, 'querySelectorAll').and.returnValue({
+      vi.spyOn(mockContainer, 'querySelectorAll').mockReturnValue({
         item: querySelectorAllCallback,
       } as any);
 
@@ -613,7 +619,7 @@ describe('DemisProcessStepperComponent', () => {
       it('should handle missing step elements gracefully', () => {
         // Create a new container to avoid spy conflicts
         const newMockContainer = document.createElement('div');
-        spyOn(newMockContainer, 'querySelectorAll').and.returnValue({
+        vi.spyOn(newMockContainer, 'querySelectorAll').mockReturnValue({
           item: nullQueryCallback,
         } as any);
 
@@ -634,8 +640,8 @@ describe('DemisProcessStepperComponent', () => {
         ngMocks.flushTestBed();
         const emptyFixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -654,6 +660,37 @@ describe('DemisProcessStepperComponent', () => {
 
         const testFunction = createEmptyPostProcessTest(emptyComponent);
         expect(testFunction).not.toThrow();
+      });
+
+      it('should provide status and description to assistive technology', () => {
+        const header = document.createElement('div');
+        header.classList.add('mat-step-header');
+        mockElementRef.nativeElement.querySelectorAll('.mat-step').item(1).appendChild(header);
+
+        component['postProcessRenderedSteps']();
+
+        expect(header.getAttribute('aria-label')).toBe('Schritt 2 von 3: Step 2, noch nicht begonnen');
+        expect(header.getAttribute('aria-describedby')).toBe('step-description-2');
+        expect(header.getAttribute('tabindex')).toBe('-1');
+        expect(header.hasAttribute('aria-current')).toBe(false);
+      });
+
+      it('should announce the current and unavailable step states', () => {
+        const currentHeader = document.createElement('div');
+        currentHeader.classList.add('mat-step-header');
+        const unavailableHeader = document.createElement('div');
+        unavailableHeader.classList.add('mat-step-header');
+        mockElementRef.nativeElement.querySelectorAll('.mat-step').item(0).appendChild(currentHeader);
+        mockElementRef.nativeElement.querySelectorAll('.mat-step').item(1).appendChild(unavailableHeader);
+        component.steps()[1].control.disable();
+
+        component['postProcessRenderedSteps']();
+
+        expect(currentHeader.getAttribute('aria-label')).toBe('Schritt 1 von 3: Step 1, aktuell');
+        expect(currentHeader.getAttribute('aria-current')).toBe('step');
+        expect(unavailableHeader.getAttribute('aria-label')).toBe('Schritt 2 von 3: Step 2, nicht verfügbar');
+        expect(unavailableHeader.getAttribute('aria-disabled')).toBe('true');
+        expect(unavailableHeader.getAttribute('tabindex')).toBe('-1');
       });
     });
 
@@ -698,7 +735,7 @@ describe('DemisProcessStepperComponent', () => {
 
     describe('ngAfterViewChecked', () => {
       it('should call postProcessRenderedSteps', () => {
-        spyOn<any>(component, 'postProcessRenderedSteps');
+        vi.spyOn<any>(component, 'postProcessRenderedSteps');
 
         component.ngAfterViewChecked();
 
@@ -707,7 +744,7 @@ describe('DemisProcessStepperComponent', () => {
     });
 
     describe('ngAfterViewInit', () => {
-      it('should set stepper.selectedIndex to initStepIndex', fakeAsync(() => {
+      it('should set stepper.selectedIndex to initStepIndex', () => {
         const mockStepper = createMockStepper({
           methods: ['reset'],
           steps: { length: 3 } as any,
@@ -717,18 +754,15 @@ describe('DemisProcessStepperComponent', () => {
         // Test with default initStepIndex (0)
         component.ngAfterViewInit();
 
-        // Advance the timer to trigger setTimeout
-        tick();
-
         expect(mockStepper.selectedIndex).toBe(0);
-      }));
+      });
 
-      it('should set stepper.selectedIndex to custom initStepIndex', fakeAsync(() => {
+      it('should set stepper.selectedIndex to custom initStepIndex', () => {
         ngMocks.flushTestBed();
         const customFixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -747,11 +781,8 @@ describe('DemisProcessStepperComponent', () => {
 
         customComponent.ngAfterViewInit();
 
-        // Advance the timer to trigger setTimeout
-        tick();
-
         expect(mockStepper.selectedIndex).toBe(2);
-      }));
+      });
     });
   });
 
@@ -759,8 +790,8 @@ describe('DemisProcessStepperComponent', () => {
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -793,8 +824,8 @@ describe('DemisProcessStepperComponent', () => {
       ngMocks.flushTestBed();
       const emptyFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -809,12 +840,12 @@ describe('DemisProcessStepperComponent', () => {
       expect(emptyComponent.steps().length).toBe(0);
     });
 
-    it('should handle negative initStepIndex with proper ngAfterViewInit behavior', fakeAsync(() => {
+    it('should handle negative initStepIndex with proper ngAfterViewInit behavior', () => {
       ngMocks.flushTestBed();
       const negativeFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -835,23 +866,20 @@ describe('DemisProcessStepperComponent', () => {
       // After ngAfterViewInit, stepper.selectedIndex should be set to initStepIndex
       negativeComponent.ngAfterViewInit();
 
-      // Advance the timer to trigger setTimeout
-      tick();
-
       expect(mockStepper.selectedIndex).toBe(-1);
 
       // Test reset behavior with negative initStepIndex
       negativeComponent.reset();
       expect(negativeComponent.currentStepIndex()).toBe(-1);
       expect(negativeComponent.currentStep()).toBeUndefined();
-    }));
+    });
 
     it('should handle initStepIndex greater than steps length with proper ngAfterViewInit behavior', () => {
       ngMocks.flushTestBed();
       const outOfBoundsFixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -884,8 +912,8 @@ describe('DemisProcessStepperComponent', () => {
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -1011,7 +1039,7 @@ describe('DemisProcessStepperComponent', () => {
     });
 
     describe('navigation methods - Isolated', () => {
-      let mockStepper: jasmine.SpyObj<MatStepper>;
+      let mockStepper: MockedObject<MatStepper>;
 
       beforeEach(() => {
         mockStepper = createMockStepper();
@@ -1110,8 +1138,8 @@ describe('DemisProcessStepperComponent', () => {
     beforeEach(() => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -1147,8 +1175,8 @@ describe('DemisProcessStepperComponent', () => {
         ngMocks.flushTestBed();
         const emptyFixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1187,8 +1215,8 @@ describe('DemisProcessStepperComponent', () => {
         ngMocks.flushTestBed();
         const emptyFixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1249,13 +1277,13 @@ describe('DemisProcessStepperComponent', () => {
       const steps = createMockSteps();
 
       // Spies on statusChanges
-      steps.forEach(step => spyOn(step.control.statusChanges, 'subscribe').and.callThrough());
+      steps.forEach(step => vi.spyOn(step.control.statusChanges, 'subscribe'));
 
       // Create component which triggers constructor effect
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -1273,11 +1301,11 @@ describe('DemisProcessStepperComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should update controlStatesChanged signal when control status changes', fakeAsync(() => {
+    it('should update controlStatesChanged signal when control status changes', () => {
       fixture = MockRender(
         `
-        <gem-demis-process-stepper 
-          [steps]="steps" 
+        <gem-demis-process-stepper
+          [steps]="steps"
           [initStepIndex]="initStepIndex">
         </gem-demis-process-stepper>
       `,
@@ -1298,21 +1326,20 @@ describe('DemisProcessStepperComponent', () => {
       // Disable next step's control
       steps[1].control.disable();
       steps[1].control.updateValueAndValidity();
-      tick();
       fixture.detectChanges();
 
       // canGoToNext should have changed
       const updatedCanGoToNext = component.canGoToNext();
       expect(updatedCanGoToNext).not.toBe(initialCanGoToNext);
       expect(updatedCanGoToNext).toBe(false);
-    }));
+    });
 
     it('should handle empty steps array in constructor effect', () => {
       expect(() => {
         const emptyFixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1334,8 +1361,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1361,8 +1388,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1387,8 +1414,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1418,8 +1445,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1451,8 +1478,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1478,8 +1505,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1504,8 +1531,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,
@@ -1535,8 +1562,8 @@ describe('DemisProcessStepperComponent', () => {
 
         fixture = MockRender(
           `
-          <gem-demis-process-stepper 
-            [steps]="steps" 
+          <gem-demis-process-stepper
+            [steps]="steps"
             [initStepIndex]="initStepIndex">
           </gem-demis-process-stepper>
         `,

@@ -215,9 +215,19 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
       return;
     }
 
+    const stepElements = this.stepperElementRef().nativeElement.querySelectorAll('.mat-step');
+    const activeStepIndex = this.currentStepIndex();
+    const totalSteps = this.steps().length;
+
     stepper.steps.forEach((step: MatStep, index: number) => {
-      const stepElement = this.stepperElementRef().nativeElement.querySelectorAll('.mat-step').item(index);
+      const stepElement = stepElements.item(index);
       const stepData = this.steps().at(index);
+
+      if (stepElement && stepData) {
+        this.updateStepHeaderAccessibility(stepElement, stepData, index, totalSteps, activeStepIndex);
+        this.hideDecorativeStepContentFromAssistiveTech(stepElement);
+      }
+
       // Set title attribute for better accessibility and UX
       stepElement?.setAttribute('title', stepData?.label ?? '');
 
@@ -240,6 +250,100 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
         }
       }
     });
+  }
+
+  /**
+   * Applies ARIA metadata to step headers so assistive technologies can announce
+   * disabled state, active state and validation state consistently.
+   */
+  private updateStepHeaderAccessibility(stepElement: Element, stepData: ProcessStep, index: number, totalSteps: number, activeStepIndex: number): void {
+    const headerElement = stepElement.querySelector('.mat-step-header');
+    if (!(headerElement instanceof HTMLElement)) {
+      return;
+    }
+
+    const isDisabled = stepData.control.disabled;
+    const isCurrentStep = activeStepIndex === index;
+    this.setStepAnnouncement(headerElement, stepData, index, totalSteps, isDisabled, isCurrentStep);
+    this.setStepDescription(headerElement, stepData.description, index);
+    this.setCurrentStepState(headerElement, isCurrentStep);
+    this.setDisabledStepState(headerElement, isDisabled);
+  }
+
+  private setStepAnnouncement(
+    headerElement: HTMLElement,
+    stepData: ProcessStep,
+    index: number,
+    totalSteps: number,
+    isDisabled: boolean,
+    isCurrentStep: boolean
+  ): void {
+    headerElement.setAttribute('aria-disabled', String(isDisabled));
+    headerElement.setAttribute(
+      'aria-label',
+      `Schritt ${index + 1} von ${totalSteps}: ${stepData.label}, ${this.getStepStatus(stepData, isDisabled, isCurrentStep)}`
+    );
+    headerElement.setAttribute('tabindex', this.getStepTabIndex(isDisabled, isCurrentStep));
+    headerElement.removeAttribute('aria-expanded');
+  }
+
+  private getStepTabIndex(isDisabled: boolean, isCurrentStep: boolean): string {
+    if (isDisabled || !isCurrentStep) return '-1';
+    return '0';
+  }
+
+  private getStepStatus(stepData: ProcessStep, isDisabled: boolean, isCurrentStep: boolean): string {
+    if (isDisabled) return 'nicht verfügbar';
+    if (isCurrentStep) return 'aktuell';
+    if (this.isCompleted(stepData)) return 'abgeschlossen';
+    if (this.hasError(stepData)) return 'mit Fehlern';
+    return 'noch nicht begonnen';
+  }
+
+  private setStepDescription(headerElement: HTMLElement, description: string | undefined, index: number): void {
+    if (description) {
+      headerElement.setAttribute('aria-describedby', `step-description-${index + 1}`);
+      return;
+    }
+    headerElement.removeAttribute('aria-describedby');
+  }
+
+  private setCurrentStepState(headerElement: HTMLElement, isCurrentStep: boolean): void {
+    if (isCurrentStep) {
+      headerElement.setAttribute('aria-current', 'step');
+      return;
+    }
+    headerElement.removeAttribute('aria-current');
+  }
+
+  private setDisabledStepState(headerElement: HTMLElement, isDisabled: boolean): void {
+    headerElement.classList.toggle('step-header-disabled', isDisabled);
+  }
+
+  /**
+   * This stepper is used as navigation only. The generated step content panels are
+   * empty and would otherwise be announced as regions by screen readers.
+   */
+  private hideDecorativeStepContentFromAssistiveTech(stepElement: Element): void {
+    const contentPanels = stepElement.querySelectorAll('.mat-vertical-content-container, .mat-vertical-stepper-content');
+    contentPanels.forEach(panel => {
+      panel.setAttribute('aria-hidden', 'true');
+      panel.setAttribute('tabindex', '-1');
+    });
+  }
+
+  private focusStepHeader(index: number): void {
+    if (index < 0) {
+      return;
+    }
+
+    const headers = this.stepperElementRef().nativeElement.querySelectorAll('.mat-step-header');
+    const header = headers.item(index);
+    if (header instanceof HTMLElement) {
+      headers.forEach((stepHeader: Element) => stepHeader.classList.remove('step-header-focused'));
+      header.classList.add('step-header-focused');
+      header.focus({ preventScroll: true });
+    }
   }
 
   ngAfterViewInit(): void {
@@ -343,6 +447,7 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
       Promise.resolve().then(() => {
         this.stepper().selectedIndex = previousIndex;
         this.currentStepIndex.set(previousIndex);
+        this.focusStepHeader(previousIndex);
       });
       return; // Early return to prevent navigating to a disabled step
     }

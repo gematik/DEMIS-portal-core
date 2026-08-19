@@ -15,7 +15,8 @@
     find details in the "Readme" file.
  */
 
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SubmitDialogComponent } from './submit-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -36,11 +37,11 @@ describe('SubmitDialogComponent', () => {
 
   beforeEach(async () => {
     const dialogRefMock = {
-      close: jasmine.createSpy('close'),
+      close: vi.fn(),
     };
 
     const routerMock = {
-      navigate: jasmine.createSpy('navigate'),
+      navigate: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -96,7 +97,7 @@ describe('SubmitDialogComponent', () => {
 
   it('should trigger download on initialization', () => {
     // Spy on the triggerDownload method to test if it's called during initialization
-    spyOn(SubmitDialogComponent.prototype, 'triggerDownload' as any);
+    vi.spyOn(SubmitDialogComponent.prototype, 'triggerDownload' as any);
 
     // Create a new component instance to test the constructor behavior
     const newFixture = TestBed.createComponent(SubmitDialogComponent);
@@ -112,12 +113,12 @@ describe('SubmitDialogComponent', () => {
     const mockAnchorElement = {
       href: '',
       download: '',
-      click: jasmine.createSpy('click'),
-      setAttribute: jasmine.createSpy('setAttribute'),
-      getAttribute: jasmine.createSpy('getAttribute'),
+      click: vi.fn(),
+      setAttribute: vi.fn(),
+      getAttribute: vi.fn(),
     } as any;
 
-    spyOn(document, 'createElement').and.returnValue(mockAnchorElement);
+    vi.spyOn(document, 'createElement').mockReturnValue(mockAnchorElement);
 
     // Call the private triggerDownload method directly
     (component as any).triggerDownload(href, fileName);
@@ -133,16 +134,16 @@ describe('SubmitDialogComponent', () => {
     expect(mockAnchorElement.click).toHaveBeenCalled();
   });
 
-  it('should navigate to home on button click', fakeAsync(() => {
-    (router.navigate as jasmine.Spy).and.returnValue(Promise.resolve(true));
+  it('should navigate to home on button click', async () => {
+    (router.navigate as Mock).mockResolvedValue(true);
 
     const homeButton = fixture.debugElement.query(By.css('#btn-back-to-homepage')).nativeElement;
     homeButton.click();
 
-    tick(); // Resolve the first navigation promise
+    await Promise.resolve(); // Resolve the first navigation promise's .then()
 
     expect(router.navigate).toHaveBeenCalledWith(['']);
     expect(router.navigate).toHaveBeenCalledWith(['/welcome']);
     expect(dialogRef.close).toHaveBeenCalled();
-  }));
+  });
 });

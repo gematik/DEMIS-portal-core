@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it } from 'vitest';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { SECTION_TITLE_DEFAULT_LEVEL, SectionHeaderComponent } from './section-header.component';
 
@@ -38,7 +39,7 @@ describe('SectionHeaderComponent', () => {
     // robust: finde entweder h2 oder h1
     const titleSpan = native.querySelector('h2.section-header .section-header-title') ?? native.querySelector('h1.section-header .section-header-title');
 
-    expect(titleSpan).withContext('title span should exist').toBeTruthy();
+    expect(titleSpan, 'title span should exist').toBeTruthy();
     expect(titleSpan?.textContent?.trim()).toContain(titleText);
   });
 

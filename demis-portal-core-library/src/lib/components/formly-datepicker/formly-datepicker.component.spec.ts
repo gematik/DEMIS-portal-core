@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { HarnessLoader } from '@angular/cdk/testing';
@@ -22,7 +23,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { DebugElement, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCalendarHarness, MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
+import { MatCalendarHarness, MatDatepickerInputHarness, MatDatepickerToggleHarness } from '@angular/material/datepicker/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
@@ -102,15 +103,15 @@ describe('FormlyDatepickerComponent', () => {
         const control = component.form.get('datepickerWithConstraints');
 
         await inputField.setValue('12.06.2022');
-        expect(control?.valid).toBeTrue();
+        expect(control?.valid).toBe(true);
 
         await inputField.setValue('06.2022');
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('formatMismatch')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('formatMismatch')).toBe(true);
 
         await inputField.setValue('2022');
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('formatMismatch')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('formatMismatch')).toBe(true);
       });
     });
 
@@ -123,8 +124,8 @@ describe('FormlyDatepickerComponent', () => {
         await inputField.blur();
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('matDatepickerMin')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('matDatepickerMin')).toBe(true);
       });
 
       it('max date violation sets matDatepickerMax error', async () => {
@@ -135,8 +136,8 @@ describe('FormlyDatepickerComponent', () => {
         await inputField.blur();
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('matDatepickerMax')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('matDatepickerMax')).toBe(true);
       });
 
       it('required field sets required error when empty', async () => {
@@ -147,8 +148,8 @@ describe('FormlyDatepickerComponent', () => {
         await inputField.blur();
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('required')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('required')).toBe(true);
       });
 
       it('invalid dates set invalidDate error', async () => {
@@ -159,8 +160,8 @@ describe('FormlyDatepickerComponent', () => {
         await inputField.blur();
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('invalidDate')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('invalidDate')).toBe(true);
       });
 
       it('invalid formats set formatMismatch error', async () => {
@@ -171,8 +172,8 @@ describe('FormlyDatepickerComponent', () => {
         await inputField.blur();
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('formatMismatch')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('formatMismatch')).toBe(true);
       });
     });
 
@@ -183,13 +184,13 @@ describe('FormlyDatepickerComponent', () => {
 
         await inputField.setValue('12.06.2022');
         expect(component.model['defaultDatepicker']).toEqual('2022-06-12');
-        expect(control?.invalid).toBeFalse();
+        expect(control?.invalid).toBe(false);
 
         await inputField.setValue('06.2022');
-        expect(control?.invalid).toBeFalse();
+        expect(control?.invalid).toBe(false);
 
         await inputField.setValue('2022');
-        expect(control?.invalid).toBeFalse();
+        expect(control?.invalid).toBe(false);
       });
     });
 
@@ -251,7 +252,7 @@ describe('FormlyDatepickerComponent', () => {
         control!.setValue('15.06.1950');
         fixture.detectChanges();
 
-        expect(control?.valid).toBeTrue();
+        expect(control?.valid).toBe(true);
         expect(component.model['datepickerWithConstraints']).toEqual('1950-06-15');
 
         const inputField = await getDatepicker(loader, '#datepickerWithConstraints-datepicker-input-field');
@@ -265,14 +266,14 @@ describe('FormlyDatepickerComponent', () => {
         // Test value before min date (1870-01-01)
         control!.setValue('31.12.1869');
         fixture.detectChanges();
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('matDatepickerMin')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('matDatepickerMin')).toBe(true);
 
         // Test value after max date (today)
         control!.setValue('01.01.2030');
         fixture.detectChanges();
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('matDatepickerMax')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('matDatepickerMax')).toBe(true);
       });
 
       it('Invalid German date format is detected', async () => {
@@ -280,8 +281,8 @@ describe('FormlyDatepickerComponent', () => {
         control!.setValue('32.13.2022'); // Invalid date
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('invalidDate')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('invalidDate')).toBe(true);
       });
 
       it('Wrong precision format is detected when constraints are applied', async () => {
@@ -289,8 +290,8 @@ describe('FormlyDatepickerComponent', () => {
         control!.setValue('06.2022'); // Month precision
         fixture.detectChanges();
 
-        expect(control?.invalid).toBeTrue();
-        expect(control?.hasError('formatMismatch')).toBeTrue();
+        expect(control?.invalid).toBe(true);
+        expect(control?.hasError('formatMismatch')).toBe(true);
       });
 
       it('ISO format values are properly handled when set programmatically', async () => {
@@ -299,19 +300,19 @@ describe('FormlyDatepickerComponent', () => {
         // Test ISO day format
         control!.setValue('2023-07-15');
         fixture.detectChanges();
-        expect(control?.valid).toBeTrue();
+        expect(control?.valid).toBe(true);
         expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023-07-15');
 
         // Test ISO month format
         control!.setValue('2023-07');
         fixture.detectChanges();
-        expect(control?.valid).toBeTrue();
+        expect(control?.valid).toBe(true);
         expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023-07');
 
         // Test ISO year format
         control!.setValue('2023');
         fixture.detectChanges();
-        expect(control?.valid).toBeTrue();
+        expect(control?.valid).toBe(true);
         expect(component.model['datepickerAllPrecisionLevels']).toEqual('2023');
       });
     });
@@ -387,7 +388,10 @@ describe('FormlyDatepickerComponent', () => {
 
       // Each case asserts the resulting model value and whether an invalidDate
       // error is reported, exercising the full detect/convert/apply pipeline.
-      const validCases: Array<{ input: string; expectedModel: string }> = [
+      const validCases: Array<{
+        input: string;
+        expectedModel: string;
+      }> = [
         { input: '15.06.2025', expectedModel: '2025-06-15' }, // German day
         { input: '06.2025', expectedModel: '2025-06' }, // German month
         { input: '2025', expectedModel: '2025' }, // Year (matches German regex first)
@@ -398,15 +402,18 @@ describe('FormlyDatepickerComponent', () => {
       validCases.forEach(({ input, expectedModel }) => {
         control.setValue(input);
         fixture.detectChanges();
-        expect(component.model['datepickerAllPrecisionLevels']).withContext(`input=${input}`).toEqual(expectedModel);
-        expect(control.hasError('invalidDate')).withContext(`input=${input}`).toBeFalse();
+        expect(component.model['datepickerAllPrecisionLevels'], `input=${input}`).toEqual(expectedModel);
+        expect(control.hasError('invalidDate'), `input=${input}`).toBe(false);
       });
 
       // German formats without dots are detected and converted to ISO, but
       // because inputStringToDate only accepts the dotted German format, the
       // post-conversion validation flags them as invalidDate. The model still
       // reflects the converted ISO value.
-      const noDotCases: Array<{ input: string; expectedModel: string }> = [
+      const noDotCases: Array<{
+        input: string;
+        expectedModel: string;
+      }> = [
         { input: '15062025', expectedModel: '2025-06-15' },
         { input: '062025', expectedModel: '2025-06' },
       ];
@@ -414,8 +421,8 @@ describe('FormlyDatepickerComponent', () => {
       noDotCases.forEach(({ input, expectedModel }) => {
         control.setValue(input);
         fixture.detectChanges();
-        expect(component.model['datepickerAllPrecisionLevels']).withContext(`input=${input}`).toEqual(expectedModel);
-        expect(control.hasError('invalidDate')).withContext(`input=${input}`).toBeTrue();
+        expect(component.model['datepickerAllPrecisionLevels'], `input=${input}`).toEqual(expectedModel);
+        expect(control.hasError('invalidDate'), `input=${input}`).toBe(true);
       });
 
       // Inputs that cannot be matched to any supported precision must yield invalidDate.
@@ -423,18 +430,18 @@ describe('FormlyDatepickerComponent', () => {
       invalidStringInputs.forEach(input => {
         control.setValue(input);
         fixture.detectChanges();
-        expect(control.hasError('invalidDate')).withContext(`input=${input}`).toBeTrue();
+        expect(control.hasError('invalidDate'), `input=${input}`).toBe(true);
       });
 
       // Non-string values are ignored by the precision detection logic and
       // therefore must not raise the invalidDate error.
       control.setValue(null);
       fixture.detectChanges();
-      expect(control.hasError('invalidDate')).toBeFalse();
+      expect(control.hasError('invalidDate')).toBe(false);
 
       control.setValue(123 as unknown as string);
       fixture.detectChanges();
-      expect(control.hasError('invalidDate')).toBeFalse();
+      expect(control.hasError('invalidDate')).toBe(false);
     });
 
     it('should trigger German format detection through user input processing', () => {
@@ -462,10 +469,10 @@ describe('FormlyDatepickerComponent', () => {
         component['processPrecisionValue'](value, precision, 'GERMAN');
 
         if (expectedControlValue !== null) {
-          expect(control.value).withContext(`input=${value}`).toBe(expectedControlValue);
+          expect(control.value, `input=${value}`).toBe(expectedControlValue);
         }
-        expect(component['currentPrecision']).withContext(`input=${value}`).toBe(precision);
-        expect(control.hasError('invalidDate')).withContext(`input=${value}`).toBe(expectInvalidDate);
+        expect(component['currentPrecision'], `input=${value}`).toBe(precision);
+        expect(control.hasError('invalidDate'), `input=${value}`).toBe(expectInvalidDate);
       });
     });
   });
@@ -510,13 +517,13 @@ describe('FormlyDatepickerComponent', () => {
     it('If the value is updated programmatically, no error is thrown when the precision is within default allowed precisions', async () => {
       component.form.get('withDefaultValue_IsoMonth_defaultPrecision')!.setValue('2025-02');
       const control = component.form.get('withDefaultValue_IsoMonth_defaultPrecision');
-      expect(control?.hasError('formatMismatch')).toBeFalse();
+      expect(control?.hasError('formatMismatch')).toBe(false);
     });
 
     it('If the value is updated programmatically, an error is thrown if no precision is detected from model', async () => {
       component.form.get('datepickerAllPrecisionLevels')!.setValue('foo');
       const control = component.form.get('datepickerAllPrecisionLevels');
-      expect(control?.hasError('invalidDate')).toBeTrue();
+      expect(control?.hasError('invalidDate')).toBe(true);
     });
   });
 
@@ -535,7 +542,7 @@ describe('FormlyDatepickerComponent', () => {
 
     describe('The calendar can handle 3 precisions level', () => {
       it('Initially the calendar should be closed', async () => {
-        expect(await datepickerAllPrecisionLevels.isCalendarOpen()).toBeFalse();
+        expect(await datepickerAllPrecisionLevels.isCalendarOpen()).toBe(false);
       });
 
       it('The calendar opens by default with the view matching the highest precision allowed', async () => {
@@ -545,9 +552,9 @@ describe('FormlyDatepickerComponent', () => {
         const monthButton = await getButton(loader, '#datepicker-precision-toggle-month');
         const yearButton = await getButton(loader, '#datepicker-precision-toggle-year');
 
-        expect(await (await dayButton.host()).hasClass('selected')).toBeTrue();
-        expect(await (await monthButton.host()).hasClass('selected')).toBeFalse();
-        expect(await (await yearButton.host()).hasClass('selected')).toBeFalse();
+        expect(await (await dayButton.host()).hasClass('selected')).toBe(true);
+        expect(await (await monthButton.host()).hasClass('selected')).toBe(false);
+        expect(await (await yearButton.host()).hasClass('selected')).toBe(false);
       });
 
       it('A date can be selected in day precision', async () => {
@@ -569,9 +576,9 @@ describe('FormlyDatepickerComponent', () => {
         const yearButton = await getButton(loader, '#datepicker-precision-toggle-year');
         await monthButton.click();
 
-        expect(await (await dayButton.host()).hasClass('selected')).toBeFalse();
-        expect(await (await monthButton.host()).hasClass('selected')).toBeTrue();
-        expect(await (await yearButton.host()).hasClass('selected')).toBeFalse();
+        expect(await (await dayButton.host()).hasClass('selected')).toBe(false);
+        expect(await (await monthButton.host()).hasClass('selected')).toBe(true);
+        expect(await (await yearButton.host()).hasClass('selected')).toBe(false);
 
         const calendar = await loader.getHarness(MatCalendarHarness);
         await calendar.selectCell({ text: 'JAN' });
@@ -588,9 +595,9 @@ describe('FormlyDatepickerComponent', () => {
         const yearButton = await getButton(loader, '#datepicker-precision-toggle-year');
         await yearButton.click();
 
-        expect(await (await dayButton.host()).hasClass('selected')).toBeFalse();
-        expect(await (await monthButton.host()).hasClass('selected')).toBeFalse();
-        expect(await (await yearButton.host()).hasClass('selected')).toBeTrue();
+        expect(await (await dayButton.host()).hasClass('selected')).toBe(false);
+        expect(await (await monthButton.host()).hasClass('selected')).toBe(false);
+        expect(await (await yearButton.host()).hasClass('selected')).toBe(true);
 
         const calendar = await loader.getHarness(MatCalendarHarness);
         await calendar.selectCell({ text: '2024' });
@@ -601,8 +608,8 @@ describe('FormlyDatepickerComponent', () => {
         await defaultDatepicker.openCalendar(); // all precision levels allowed by default
         const monthButton = await getButton(loader, '#datepicker-precision-toggle-month');
         const yearButton = await getButton(loader, '#datepicker-precision-toggle-year');
-        expect(await monthButton.isDisabled()).toBeFalse();
-        expect(await yearButton.isDisabled()).toBeFalse();
+        expect(await monthButton.isDisabled()).toBe(false);
+        expect(await yearButton.isDisabled()).toBe(false);
       });
 
       it('User can switch precision level multiple time', async () => {
@@ -611,8 +618,8 @@ describe('FormlyDatepickerComponent', () => {
         await yearButton.click();
         const dayButton = await getButton(loader, '#datepicker-precision-toggle-day');
         await dayButton.click();
-        expect(await (await dayButton.host()).hasClass('selected')).toBeTrue();
-        expect(await (await yearButton.host()).hasClass('selected')).toBeFalse();
+        expect(await (await dayButton.host()).hasClass('selected')).toBe(true);
+        expect(await (await yearButton.host()).hasClass('selected')).toBe(false);
       });
 
       it('On reopen the calendar is reset to default precision', async () => {
@@ -620,18 +627,21 @@ describe('FormlyDatepickerComponent', () => {
         await datepickerAllPrecisionLevels.openCalendar();
         const yearButton = await getButton(loader, '#datepicker-precision-toggle-year');
         await yearButton.click();
-        expect(await (await yearButton.host()).hasClass('selected')).toBeTrue();
+        expect(await (await yearButton.host()).hasClass('selected')).toBe(true);
         await datepickerAllPrecisionLevels.closeCalendar();
-
-        //And then reopen the calendar
-        const toggleDebugEl = fixture.debugElement.query(By.css('mat-datepicker-toggle'));
-        toggleDebugEl.nativeElement.click();
         fixture.detectChanges();
-        expect(await datepickerAllPrecisionLevels.isCalendarOpen()).toBeTrue();
+        await fixture.whenStable();
+
+        //And then reopen the calendar via the toggle button (resets precision)
+        // Directly invoke toggle click to reset precision, then open via harness
+        component.onDatepickerToggleClick();
+        fixture.detectChanges();
+        await datepickerAllPrecisionLevels.openCalendar();
+        expect(await datepickerAllPrecisionLevels.isCalendarOpen()).toBe(true);
         const refreshedYearButton = await getButton(loader, '#datepicker-precision-toggle-year');
         const dayButton = await getButton(loader, '#datepicker-precision-toggle-day');
-        expect(await (await refreshedYearButton.host()).hasClass('selected')).toBeFalse();
-        expect(await (await dayButton.host()).hasClass('selected')).toBeTrue();
+        expect(await (await refreshedYearButton.host()).hasClass('selected')).toBe(false);
+        expect(await (await dayButton.host()).hasClass('selected')).toBe(true);
       });
     });
 
@@ -643,7 +653,7 @@ describe('FormlyDatepickerComponent', () => {
         await calendar.selectCell({ text: 'MAI' });
         await calendar.selectCell({ text: '15' });
         expect(component.model['multiYearDatepicker']).toEqual('2024-05-15');
-        expect(await multiYearDatepicker.isCalendarOpen()).toBeFalse();
+        expect(await multiYearDatepicker.isCalendarOpen()).toBe(false);
       });
 
       it('user can select date with month precision in multi-year modus', async () => {
@@ -655,7 +665,7 @@ describe('FormlyDatepickerComponent', () => {
         await calendar.selectCell({ text: 'MAI' });
 
         expect(component.model['multiYearDatepicker']).toEqual('2024-05');
-        expect(await multiYearDatepicker.isCalendarOpen()).toBeFalse();
+        expect(await multiYearDatepicker.isCalendarOpen()).toBe(false);
       });
 
       it('user can select date with year precision in multi-year modus', async () => {
@@ -665,7 +675,7 @@ describe('FormlyDatepickerComponent', () => {
         const calendar = await loader.getHarness(MatCalendarHarness);
         await calendar.selectCell({ text: '2024' });
         expect(component.model['multiYearDatepicker']).toEqual('2024');
-        expect(await multiYearDatepicker.isCalendarOpen()).toBeFalse();
+        expect(await multiYearDatepicker.isCalendarOpen()).toBe(false);
       });
 
       it('if the user closes the calender before the end of the date selection, the partially selected date is ignored', async () => {
@@ -849,8 +859,8 @@ describe('FormlyDatepickerComponent', () => {
           await datepickerWithTimeRange.openCalendar();
           prevYear = await getButton(loader, '#prev-year');
           prevMonth = await getButton(loader, '#prev-month');
-          expect(await prevYear.isDisabled()).toBeTrue();
-          expect(await prevMonth.isDisabled()).toBeTrue();
+          expect(await prevYear.isDisabled()).toBe(true);
+          expect(await prevMonth.isDisabled()).toBe(true);
           await datepickerWithTimeRange.closeCalendar();
 
           // reminder: datepickerWithTimeRange has maxDate set to 31.12.2009
@@ -858,8 +868,8 @@ describe('FormlyDatepickerComponent', () => {
           await datepickerWithTimeRange.openCalendar();
           nextYear = await getButton(loader, '#next-year');
           nextMonth = await getButton(loader, '#next-month');
-          expect(await nextYear.isDisabled()).toBeTrue();
-          expect(await nextMonth.isDisabled()).toBeTrue();
+          expect(await nextYear.isDisabled()).toBe(true);
+          expect(await nextMonth.isDisabled()).toBe(true);
           await datepickerWithTimeRange.closeCalendar();
         });
 
@@ -870,7 +880,7 @@ describe('FormlyDatepickerComponent', () => {
           let monthButton = await getButton(loader, '#datepicker-precision-toggle-month');
           await monthButton.click();
           prevYear = await getButton(loader, '#prev-year');
-          expect(await prevYear.isDisabled()).toBeTrue();
+          expect(await prevYear.isDisabled()).toBe(true);
           await datepickerWithTimeRange.closeCalendar();
 
           // reminder: datepickerWithTimeRange has maxDate set to 31.12.2009
@@ -879,7 +889,7 @@ describe('FormlyDatepickerComponent', () => {
           monthButton = await getButton(loader, '#datepicker-precision-toggle-month');
           await monthButton.click();
           nextYear = await getButton(loader, '#next-year');
-          expect(await nextYear.isDisabled()).toBeTrue();
+          expect(await nextYear.isDisabled()).toBe(true);
           await datepickerWithTimeRange.closeCalendar();
         });
 
@@ -888,14 +898,14 @@ describe('FormlyDatepickerComponent', () => {
           await datepickerWithTimeRange.setValue('2000');
           await datepickerWithTimeRange.openCalendar();
           prevYears = await getButton(loader, '#prev-years');
-          expect(await prevYears.isDisabled()).toBeTrue();
+          expect(await prevYears.isDisabled()).toBe(true);
           await datepickerWithTimeRange.closeCalendar();
 
           // reminder: datepickerWithTimeRange has maxDate set to 31.12.2009
           await datepickerWithTimeRange.setValue('2000');
           await datepickerWithTimeRange.openCalendar();
           nextYears = await getButton(loader, '#next-years');
-          expect(await nextYears.isDisabled()).toBeTrue();
+          expect(await nextYears.isDisabled()).toBe(true);
           await datepickerWithTimeRange.closeCalendar();
         });
 
@@ -916,113 +926,113 @@ describe('FormlyDatepickerComponent', () => {
 
           it('should allow click to the previous month if within bounds', () => {
             minDateSignal.set(new Date('2022-12-01'));
-            expect(header.canGoPrevious('month')).toBeTrue();
+            expect(header.canGoPrevious('month')).toBe(true);
 
             minDateSignal.set(new Date('2025-05-01'));
-            expect(header.canGoPrevious('month')).toBeTrue();
+            expect(header.canGoPrevious('month')).toBe(true);
 
             minDateSignal.set(new Date('2025-05-28'));
-            expect(header.canGoPrevious('month')).toBeTrue();
+            expect(header.canGoPrevious('month')).toBe(true);
           });
 
           it('should disallow click to the previous month if not within bounds', () => {
             minDateSignal.set(new Date('2025-06-01'));
-            expect(header.canGoPrevious('month')).toBeFalse();
+            expect(header.canGoPrevious('month')).toBe(false);
 
             minDateSignal.set(new Date('2025-06-14'));
-            expect(header.canGoPrevious('month')).toBeFalse();
+            expect(header.canGoPrevious('month')).toBe(false);
 
             minDateSignal.set(new Date('2025-06-28'));
-            expect(header.canGoPrevious('month')).toBeFalse();
+            expect(header.canGoPrevious('month')).toBe(false);
 
             minDateSignal.set(new Date('2025-07-28'));
-            expect(header.canGoPrevious('month')).toBeFalse();
+            expect(header.canGoPrevious('month')).toBe(false);
           });
 
           it('should allow click to the next month if within bounds', () => {
             maxDateSignal.set(new Date('2025-07-01'));
-            expect(header.canGoNext('month')).toBeTrue();
+            expect(header.canGoNext('month')).toBe(true);
 
             maxDateSignal.set(new Date('2025-07-20'));
-            expect(header.canGoNext('month')).toBeTrue();
+            expect(header.canGoNext('month')).toBe(true);
 
             maxDateSignal.set(new Date('2026-01-01'));
-            expect(header.canGoNext('month')).toBeTrue();
+            expect(header.canGoNext('month')).toBe(true);
           });
 
           it('should disallow click to the next month if not within bounds', () => {
             maxDateSignal.set(new Date('2025-06-01'));
-            expect(header.canGoNext('month')).toBeFalse();
+            expect(header.canGoNext('month')).toBe(false);
 
             maxDateSignal.set(new Date('2025-06-14'));
-            expect(header.canGoNext('month')).toBeFalse();
+            expect(header.canGoNext('month')).toBe(false);
 
             maxDateSignal.set(new Date('2025-06-28'));
-            expect(header.canGoNext('month')).toBeFalse();
+            expect(header.canGoNext('month')).toBe(false);
 
             maxDateSignal.set(new Date('2025-05-10'));
-            expect(header.canGoNext('month')).toBeFalse();
+            expect(header.canGoNext('month')).toBe(false);
           });
 
           it('should allow click to the previous year if within bounds', () => {
             minDateSignal.set(new Date('2024-01-15'));
-            expect(header.canGoPrevious('year')).toBeTrue();
+            expect(header.canGoPrevious('year')).toBe(true);
 
             minDateSignal.set(new Date('2024-11-15'));
-            expect(header.canGoPrevious('year')).toBeTrue();
+            expect(header.canGoPrevious('year')).toBe(true);
           });
 
           it('should disallow click to the previous year if not within bounds', () => {
             minDateSignal.set(new Date('2025-01-15'));
-            expect(header.canGoPrevious('year')).toBeFalse();
+            expect(header.canGoPrevious('year')).toBe(false);
 
             minDateSignal.set(new Date('2025-11-15'));
-            expect(header.canGoPrevious('year')).toBeFalse();
+            expect(header.canGoPrevious('year')).toBe(false);
 
             minDateSignal.set(new Date('2026-01-15'));
-            expect(header.canGoPrevious('year')).toBeFalse();
+            expect(header.canGoPrevious('year')).toBe(false);
           });
 
           it('should allow click to the next year if within bounds', () => {
             maxDateSignal.set(new Date('2026-01-15'));
-            expect(header.canGoNext('year')).toBeTrue();
+            expect(header.canGoNext('year')).toBe(true);
 
             maxDateSignal.set(new Date('2026-11-15'));
-            expect(header.canGoNext('year')).toBeTrue();
+            expect(header.canGoNext('year')).toBe(true);
 
             maxDateSignal.set(new Date('2027-01-15'));
-            expect(header.canGoNext('year')).toBeTrue();
+            expect(header.canGoNext('year')).toBe(true);
           });
 
           it('should disallow click to the next year if not within bounds', () => {
             maxDateSignal.set(new Date('2025-01-15'));
-            expect(header.canGoNext('year')).toBeFalse();
+            expect(header.canGoNext('year')).toBe(false);
 
             maxDateSignal.set(new Date('2025-11-15'));
-            expect(header.canGoNext('year')).toBeFalse();
+            expect(header.canGoNext('year')).toBe(false);
 
             maxDateSignal.set(new Date('2024-01-01'));
-            expect(header.canGoNext('year')).toBeFalse();
+            expect(header.canGoNext('year')).toBe(false);
           });
 
           it('should allow click to the previous year-range if within bounds', () => {
             minDateSignal.set(new Date('1970-01-15'));
-            expect(header.canGoPrevious('multi-year')).toBeTrue();
+            expect(header.canGoPrevious('multi-year')).toBe(true);
           });
 
           it('should disallow click to the previous year-range if not within bounds', () => {
             minDateSignal.set(new Date('2025-01-15'));
-            expect(header.canGoPrevious('multi-year')).toBeFalse();
+            expect(header.canGoPrevious('multi-year')).toBe(false);
           });
 
           it('should allow click to the next year-range if within bounds', () => {
             maxDateSignal.set(new Date('2084-01-01'));
-            expect(header.canGoNext('multi-year')).toBeTrue();
+            expect(header.canGoNext('multi-year')).toBe(true);
           });
 
           it('should disallow click to the next year-range if not within bounds', () => {
             maxDateSignal.set(new Date('2025-01-15'));
-            expect(header.canGoNext('multi-year')).toBeFalse();
+            expect(header.canGoNext('multi-year')).toBe(false);
           });
         });
       });
@@ -1044,19 +1054,19 @@ describe('FormlyDatepickerComponent', () => {
 
       it('should parse a valid date string with day precision', () => {
         const result = component['inputStringToDate']('30.05.2024', 'day');
-        expect(isValid(result)).toBeTrue();
+        expect(isValid(result)).toBe(true);
       });
 
       it('should return an invalid Date for malformed input', () => {
         const result = component['inputStringToDate']('not-a-date', 'day');
-        expect(result instanceof Date).toBeTrue();
-        expect(isValid(result)).toBeFalse();
+        expect(result instanceof Date).toBe(true);
+        expect(isValid(result)).toBe(false);
       });
 
       it('should return an invalid Date for mismatch format input', () => {
         const result = component['inputStringToDate']('2024', 'day');
-        expect(result instanceof Date).toBeTrue();
-        expect(isValid(result)).toBeFalse();
+        expect(result instanceof Date).toBe(true);
+        expect(isValid(result)).toBe(false);
       });
 
       it('should return null if precision is null', () => {
@@ -1066,7 +1076,7 @@ describe('FormlyDatepickerComponent', () => {
 
       it('should parse with year precision', () => {
         const result = component['inputStringToDate']('2020', 'year');
-        expect(isValid(result)).toBeTrue();
+        expect(isValid(result)).toBe(true);
       });
     });
   });

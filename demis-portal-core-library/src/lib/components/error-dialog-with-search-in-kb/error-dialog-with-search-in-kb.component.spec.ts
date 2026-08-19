@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -68,12 +69,12 @@ describe('UploadErrorsComponent', () => {
       component = fixture.componentInstance;
       loader = TestbedHarnessEnvironment.loader(fixture);
       clipboard = TestBed.inject(Clipboard);
-      spyOn(clipboard, 'copy').and.returnValue(true);
+      vi.spyOn(clipboard, 'copy').mockReturnValue(true);
       fixture.detectChanges();
     });
 
     it('should call onCopyErrors and copy the string to clipboard when button is clicked', async () => {
-      spyOn(component, 'onCopyErrors').and.callThrough();
+      vi.spyOn(component, 'onCopyErrors');
 
       const button = await loader.getHarness(MatButtonHarness.with({ selector: '#copy-errors-btn' }));
       expect(button).toBeDefined();
@@ -146,7 +147,7 @@ describe('UploadErrorsComponent', () => {
       component = fixture.componentInstance;
       loader = TestbedHarnessEnvironment.loader(fixture);
       clipboard = TestBed.inject(Clipboard);
-      spyOn(clipboard, 'copy').and.returnValue(true);
+      vi.spyOn(clipboard, 'copy').mockReturnValue(true);
       fixture.detectChanges();
     });
 
@@ -197,7 +198,7 @@ describe('UploadErrorsComponent', () => {
       fixture = TestBed.createComponent(ErrorDialogWithSearchInKbComponent);
       component = fixture.componentInstance;
       clipboard = TestBed.inject(Clipboard);
-      spyOn(clipboard, 'copy').and.returnValue(true);
+      vi.spyOn(clipboard, 'copy').mockReturnValue(true);
       fixture.detectChanges();
     });
 
@@ -219,7 +220,12 @@ describe('UploadErrorsComponent', () => {
       await TestBed.configureTestingModule({
         imports: [MatDialogModule, ErrorDialogWithSearchInKbComponent],
         providers: [
-          { provide: MatDialogRef, useValue: jasmine.createSpyObj('MatDialogRef', ['close']) },
+          {
+            provide: MatDialogRef,
+            useValue: {
+              close: vi.fn().mockName('MatDialogRef.close'),
+            },
+          },
           {
             provide: MAT_DIALOG_DATA,
             useValue: {
@@ -239,12 +245,12 @@ describe('UploadErrorsComponent', () => {
       loader = TestbedHarnessEnvironment.loader(fixture);
       clipboard = TestBed.inject(Clipboard);
       router = TestBed.inject(Router);
-      spyOn(clipboard, 'copy').and.returnValue(true);
+      vi.spyOn(clipboard, 'copy').mockReturnValue(true);
       fixture.detectChanges();
     });
 
     it('should close the dialog and redirect to homepage when clicking the close button', () => {
-      const navigateSpy = spyOn(router, 'navigate');
+      const navigateSpy = vi.spyOn(router, 'navigate');
       component.onClose();
       expect(component.dialogRef.close).toHaveBeenCalled();
       expect(navigateSpy).toHaveBeenCalledWith(['/']);
@@ -278,12 +284,12 @@ describe('UploadErrorsComponent', () => {
       loader = TestbedHarnessEnvironment.loader(fixture);
       clipboard = TestBed.inject(Clipboard);
       router = TestBed.inject(Router);
-      spyOn(clipboard, 'copy').and.returnValue(true);
+      vi.spyOn(clipboard, 'copy').mockReturnValue(true);
       fixture.detectChanges();
     });
 
     it('should close the dialog when clicking the close button', () => {
-      const closeSpy = spyOn(TestBed.inject(MatDialogRef<ErrorDialogWithSearchInKbComponent>), 'close');
+      const closeSpy = vi.spyOn(TestBed.inject(MatDialogRef<ErrorDialogWithSearchInKbComponent>), 'close');
       component.onClose();
       expect(closeSpy).toHaveBeenCalled();
     });

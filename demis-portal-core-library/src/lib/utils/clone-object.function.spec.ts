@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { describe, expect, it } from 'vitest';
 import { cloneObject } from './clone-object.function';
 
 describe('Utils - cloneObject', () => {

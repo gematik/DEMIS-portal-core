@@ -27,7 +27,7 @@ const appConfig: ApplicationConfig = {
       {
         types: [
           {
-            name: 'repeat',
+            name: 'repeater',
             component: FormlyRepeaterComponent,
           },
         ],

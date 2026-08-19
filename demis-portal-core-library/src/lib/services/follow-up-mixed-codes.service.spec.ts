@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { MockBuilder } from 'ng-mocks';
 import { Subject } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -64,7 +65,7 @@ describe('FollowUpMixedCodesService', () => {
     dialog = TestBed.inject(MatDialog);
 
     dialogRefMock = new MatDialogRefMock<FollowUpMixedCodesDialogComponent>();
-    spyOn(dialog, 'open').and.returnValue(dialogRefMock as unknown as MatDialogRef<FollowUpMixedCodesDialogComponent>);
+    vi.spyOn(dialog, 'open').mockReturnValue(dialogRefMock as unknown as MatDialogRef<FollowUpMixedCodesDialogComponent>);
     (dialog.openDialogs as any[]).length = 0;
   });
 
@@ -73,13 +74,13 @@ describe('FollowUpMixedCodesService', () => {
       service.openDialog(mockMixedCodesList);
 
       expect(dialog.open).toHaveBeenCalledTimes(1);
-      const args = (dialog.open as jasmine.Spy).calls.mostRecent().args;
+      const args = vi.mocked(dialog.open as Mock).mock.lastCall;
       const component = args[0];
       const config = args[1];
 
       expect(component).toBe(FollowUpMixedCodesDialogComponent);
-      expect(config.disableClose).toBeTrue();
-      expect(config.ariaModal).toBeTrue();
+      expect(config.disableClose).toBe(true);
+      expect(config.ariaModal).toBe(true);
       expect(config.ariaLabelledBy).toBe('dialog-title');
       expect(config.ariaDescribedBy).toBe('dialog-paragraph');
       expect(config.data).toEqual(mockMixedCodesList);
@@ -93,19 +94,17 @@ describe('FollowUpMixedCodesService', () => {
       expect(dialog.open).toHaveBeenCalledTimes(1);
     });
 
-    it('returns the result from afterClosed() after opening dialog', done => {
+    it('returns the result from afterClosed() after opening dialog', async () => {
       service.openDialog(mockMixedCodesList).subscribe(result => {
         expect(result).toBe('code1');
-        done();
       });
 
       dialogRefMock.close('code1');
     });
 
-    it('returns undefined if dialog is closed without result', done => {
+    it('returns undefined if dialog is closed without result', async () => {
       service.openDialog(mockMixedCodesList).subscribe(result => {
         expect(result).toBeUndefined();
-        done();
       });
 
       dialogRefMock.close(undefined);
@@ -123,7 +122,7 @@ describe('FollowUpMixedCodesService', () => {
       expect((service as any).dialogRef).toBeNull();
     });
 
-    it('returns previousDialog afterClosed if one is already open', done => {
+    it('returns previousDialog afterClosed if one is already open', async () => {
       // First dialog
       const first$ = service.openDialog(mockMixedCodesList);
 
@@ -134,7 +133,6 @@ describe('FollowUpMixedCodesService', () => {
 
       second$.subscribe(result => {
         expect(result).toBe('code2');
-        done();
       });
 
       dialogRefMock.close('code2');
@@ -144,7 +142,7 @@ describe('FollowUpMixedCodesService', () => {
   describe('closeDialog()', () => {
     it('closes the dialog if present', () => {
       service.openDialog(mockMixedCodesList);
-      const closeSpy = spyOn(dialogRefMock, 'close').and.callThrough();
+      const closeSpy = vi.spyOn(dialogRefMock, 'close');
 
       service.closeDialog('code1');
 
@@ -153,7 +151,7 @@ describe('FollowUpMixedCodesService', () => {
 
     it('closes the dialog with undefined result if no result provided', () => {
       service.openDialog(mockMixedCodesList);
-      const closeSpy = spyOn(dialogRefMock, 'close').and.callThrough();
+      const closeSpy = vi.spyOn(dialogRefMock, 'close');
 
       service.closeDialog();
 
@@ -167,7 +165,7 @@ describe('FollowUpMixedCodesService', () => {
 
     it('closes the dialog with the correct selected value', () => {
       service.openDialog(mockMixedCodesList);
-      const closeSpy = spyOn(dialogRefMock, 'close').and.callThrough();
+      const closeSpy = vi.spyOn(dialogRefMock, 'close');
 
       service.closeDialog('code2');
 
@@ -187,13 +185,12 @@ describe('FollowUpMixedCodesService', () => {
   });
 
   describe('openDialog + closeDialog', () => {
-    it('opens dialog, updates selectedValue, and closes with result', done => {
+    it('opens dialog, updates selectedValue, and closes with result', async () => {
       const result$ = service.openDialog(mockMixedCodesList);
 
       result$.subscribe(result => {
         expect(result).toBe('code2');
         expect(service.selectedValue()).toBe('code2');
-        done();
       });
 
       // Simulate user selecting a code
@@ -203,7 +200,7 @@ describe('FollowUpMixedCodesService', () => {
       service.closeDialog(service.selectedValue());
     });
 
-    it('returns existing dialogRef afterClosed if one is already open', done => {
+    it('returns existing dialogRef afterClosed if one is already open', async () => {
       // First dialog
       const result1$ = service.openDialog(mockMixedCodesList);
 
@@ -219,8 +216,7 @@ describe('FollowUpMixedCodesService', () => {
       result2$.subscribe(result => {
         expect(result).toBe('code2');
         // Both subscriptions should receive the same result
-        expect(result1Received).toBeTrue();
-        done();
+        expect(result1Received).toBe(true);
       });
 
       // Close the dialog - both subscriptions should complete

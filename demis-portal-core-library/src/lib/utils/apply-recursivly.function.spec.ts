@@ -15,18 +15,19 @@
     find details in the "Readme" file.
  */
 
+import { describe, expect, it, vi } from 'vitest';
 import { applyRecursivly } from './apply-recursivly.function';
 
 describe('Utils - applyRecursivly', () => {
   it('should apply callback to a primitive value', () => {
-    const callback = jasmine.createSpy('callback').and.callFake(value => value * 2);
+    const callback = vi.fn().mockImplementation(value => value * 2);
     const result = applyRecursivly(5, callback);
     expect(result).toBe(10);
     expect(callback).toHaveBeenCalledWith(5);
   });
 
   it('should apply callback to each element in an array', () => {
-    const callback = jasmine.createSpy('callback').and.callFake(value => value * 2);
+    const callback = vi.fn().mockImplementation(value => value * 2);
     const result = applyRecursivly([1, 2, 3], callback);
     expect(result).toEqual([2, 4, 6]);
     expect(callback).toHaveBeenCalledWith(1);
@@ -35,7 +36,7 @@ describe('Utils - applyRecursivly', () => {
   });
 
   it('should apply callback to each property in an object', () => {
-    const callback = jasmine.createSpy('callback').and.callFake(value => value * 2);
+    const callback = vi.fn().mockImplementation(value => value * 2);
     const result = applyRecursivly({ a: 1, b: 2, c: 3 }, callback);
     expect(result).toEqual({ a: 2, b: 4, c: 6 });
     expect(callback).toHaveBeenCalledWith(1);
@@ -44,7 +45,7 @@ describe('Utils - applyRecursivly', () => {
   });
 
   it('should apply callback recursively to nested objects', () => {
-    const callback = jasmine.createSpy('callback').and.callFake(value => value * 2);
+    const callback = vi.fn().mockImplementation(value => value * 2);
     const result = applyRecursivly({ a: { b: 2 }, c: 3 }, callback);
     expect(result).toEqual({ a: { b: 4 }, c: 6 });
     expect(callback).toHaveBeenCalledWith(2);
@@ -52,7 +53,7 @@ describe('Utils - applyRecursivly', () => {
   });
 
   it('should apply callback recursively to nested arrays', () => {
-    const callback = jasmine.createSpy('callback').and.callFake(value => value * 2);
+    const callback = vi.fn().mockImplementation(value => value * 2);
     const result = applyRecursivly([1, [2, 3]], callback);
     expect(result).toEqual([2, [4, 6]]);
     expect(callback).toHaveBeenCalledWith(1);
@@ -61,7 +62,7 @@ describe('Utils - applyRecursivly', () => {
   });
 
   it('should handle mixed nested structures', () => {
-    const callback = jasmine.createSpy('callback').and.callFake(value => value * 2);
+    const callback = vi.fn().mockImplementation(value => value * 2);
     const result = applyRecursivly({ a: [1, { b: 2 }], c: 3 }, callback);
     expect(result).toEqual({ a: [2, { b: 4 }], c: 6 });
     expect(callback).toHaveBeenCalledWith(1);

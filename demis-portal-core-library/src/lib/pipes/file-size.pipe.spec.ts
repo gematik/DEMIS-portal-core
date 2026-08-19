@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it } from 'vitest';
 import { FileSizePipe } from './file-size.pipe';
 import { MockBuilder } from 'ng-mocks';
 

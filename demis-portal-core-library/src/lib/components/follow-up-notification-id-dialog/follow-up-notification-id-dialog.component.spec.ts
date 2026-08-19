@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { FollowUpNotificationIdDialogComponent } from './follow-up-notification-id-dialog.component';
 import { FollowUpNotificationIdService, ValidationStatus } from '../../services/follow-up-notification-id.service';
@@ -84,11 +85,11 @@ describe('FollowUpNotificationIdDialogComponent', () => {
 
       const cls = component.getInputClass();
       expect(cls).toContain('initial-notification-id-input-field-');
-      expect(cls.endsWith('notvalidated')).toBeTrue();
+      expect(cls.endsWith('notvalidated')).toBe(true);
     });
 
     it('isTextInputValid() is initially false', () => {
-      expect(component.isTextInputValid()).toBeFalse();
+      expect(component.isTextInputValid()).toBe(false);
     });
   });
 
@@ -97,7 +98,7 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       validationStatusMock.set(ValidationStatus.NOT_FOUND);
       fixture.detectChanges(); // Let effect run
 
-      expect(component.initialNotificationIdControl.errors).toEqual(jasmine.objectContaining({ invalid: true }));
+      expect(component.initialNotificationIdControl.errors).toEqual(expect.objectContaining({ invalid: true }));
       expect(component.getValidationStyle()).toBe('invalid');
       expect(component.getInputClass()).toBe('initial-notification-id-input-field-invalid');
     });
@@ -126,7 +127,7 @@ describe('FollowUpNotificationIdDialogComponent', () => {
   });
   describe('validateNotificationId()', () => {
     it('calls the service only if ID is present', () => {
-      const spy = spyOn(service, 'validateNotificationId');
+      const spy = vi.spyOn(service, 'validateNotificationId');
 
       component.validateNotificationId(null);
       expect(spy).not.toHaveBeenCalled();
@@ -139,11 +140,12 @@ describe('FollowUpNotificationIdDialogComponent', () => {
     });
 
     it('uses pathToDestinationLookup from MAT_DIALOG_DATA', () => {
-      const spy = spyOn(service, 'validateNotificationId');
+      const spy = vi.spyOn(service, 'validateNotificationId');
 
       component.validateNotificationId('id-999');
       expect(spy).toHaveBeenCalledTimes(1);
-      const args = spy.calls.mostRecent().args;
+      const args = vi.mocked(spy).mock.lastCall as any;
+      expect(args).toHaveLength(2);
       expect(args[0]).toBe('id-999');
       expect(args[1]).toBe(mockDialogData.pathToDestinationLookup);
     });
@@ -154,16 +156,16 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       component.initialNotificationIdControl.setValue('valid');
       component.initialNotificationIdControl.markAsTouched();
 
-      expect(component.initialNotificationIdControl.valid).toBeTrue();
-      expect(component.isTextInputValid()).toBeTrue();
+      expect(component.initialNotificationIdControl.valid).toBe(true);
+      expect(component.isTextInputValid()).toBe(true);
     });
 
     it('is true if control is valid and dirty', () => {
       component.initialNotificationIdControl.setValue('valid');
       component.initialNotificationIdControl.markAsDirty();
 
-      expect(component.initialNotificationIdControl.valid).toBeTrue();
-      expect(component.isTextInputValid()).toBeTrue();
+      expect(component.initialNotificationIdControl.valid).toBe(true);
+      expect(component.isTextInputValid()).toBe(true);
     });
 
     it('is false if control is invalid or neither touched nor dirty', () => {
@@ -171,18 +173,18 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       component.initialNotificationIdControl.markAsUntouched();
       component.initialNotificationIdControl.markAsPristine();
 
-      expect(component.initialNotificationIdControl.valid).toBeFalse();
-      expect(component.isTextInputValid()).toBeFalse();
+      expect(component.initialNotificationIdControl.valid).toBe(false);
+      expect(component.isTextInputValid()).toBe(false);
 
       component.initialNotificationIdControl.setValue('ok');
-      expect(component.initialNotificationIdControl.valid).toBeTrue();
-      expect(component.isTextInputValid()).toBeFalse(); // neither touched nor dirty
+      expect(component.initialNotificationIdControl.valid).toBe(true);
+      expect(component.isTextInputValid()).toBe(false); // neither touched nor dirty
     });
   });
 
   describe('closeDialog()', () => {
     it('delegates to FollowUpNotificationIdService', async () => {
-      const spy = spyOn(service, 'closeDialog');
+      const spy = vi.spyOn(service, 'closeDialog');
       await component.closeDialog();
       expect(spy).toHaveBeenCalled();
     });
@@ -190,29 +192,29 @@ describe('FollowUpNotificationIdDialogComponent', () => {
 
   describe('navigateToWelcomePage()', () => {
     it('closes dialog and navigates twice: "" and then "/welcome"', async () => {
-      const closeSpy = spyOn(service, 'closeDialog');
-      const navSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+      const closeSpy = vi.spyOn(service, 'closeDialog');
+      const navSpy = vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
 
       await component.navigateToWelcomePage();
 
       expect(closeSpy).toHaveBeenCalledTimes(1);
-      expect(navSpy.calls.count()).toBe(2);
-      expect(navSpy.calls.argsFor(0)[0]).toEqual(['']);
-      expect(navSpy.calls.argsFor(1)[0]).toEqual(['/welcome']);
+      expect(vi.mocked(navSpy).mock.calls.length).toBe(2);
+      expect(vi.mocked(navSpy).mock.calls[0][0]).toEqual(['']);
+      expect(vi.mocked(navSpy).mock.calls[1][0]).toEqual(['/welcome']);
     });
   });
 
   describe('Accessibility announcements', () => {
     it('announces success once when validation status transitions to VALID', () => {
       const liveAnnouncer = fixture.point.injector.get(LiveAnnouncer);
-      const announceSpy = spyOn(liveAnnouncer, 'announce').and.callThrough();
+      const announceSpy = vi.spyOn(liveAnnouncer, 'announce');
 
       // Transition to VALID triggers announcement.
       validationStatusMock.set(ValidationStatus.VALID);
       fixture.detectChanges();
 
       expect(announceSpy).toHaveBeenCalledTimes(1);
-      expect(announceSpy.calls.mostRecent().args[0]).toContain('Meldungs-ID');
+      expect((vi.mocked(announceSpy).mock.lastCall as any)[0]).toContain('Meldungs-ID');
 
       // Further detectChanges should not announce again.
       fixture.detectChanges();
@@ -235,16 +237,19 @@ describe('FollowUpNotificationIdDialogComponent', () => {
       validationStatusMock.set(ValidationStatus.VALID);
       fixture.detectChanges();
 
-      // afterNextRender() schedules work; let the fixture settle.
-      await fixture.whenStable();
-      fixture.detectChanges();
-
-      const nextBtn = document.getElementById('btn-next') as HTMLButtonElement | null;
-      expect(nextBtn).withContext('Expected "Weiter" button to exist in VALID state').not.toBeNull();
-      expect(document.activeElement).toBe(nextBtn);
+      // afterNextRender() + setTimeout(fn, 100) schedule work; wait until focus is applied.
+      await vi.waitFor(
+        () => {
+          const nextBtn = document.getElementById('btn-next') as HTMLButtonElement | null;
+          expect(nextBtn, 'Expected "Weiter" button to exist in VALID state').not.toBeNull();
+          expect(document.activeElement).toBe(nextBtn);
+        },
+        { timeout: 500 }
+      );
 
       // Extra change detection should not steal focus.
       fixture.detectChanges();
+      const nextBtn = document.getElementById('btn-next') as HTMLButtonElement | null;
       expect(document.activeElement).toBe(nextBtn);
     });
   });

@@ -15,7 +15,8 @@
     find details in the "Readme" file.
  */
 
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MockBuilder, MockProvider } from 'ng-mocks';
@@ -41,25 +42,25 @@ describe('PasteBoxComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit dataPasted event when clipboard text is read and parsed successfully', fakeAsync(async () => {
+  it('should emit dataPasted event when clipboard text is read and parsed successfully', async () => {
     const clipboardText = 'URL P.family=Schulz&P.given=Klaus';
     const expectedParsedClipboardData = new Map<string, string>([
       ['P.family', 'Schulz'],
       ['P.given', 'Klaus'],
     ]);
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue(clipboardText);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000); // Wait for the promise to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).toHaveBeenCalledWith(expectedParsedClipboardData);
-  }));
+  });
 
-  it('should emit dataPasted event when encoded clipboard text is read and parsed successfully', fakeAsync(async () => {
+  it('should emit dataPasted event when encoded clipboard text is read and parsed successfully', async () => {
     const clipboardText = 'URL F.name=ACME%20Corp.&F.bsnr=4711&F.type=1&F.street=Stairway%20To%20Heaven&F.houseNumber=911&F.zip=0815&F.city=Duckburg';
     const expectedParsedClipboardData = new Map<string, string>([
       ['F.name', 'ACME Corp.'],
@@ -70,19 +71,19 @@ describe('PasteBoxComponent', () => {
       ['F.zip', '0815'],
       ['F.city', 'Duckburg'],
     ]);
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue(clipboardText);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000); // Wait for the promise to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).toHaveBeenCalledWith(expectedParsedClipboardData);
-  }));
+  });
 
-  it('should emit dataPasted event when fully encoded clipboard text is read and parsed successfully', fakeAsync(async () => {
+  it('should emit dataPasted event when fully encoded clipboard text is read and parsed successfully', async () => {
     const clipboardText =
       'URL F.name%3DACME%20Corp.%26F.bsnr%3D4711%26F.type%3D1%26F.street%3DStairway%20To%20Heaven%26F.houseNumber%3D911%26F.zip%3D0815%26F.city%3DDuckburg';
     const expectedParsedClipboardData = new Map<string, string>([
@@ -94,81 +95,81 @@ describe('PasteBoxComponent', () => {
       ['F.zip', '0815'],
       ['F.city', 'Duckburg'],
     ]);
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue(clipboardText);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000); // Wait for the promise to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).toHaveBeenCalledWith(expectedParsedClipboardData);
-  }));
+  });
 
-  it('should call showErrorDialog when clipboard text is read successfully, but cannot be parsed', fakeAsync(async () => {
+  it('should call showErrorDialog when clipboard text is read successfully, but cannot be parsed', async () => {
     const clipboardText = 'URL not_parsable_data';
-    const showErrorDialogSpy = spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    const showErrorDialogSpy = vi.spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
+    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue(clipboardText);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000); // Wait for the promise to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).not.toHaveBeenCalled();
     expect(showErrorDialogSpy).toHaveBeenCalledWith(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
-  }));
+  });
 
-  it('should call showErrorDialog when clipboard text is empty', fakeAsync(async () => {
+  it('should call showErrorDialog when clipboard text is empty', async () => {
     const clipboardText = '';
-    const showErrorDialogSpy = spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    const showErrorDialogSpy = vi.spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
+    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue(clipboardText);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000); // Wait for the promise to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).not.toHaveBeenCalled();
     expect(showErrorDialogSpy).toHaveBeenCalledWith(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
-  }));
+  });
 
-  it('should call showErrorDialog when clipboard read fails', fakeAsync(async () => {
-    const showErrorDialogSpy = spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
+  it('should call showErrorDialog when clipboard read fails', async () => {
+    const showErrorDialogSpy = vi.spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
     const error = new Error('Clipboard read failed');
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.reject(error));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    vi.spyOn(navigator.clipboard, 'readText').mockRejectedValue(error);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000); // Wait for the promise to reject
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).not.toHaveBeenCalled();
     expect(showErrorDialogSpy).toHaveBeenCalledWith(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
-  }));
+  });
 
-  it('should trim key and value when parsing clipboard data with newline after &', fakeAsync(async () => {
+  it('should trim key and value when parsing clipboard data with newline after &', async () => {
     const clipboardText = 'URL  key1 = value1  &\n  key2=  value2 ';
     const expectedParsedClipboardData = new Map<string, string>([
       ['key1', 'value1'],
       ['key2', 'value2'],
     ]);
-    spyOn(navigator.clipboard, 'readText').and.returnValue(Promise.resolve(clipboardText));
-    spyOn(navigator.clipboard, 'writeText');
-    spyOn(component.dataPasted, 'emit');
+    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue(clipboardText);
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    vi.spyOn(component.dataPasted, 'emit');
 
     component.readFromClipboard();
-    tick(1000);
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(navigator.clipboard.readText).toHaveBeenCalled();
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).toHaveBeenCalledWith(expectedParsedClipboardData);
-  }));
+  });
 });

@@ -6,7 +6,7 @@
       @for (selected of selectedValues(); track selected[optionValueKey()]) {
         <mat-chip (removed)="removeChip(selected)">
           <span>{{ displayFn(selected) }}</span>
-          <button matChipRemove [attr.aria-label]="'Eintrag entfernen: ' + displayFn(selected)" (click)="$event.stopPropagation()">
+          <button type="button" matChipRemove [attr.aria-label]="'Eintrag entfernen: ' + displayFn(selected)" (click)="$event.stopPropagation()">
             <mat-icon>close</mat-icon>
           </button>
         </mat-chip>
@@ -60,6 +60,7 @@
 
 @if (clearable() && hasValue()) {
   <button
+    type="button"
     mat-icon-button
     aria-label="Auswahl löschen"
     (click)="clearSelection($event)"

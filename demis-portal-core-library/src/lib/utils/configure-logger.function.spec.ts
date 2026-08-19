@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { describe, expect, it, vi } from 'vitest';
 import { NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { LOGGER_CONFIG_FOR_DEV, LOGGER_CONFIG_FOR_PROD, updateConfigurationForLogger } from './configure-logger.function';
@@ -22,7 +23,7 @@ import { LOGGER_CONFIG_FOR_DEV, LOGGER_CONFIG_FOR_PROD, updateConfigurationForLo
 describe('LOGGER_CONFIG_FOR_DEV', () => {
   it('should expose debug defaults for development', () => {
     expect(LOGGER_CONFIG_FOR_DEV.level).toBe(NgxLoggerLevel.DEBUG);
-    expect(LOGGER_CONFIG_FOR_DEV.disableConsoleLogging).toBeFalse();
+    expect(LOGGER_CONFIG_FOR_DEV.disableConsoleLogging).toBe(false);
     expect(LOGGER_CONFIG_FOR_DEV.serverLogLevel).toBe(NgxLoggerLevel.DEBUG);
   });
 });
@@ -30,7 +31,7 @@ describe('LOGGER_CONFIG_FOR_DEV', () => {
 describe('LOGGER_CONFIG_FOR_PROD', () => {
   it('should expose restrictive defaults for production', () => {
     expect(LOGGER_CONFIG_FOR_PROD.level).toBe(NgxLoggerLevel.ERROR);
-    expect(LOGGER_CONFIG_FOR_PROD.disableConsoleLogging).toBeTrue();
+    expect(LOGGER_CONFIG_FOR_PROD.disableConsoleLogging).toBe(true);
     expect(LOGGER_CONFIG_FOR_PROD.serverLogLevel).toBe(NgxLoggerLevel.OFF);
   });
 });
@@ -44,8 +45,11 @@ describe('updateConfigurationForLogger', () => {
       customProperty: 'kept',
     };
 
-    const loggerSpy = jasmine.createSpyObj<NGXLogger>('NGXLogger', ['getConfigSnapshot', 'updateConfig']);
-    loggerSpy.getConfigSnapshot.and.returnValue(currentConfig as any);
+    const loggerSpy = {
+      getConfigSnapshot: vi.fn().mockName('NGXLogger.getConfigSnapshot'),
+      updateConfig: vi.fn().mockName('NGXLogger.updateConfig'),
+    };
+    loggerSpy.getConfigSnapshot.mockReturnValue(currentConfig as any);
 
     const newConfig = {
       level: NgxLoggerLevel.DEBUG,
@@ -58,7 +62,7 @@ describe('updateConfigurationForLogger', () => {
     expect(loggerSpy.getConfigSnapshot).toHaveBeenCalledTimes(1);
     expect(loggerSpy.updateConfig).toHaveBeenCalledTimes(1);
     expect(loggerSpy.updateConfig).toHaveBeenCalledWith(currentConfig as any);
-    expect(loggerSpy.updateConfig.calls.mostRecent().args[0] as object).toBe(currentConfig);
+    expect(vi.mocked(loggerSpy.updateConfig).mock.lastCall[0] as object).toBe(currentConfig);
   });
 
   it('should overwrite logger config values and keep unrelated properties', () => {
@@ -69,8 +73,11 @@ describe('updateConfigurationForLogger', () => {
       customProperty: 'kept',
     };
 
-    const loggerSpy = jasmine.createSpyObj<NGXLogger>('NGXLogger', ['getConfigSnapshot', 'updateConfig']);
-    loggerSpy.getConfigSnapshot.and.returnValue(currentConfig as any);
+    const loggerSpy = {
+      getConfigSnapshot: vi.fn().mockName('NGXLogger.getConfigSnapshot'),
+      updateConfig: vi.fn().mockName('NGXLogger.updateConfig'),
+    };
+    loggerSpy.getConfigSnapshot.mockReturnValue(currentConfig as any);
 
     const newConfig = {
       level: NgxLoggerLevel.DEBUG,
@@ -81,14 +88,17 @@ describe('updateConfigurationForLogger', () => {
     updateConfigurationForLogger(loggerSpy, newConfig);
 
     expect(currentConfig.level).toBe(NgxLoggerLevel.DEBUG);
-    expect(currentConfig.disableConsoleLogging).toBeTrue();
+    expect(currentConfig.disableConsoleLogging).toBe(true);
     expect(currentConfig.serverLogLevel).toBe(NgxLoggerLevel.ERROR);
     expect(currentConfig.customProperty).toBe('kept');
   });
 
   it('should return the same logger instance', () => {
-    const loggerSpy = jasmine.createSpyObj<NGXLogger>('NGXLogger', ['getConfigSnapshot', 'updateConfig']);
-    loggerSpy.getConfigSnapshot.and.returnValue({
+    const loggerSpy = {
+      getConfigSnapshot: vi.fn().mockName('NGXLogger.getConfigSnapshot'),
+      updateConfig: vi.fn().mockName('NGXLogger.updateConfig'),
+    };
+    loggerSpy.getConfigSnapshot.mockReturnValue({
       level: NgxLoggerLevel.INFO,
       disableConsoleLogging: false,
       serverLogLevel: NgxLoggerLevel.WARN,

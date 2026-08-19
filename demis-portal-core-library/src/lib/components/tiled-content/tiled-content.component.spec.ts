@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TiledContentComponent } from './tiled-content.component';
 import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -39,7 +40,7 @@ describe('TiledContentComponent', () => {
   });
 
   it('should call the refresh method after changes', () => {
-    const calculateMaxContainerHeightSpy = spyOn(TestBed.inject(MaxContainerHeightService), 'calculateMaxContainerHeight').and.returnValue('100px');
+    const calculateMaxContainerHeightSpy = vi.spyOn(TestBed.inject(MaxContainerHeightService), 'calculateMaxContainerHeight').mockReturnValue('100px');
     component.ngOnChanges({});
     expect(calculateMaxContainerHeightSpy).toHaveBeenCalled();
   });

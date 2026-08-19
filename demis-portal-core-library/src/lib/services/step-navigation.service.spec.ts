@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type MockedObject, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { StepNavigationService } from './step-navigation.service';
@@ -73,16 +74,21 @@ describe('StepNavigationService', () => {
   });
 
   describe('after stepper registration', () => {
-    let mockStepper: jasmine.SpyObj<DemisProcessStepperComponent>;
+    let mockStepper: MockedObject<DemisProcessStepperComponent>;
     const mockStep: ProcessStep = { key: 'step-3', label: 'Step 3', control: new FormControl() };
 
     beforeEach(() => {
-      mockStepper = jasmine.createSpyObj('DemisProcessStepperComponent', ['next', 'previous', 'reset', 'goToStep', 'goToStepByKey'], {
-        canGoToNext: jasmine.createSpy('canGoToNext').and.returnValue(true),
-        canGoToPrevious: jasmine.createSpy('canGoToPrevious').and.returnValue(false),
-        currentStepIndex: jasmine.createSpy('currentStepIndex').and.returnValue(2),
-        currentStep: jasmine.createSpy('currentStep').and.returnValue(mockStep),
-      });
+      mockStepper = {
+        next: vi.fn().mockName('DemisProcessStepperComponent.next'),
+        previous: vi.fn().mockName('DemisProcessStepperComponent.previous'),
+        reset: vi.fn().mockName('DemisProcessStepperComponent.reset'),
+        goToStep: vi.fn().mockName('DemisProcessStepperComponent.goToStep'),
+        goToStepByKey: vi.fn().mockName('DemisProcessStepperComponent.goToStepByKey'),
+        canGoToNext: vi.fn().mockReturnValue(true),
+        canGoToPrevious: vi.fn().mockReturnValue(false),
+        currentStepIndex: vi.fn().mockReturnValue(2),
+        currentStep: vi.fn().mockReturnValue(mockStep),
+      };
 
       service.registerStepper(mockStepper);
     });
@@ -131,18 +137,20 @@ describe('StepNavigationService', () => {
 
   describe('stepper re-registration', () => {
     it('should use the latest registered stepper', () => {
-      const firstStepper = jasmine.createSpyObj('first', ['next'], {
-        canGoToNext: jasmine.createSpy().and.returnValue(false),
-        canGoToPrevious: jasmine.createSpy().and.returnValue(false),
-        currentStepIndex: jasmine.createSpy().and.returnValue(0),
-        currentStep: jasmine.createSpy().and.returnValue(undefined),
-      });
-      const secondStepper = jasmine.createSpyObj('second', ['next'], {
-        canGoToNext: jasmine.createSpy().and.returnValue(true),
-        canGoToPrevious: jasmine.createSpy().and.returnValue(false),
-        currentStepIndex: jasmine.createSpy().and.returnValue(1),
-        currentStep: jasmine.createSpy().and.returnValue(undefined),
-      });
+      const firstStepper = {
+        next: vi.fn().mockName('first.next'),
+        canGoToNext: vi.fn().mockReturnValue(false),
+        canGoToPrevious: vi.fn().mockReturnValue(false),
+        currentStepIndex: vi.fn().mockReturnValue(0),
+        currentStep: vi.fn().mockReturnValue(undefined),
+      };
+      const secondStepper = {
+        next: vi.fn().mockName('second.next'),
+        canGoToNext: vi.fn().mockReturnValue(true),
+        canGoToPrevious: vi.fn().mockReturnValue(false),
+        currentStepIndex: vi.fn().mockReturnValue(1),
+        currentStep: vi.fn().mockReturnValue(undefined),
+      };
 
       service.registerStepper(firstStepper);
       service.registerStepper(secondStepper);

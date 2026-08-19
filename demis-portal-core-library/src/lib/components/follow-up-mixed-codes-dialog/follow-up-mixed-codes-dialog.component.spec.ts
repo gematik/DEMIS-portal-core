@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FollowUpMixedCodesDialogComponent } from './follow-up-mixed-codes-dialog.component';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { FollowUpMixedCodesService } from '../../services/follow-up-mixed-codes.service';
@@ -44,7 +45,7 @@ describe('FollowUpMixedCodesDialogComponent', () => {
       .keep(MatRadioGroup)
       .keep(MatRadioButton)
       .mock(FollowUpMixedCodesService, {
-        closeDialog: jasmine.createSpy('closeDialog'),
+        closeDialog: vi.fn(),
       } as Partial<FollowUpMixedCodesService> as FollowUpMixedCodesService)
       .mock(Router, {
         navigate: (_commands: any[]) => Promise.resolve(true),
@@ -79,11 +80,11 @@ describe('FollowUpMixedCodesDialogComponent', () => {
 
     it('should initialize selectedValue as undefined or null', () => {
       const value = component.selectedValue();
-      expect(value === undefined || value === null).toBeTrue();
+      expect(value === undefined || value === null).toBe(true);
     });
 
     it('should initialize nextButtonDisabled as true when no selection', () => {
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
     });
   });
 
@@ -94,48 +95,48 @@ describe('FollowUpMixedCodesDialogComponent', () => {
     });
 
     it('updates nextButtonDisabled when selectedValue changes', () => {
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
 
       component.selectedValue.set('code1');
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
 
       component.selectedValue.set('code2');
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
 
       component.selectedValue.set(undefined);
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
     });
 
     it('disables next button when value is set to undefined', () => {
       component.selectedValue.set('code1');
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
 
       component.selectedValue.set(undefined);
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
     });
 
     it('disables next button when value is set to empty string', () => {
       component.selectedValue.set('');
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
     });
   });
 
   describe('nextButtonDisabled computed signal', () => {
     it('is true when selectedValue is undefined', () => {
       component.selectedValue.set(undefined);
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
     });
 
     it('is true when selectedValue is not set (initial state)', () => {
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
     });
 
     it('is false when selectedValue is a valid code', () => {
       component.selectedValue.set('code1');
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
 
       component.selectedValue.set('code2');
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
     });
   });
 
@@ -158,7 +159,7 @@ describe('FollowUpMixedCodesDialogComponent', () => {
 
     it('announces dialog closure before calling service', async () => {
       const liveAnnouncer = fixture.point.injector.get(LiveAnnouncer);
-      const announceSpy = spyOn(liveAnnouncer, 'announce').and.callThrough();
+      const announceSpy = vi.spyOn(liveAnnouncer, 'announce');
 
       component.selectedValue.set('code1');
       await component.closeDialog();
@@ -169,30 +170,30 @@ describe('FollowUpMixedCodesDialogComponent', () => {
 
   describe('navigateToWelcomePage()', () => {
     it('closes dialog and navigates twice: "" and then "/welcome"', async () => {
-      const navSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+      const navSpy = vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
 
       await component.navigateToWelcomePage();
 
       expect(service.closeDialog).toHaveBeenCalled();
-      expect(navSpy.calls.count()).toBe(2);
-      expect(navSpy.calls.argsFor(0)[0]).toEqual(['']);
-      expect(navSpy.calls.argsFor(1)[0]).toEqual(['/welcome']);
+      expect(vi.mocked(navSpy).mock.calls.length).toBe(2);
+      expect(vi.mocked(navSpy).mock.calls[0][0]).toEqual(['']);
+      expect(vi.mocked(navSpy).mock.calls[1][0]).toEqual(['/welcome']);
     });
 
     it('first navigates to empty route then to /welcome', async () => {
-      const navSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+      const navSpy = vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
 
       await component.navigateToWelcomePage();
 
-      const firstCall = navSpy.calls.argsFor(0)[0];
-      const secondCall = navSpy.calls.argsFor(1)[0];
+      const firstCall = vi.mocked(navSpy).mock.calls[0][0];
+      const secondCall = vi.mocked(navSpy).mock.calls[1][0];
 
       expect(firstCall).toEqual(['']);
       expect(secondCall).toEqual(['/welcome']);
     });
 
     it('calls navigate with correct parameters on successful navigation', async () => {
-      const navSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+      const navSpy = vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
 
       await component.navigateToWelcomePage();
 
@@ -203,13 +204,13 @@ describe('FollowUpMixedCodesDialogComponent', () => {
 
   describe('Integration: User interaction flow', () => {
     it('next button is disabled until user selects a code', () => {
-      expect(component.nextButtonDisabled()).toBeTrue();
+      expect(component.nextButtonDisabled()).toBe(true);
 
       component.selectedValue.set(notificationCategoriesMock[0].code);
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
 
       component.selectedValue.set(notificationCategoriesMock[1].code);
-      expect(component.nextButtonDisabled()).toBeFalse();
+      expect(component.nextButtonDisabled()).toBe(false);
     });
 
     it('closeDialog is called with selected code when user clicks next', async () => {
@@ -232,12 +233,12 @@ describe('FollowUpMixedCodesDialogComponent', () => {
     });
 
     it('back button navigates to welcome page', async () => {
-      const navSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+      const navSpy = vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
 
       await component.navigateToWelcomePage();
 
       expect(navSpy).toHaveBeenCalledTimes(2);
-      expect(navSpy.calls.argsFor(1)[0]).toEqual(['/welcome']);
+      expect(vi.mocked(navSpy).mock.calls[1][0]).toEqual(['/welcome']);
     });
   });
 

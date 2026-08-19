@@ -49,7 +49,7 @@ export class FormlyRepeaterExample2Component {
     {
       id: 'pets',
       key: 'pets',
-      type: 'repeat',
+      type: 'repeater',
       defaultValue: [],
       props: {
         required: false,

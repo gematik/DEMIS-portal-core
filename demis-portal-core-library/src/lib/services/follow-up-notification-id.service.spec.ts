@@ -1,3 +1,21 @@
+/*
+    Copyright (c) 2026 gematik GmbH
+    Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+    European Commission – subsequent versions of the EUPL (the "Licence").
+    You may not use this work except in compliance with the Licence.
+    You find a copy of the Licence in the "Licence" file or at
+    https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Licence is distributed on an "AS IS" basis,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+    In case of changes by gematik find details in the "Readme" file.
+    See the Licence for the specific language governing permissions and limitations under the Licence.
+    *******
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
+ */
+
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 // follow-up-notification-id.service.spec.ts
 
 /*
@@ -62,7 +80,7 @@ describe('FollowUpNotificationIdService', () => {
     fhirService = TestBed.inject(FhirCoreNotificationService);
 
     dialogRefMock = new MatDialogRefMock<FollowUpNotificationIdDialogComponent>();
-    spyOn(dialog, 'open').and.returnValue(dialogRefMock as unknown as MatDialogRef<FollowUpNotificationIdDialogComponent>);
+    vi.spyOn(dialog, 'open').mockReturnValue(dialogRefMock as unknown as MatDialogRef<FollowUpNotificationIdDialogComponent>);
     (dialog.openDialogs as any[]).length = 0;
   });
 
@@ -80,14 +98,14 @@ describe('FollowUpNotificationIdService', () => {
       service.openDialog(dialogData);
 
       expect(dialog.open).toHaveBeenCalledTimes(1);
-      const args = (dialog.open as jasmine.Spy).calls.mostRecent().args;
+      const args = vi.mocked(dialog.open as Mock).mock.lastCall;
       const component = args[0];
       const config = args[1];
 
       expect(component).toBe(FollowUpNotificationIdDialogComponent);
-      expect(config.disableClose).toBeTrue();
+      expect(config.disableClose).toBe(true);
       expect(config.data).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           routerLink: dialogData.dialogData.routerLink,
           linkTextContent: dialogData.dialogData.linkTextContent,
           pathToDestinationLookup: dialogData.dialogData.pathToDestinationLookup,
@@ -123,7 +141,7 @@ describe('FollowUpNotificationIdService', () => {
           pathToDestinationLookup: '/destination-lookup',
         },
       });
-      const closeSpy = spyOn(dialogRefMock, 'close').and.callThrough();
+      const closeSpy = vi.spyOn(dialogRefMock, 'close');
 
       service.closeDialog();
 
@@ -142,7 +160,7 @@ describe('FollowUpNotificationIdService', () => {
 
     it('first sets status to NOT_VALIDATED, then to VALID on success and fills signals', () => {
       const response: FollowUpNotificationCategory = { notificationCategory: 'invp' };
-      spyOn(fhirService, 'fetchFollowUpNotificationCategory').and.returnValue(of(response));
+      vi.spyOn(fhirService, 'fetchFollowUpNotificationCategory').mockReturnValue(of(response));
 
       // Previous state
       service.validationStatus.set(ValidationStatus.NOT_FOUND);
@@ -160,7 +178,7 @@ describe('FollowUpNotificationIdService', () => {
     });
 
     it('sets NOT_FOUND and clears signals on error', () => {
-      spyOn(fhirService, 'fetchFollowUpNotificationCategory').and.returnValue(throwError(() => new Error('404')));
+      vi.spyOn(fhirService, 'fetchFollowUpNotificationCategory').mockReturnValue(throwError(() => new Error('404')));
 
       service.validatedNotificationId.set('old');
       service.followUpNotificationCategory.set('oldCat');
@@ -175,7 +193,7 @@ describe('FollowUpNotificationIdService', () => {
 
     it('accepts supported category if codes are set', () => {
       const response: FollowUpNotificationCategory = { notificationCategory: 'abvp' };
-      spyOn(fhirService, 'fetchFollowUpNotificationCategory').and.returnValue(of(response));
+      vi.spyOn(fhirService, 'fetchFollowUpNotificationCategory').mockReturnValue(of(response));
 
       // via openDialog we set the codes (normal flow)
       service.openDialog({
@@ -195,7 +213,7 @@ describe('FollowUpNotificationIdService', () => {
 
     it('accepts any category if no codes are set', () => {
       const response: FollowUpNotificationCategory = { notificationCategory: 'abcd' };
-      spyOn(fhirService, 'fetchFollowUpNotificationCategory').and.returnValue(of(response));
+      vi.spyOn(fhirService, 'fetchFollowUpNotificationCategory').mockReturnValue(of(response));
 
       // do not set codes (no openDialog with codes)
       service.validateNotificationId(id, path);
