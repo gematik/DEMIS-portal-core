@@ -26,6 +26,7 @@ import { DocTableComponent } from '../utils/doc-table.component';
 import { ExpandableSectionsComponent } from '../utils/expandable-sections.component';
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
+import { FilterableSelectExample5Component } from '../code-snippets/formly-filterable-select/example-5.component';
 
 @Component({
   selector: 'app-formly-filterable-select-consumer',
@@ -41,6 +42,7 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
     ExpandableSectionsComponent,
     CodeExampleBoxComponent,
     RouterLink,
+    FilterableSelectExample5Component,
   ],
 
   template: `
@@ -97,6 +99,9 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
       </app-code-example-box>
       <app-code-example-box [options]="examples[3]">
         <app-filterable-select-example-4 />
+      </app-code-example-box>
+      <app-code-example-box [options]="examples[4]">
+        <app-filterable-select-example-5 />
       </app-code-example-box>
     </app-expandable-sections>
   `,
@@ -228,6 +233,22 @@ export class FormlyFilterableSelectConsumerComponent {
         },
         {
           fileName: 'example-4.component.ts',
+          language: 'ts',
+          codeSnippetPath: 'code-snippets/formly-filterable-select',
+        },
+      ],
+    },
+    {
+      expanderTitle: 'Beispiel 5',
+      expanderDescription: 'Auto-select, wenn nur eine Option verfügbar ist und das Feld required ist',
+      codeSnippets: [
+        {
+          fileName: 'example-5.component.html',
+          language: 'html',
+          codeSnippetPath: 'code-snippets/formly-filterable-select',
+        },
+        {
+          fileName: 'example-5.component.ts',
           language: 'ts',
           codeSnippetPath: 'code-snippets/formly-filterable-select',
         },
