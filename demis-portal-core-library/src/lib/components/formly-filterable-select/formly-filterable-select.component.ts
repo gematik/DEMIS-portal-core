@@ -100,7 +100,8 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
     this.optionLabelKey.set(props.optionLabelKey ?? 'label');
     this.optionDescriptionKey.set(props.optionDescriptionKey ?? 'description');
     this.allOptions.set(props.options ?? []);
-    this.applySingleOptionDefault();
+    this.applyConfiguredDefaultValue();
+    this.applySingleOption();
 
     this.currentValue.set(this.formControl.value);
     this.formControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
@@ -136,20 +137,42 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
     this.searchControl.setValue('');
   }
 
-  private applySingleOptionDefault(): void {
+  private applySingleOption(): void {
+    //set the value to the single option if only one option is available and the field is required
     const options = this.allOptions();
-    if (options.length !== 1) {
+
+    if (!this.props.required || options.length !== 1) {
       return;
     }
 
     const currentValue = this.formControl.value;
-    const hasExistingValue = this.multiple() ? Array.isArray(currentValue) && currentValue.length > 0 : currentValue != null;
-    if (hasExistingValue) {
+    if (this.hasExistingValue(currentValue)) {
       return;
     }
 
-    const defaultValue = this.multiple() ? [options[0]] : options[0];
-    this.formControl.setValue(defaultValue);
+    const singleOptionValue = this.multiple() ? [options[0]] : options[0];
+    this.formControl.setValue(singleOptionValue);
+  }
+
+  private applyConfiguredDefaultValue(): void {
+    const currentValue = this.formControl.value;
+    if (this.hasExistingValue(currentValue)) {
+      return;
+    }
+
+    if (Object.hasOwn(this.field, 'defaultValue')) {
+      this.formControl.setValue(this.field.defaultValue);
+      return;
+    }
+
+    const props = this.props as FilterableSelectCustomProps;
+    if (Object.hasOwn(props, 'defaultValue')) {
+      this.formControl.setValue(props.defaultValue);
+    }
+  }
+
+  private hasExistingValue(value: any): boolean {
+    return this.multiple() ? Array.isArray(value) && value.length > 0 : value != null;
   }
 
   private repositionOverlay(): void {

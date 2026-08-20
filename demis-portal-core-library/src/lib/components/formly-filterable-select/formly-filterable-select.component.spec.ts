@@ -75,8 +75,32 @@ describe('FormlyFilterableSelectComponent', () => {
       expect(mockComponent.form.get('singleOptionSelect')?.value).toEqual(SINGLE_OPTION as any);
     });
 
+    it('should not auto-select the only available option for non-required select', () => {
+      expect(mockComponent.form.get('singleOptionSelectNotRequired')?.value).toEqual(undefined);
+    });
+
     it('should not overwrite an existing value when applying the single-option default', () => {
       expect(mockComponent.form.get('prefilledSingleOptionSelect')?.value).toEqual(MOCK_OPTIONS[0] as any);
+    });
+
+    it('should not apply single-option default when required with existing value', () => {
+      expect(mockComponent.form.get('prefilledRequiredSingleOption')?.value).toEqual(SINGLE_OPTION as any);
+    });
+
+    it('should use defaultValue as existing value', () => {
+      expect(mockComponent.form.get('nonRequiredSelectWithDefault')?.value).toEqual(MOCK_OPTIONS[0] as any);
+    });
+
+    it('should apply field-level defaultValue', () => {
+      expect(mockComponent.form.get('fieldLevelDefaultSelect')?.value).toEqual(MOCK_OPTIONS[1] as any);
+    });
+
+    it('should not apply single-option default when value already exists', () => {
+      const singleOptionSelect = mockComponent.form.get('singleOptionSelect')!;
+      expect(singleOptionSelect.value).toEqual(SINGLE_OPTION as any);
+      singleOptionSelect.setValue(MOCK_OPTIONS[0]);
+      fixture.detectChanges();
+      expect(singleOptionSelect.value).toEqual(MOCK_OPTIONS[0] as any);
     });
 
     it('should allow selecting an option', async () => {
@@ -108,8 +132,24 @@ describe('FormlyFilterableSelectComponent', () => {
       expect(mockComponent.form.get('singleOptionMultiSelect')?.value).toEqual([SINGLE_OPTION] as any);
     });
 
+    it('should not auto-select the only available option as an array in  non-required multi-select mode', () => {
+      expect(mockComponent.form.get('singleOptionMultiSelectNotRequired')?.value).toEqual(undefined);
+    });
+
     it('should not overwrite existing multi-select values when applying the single-option default', () => {
       expect(mockComponent.form.get('prefilledSingleOptionMultiSelect')?.value).toEqual([MOCK_OPTIONS[0]] as any);
+    });
+
+    it('should use defaultValue as actual values', () => {
+      expect(mockComponent.form.get('nonRequiredMultiSelectWithDefault')?.value).toEqual([MOCK_OPTIONS[0], MOCK_OPTIONS[1]] as any);
+    });
+
+    it('should not apply single-option default when multi-select value already exists', () => {
+      const singleOptionMultiSelect = mockComponent.form.get('singleOptionMultiSelect')!;
+      expect(singleOptionMultiSelect.value).toEqual([SINGLE_OPTION] as any);
+      singleOptionMultiSelect.setValue([MOCK_OPTIONS[0], MOCK_OPTIONS[1]]);
+      fixture.detectChanges();
+      expect(singleOptionMultiSelect.value).toEqual([MOCK_OPTIONS[0], MOCK_OPTIONS[1]] as any);
     });
 
     it('should allow selecting multiple options', async () => {
@@ -267,7 +307,7 @@ describe('FormlyFilterableSelectComponent', () => {
 
       const selects = await loader.getAllHarnesses(MatSelectHarness);
       // selectWithCode is the third select
-      const valueText = await selects[2].getValueText();
+      const valueText = await selects[3].getValueText();
       expect(valueText).toContain('Option Alpha | OPT1');
     });
   });
@@ -760,19 +800,6 @@ describe('filterable-select-shared utilities', () => {
       });
 
       expect(result.defaultValue).toEqual(explicitDefaults);
-    });
-
-    it('should throw when explicit defaultValue does not match one of the provided options', () => {
-      const options: SelectOption[] = [{ value: 'ONLY', label: 'Only option' }];
-
-      expect(() =>
-        filterableSelectField<SelectOption>({
-          key: 'test',
-          label: 'Test',
-          options,
-          defaultValue: { value: 'EXPLICIT', label: 'Explicit default' },
-        })
-      ).toThrow('filterableSelectField defaultValue must match one of the provided options.');
     });
 
     it('should work with custom domain objects using explicit keys', () => {

@@ -30,6 +30,7 @@ export interface SelectOption {
 
 export interface FilterableSelectCustomProps extends FormlyFieldProps {
   options: any[];
+  defaultValue?: any;
   optionValueKey?: string;
   optionLabelKey?: string;
   optionDescriptionKey?: string;
@@ -72,11 +73,6 @@ export function formatOptionDisplay(option: any, showValue: boolean, labelKey: s
   }
   const label = getOptionLabel(option, labelKey);
   return showValue ? `${label} | ${getOptionValue(option, valueKey)}` : label;
-}
-
-function isExplicitDefaultValueInOptions<T>(defaultValue: T | T[], options: T[], valueKey: string): boolean {
-  const defaultValues = Array.isArray(defaultValue) ? defaultValue : [defaultValue];
-  return defaultValues.every(defaultOption => options.some(option => compareOptions(option, defaultOption, valueKey)));
 }
 
 function resolveDefaultValue<T>(
@@ -126,11 +122,6 @@ type FilterableSelectFieldConfig<T> = T extends SelectOption
 export function filterableSelectField<T>(config: FilterableSelectFieldConfig<T>): FormlyFieldConfig {
   const { id, key, label, defaultValue, options, required, multiple, showValue, clearable, searchPlaceholder, noEntriesFoundLabel, ...extra } = config;
   const hasExplicitDefaultValue = Object.hasOwn(config, 'defaultValue');
-  const optionValueKey = 'optionValueKey' in config ? config.optionValueKey : 'value';
-
-  if (hasExplicitDefaultValue && defaultValue !== undefined && !isExplicitDefaultValueInOptions(defaultValue, options, optionValueKey)) {
-    throw new Error('filterableSelectField defaultValue must match one of the provided options.');
-  }
 
   const props: Record<string, any> = { label, options, ...extra };
   if (required != null) props['required'] = required;

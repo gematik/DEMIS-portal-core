@@ -44,6 +44,7 @@ export class FormlyFilterableSelectMockComponent {
   model: Record<string, any> = {
     prefilledSingleOptionSelect: MOCK_OPTIONS[0],
     prefilledSingleOptionMultiSelect: [MOCK_OPTIONS[0]],
+    prefilledRequiredSingleOption: SINGLE_OPTION,
   };
   fields: FormlyFieldConfig[] = [
     {
@@ -67,6 +68,18 @@ export class FormlyFilterableSelectMockComponent {
       },
     },
     {
+      id: 'nonRequiredMultiSelectWithDefault',
+      key: 'nonRequiredMultiSelectWithDefault',
+      type: 'filterable-select',
+      props: {
+        label: 'Mehrfachauswahl',
+        options: MOCK_OPTIONS,
+        required: false,
+        multiple: true,
+        defaultValue: [MOCK_OPTIONS[0], MOCK_OPTIONS[1]],
+      },
+    },
+    {
       id: 'selectWithCode',
       key: 'selectWithCode',
       type: 'filterable-select',
@@ -87,8 +100,39 @@ export class FormlyFilterableSelectMockComponent {
       },
     },
     {
+      id: 'nonRequiredSelectWithDefault',
+      key: 'nonRequiredSelectWithDefault',
+      type: 'filterable-select',
+      props: {
+        label: 'Pflichtauswahl',
+        options: MOCK_OPTIONS,
+        required: false,
+        defaultValue: MOCK_OPTIONS[0],
+      },
+    },
+    {
+      id: 'fieldLevelDefaultSelect',
+      key: 'fieldLevelDefaultSelect',
+      type: 'filterable-select',
+      defaultValue: MOCK_OPTIONS[1],
+      props: {
+        label: 'Field Level Default',
+        options: MOCK_OPTIONS,
+      },
+    },
+    {
       id: 'singleOptionSelect',
       key: 'singleOptionSelect',
+      type: 'filterable-select',
+      props: {
+        label: 'Single Option',
+        options: [SINGLE_OPTION],
+        required: true,
+      },
+    },
+    {
+      id: 'singleOptionSelectNotRequired',
+      key: 'singleOptionSelectNotRequired',
       type: 'filterable-select',
       props: {
         label: 'Single Option',
@@ -111,6 +155,17 @@ export class FormlyFilterableSelectMockComponent {
       props: {
         label: 'Single Option Multi',
         options: [SINGLE_OPTION],
+        required: true,
+        multiple: true,
+      },
+    },
+    {
+      id: 'singleOptionMultiSelectNotRequired',
+      key: 'singleOptionMultiSelectNotRequired',
+      type: 'filterable-select',
+      props: {
+        label: 'Single Option Multi',
+        options: [SINGLE_OPTION],
         multiple: true,
       },
     },
@@ -122,6 +177,16 @@ export class FormlyFilterableSelectMockComponent {
         label: 'Prefilled Single Option Multi',
         options: [SINGLE_OPTION],
         multiple: true,
+      },
+    },
+    {
+      id: 'prefilledRequiredSingleOption',
+      key: 'prefilledRequiredSingleOption',
+      type: 'filterable-select',
+      props: {
+        label: 'Prefilled Required Single Option',
+        options: [SINGLE_OPTION],
+        required: true,
       },
     },
     {

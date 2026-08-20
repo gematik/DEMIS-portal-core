@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.3.1
+- Optimized single-option and defaultValue handling for filterable-select fields
+
 ## Release 4.3.0
 - Added default value handling for in filterable-select component
 
@@ -24,8 +27,8 @@
 - Optimized side navigation: trigger validation when switching to next step
 
 ## Release 4.2.6
-- Update portal-theme to 1.3.0 for text field label font size increase 
-- Fix type errors caused by stricter Angular Material template typing after update to v21.2.14 (incl. TypeScript 5.9.3)
+- Updated portal-theme to 1.3.0 for text field label font size increase 
+- Fixed type errors caused by stricter Angular Material template typing after update to v21.2.14 (incl. TypeScript 5.9.3)
 
 ## Release 4.2.5
 - Fixed datepicker validation for two-digit inputs
