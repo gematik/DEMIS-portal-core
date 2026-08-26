@@ -34,8 +34,20 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
   showAddButtonLabel!: boolean;
   isSingleInputField!: boolean;
 
+  get repeaterAriaLabel(): string | null {
+    return this.field.fieldGroup?.length ? null : 'Keine Kontaktmöglichkeiten hinzugefügt';
+  }
+
   private get repeaterProps(): RepeaterCustomProps {
-    return this.props as RepeaterCustomProps;
+    return this.props;
+  }
+
+  get label(): string {
+    return this.field.fieldGroup?.[0]?.fieldGroup?.[0]?.props?.label ?? '';
+  }
+
+  getDeleteButtonAriaLabel(index: number): string {
+    return this.label ? `${this.label} ${index + 1} entfernen` : '';
   }
 
   ngOnInit() {
@@ -83,7 +95,7 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
   }
 
   setIdNames(formlyField: FormlyFieldConfig, index: number): string {
-    this.setIdNameInChildElements(formlyField, index);
+    this.setPropsInChildElements(formlyField, index);
     return formlyField.parent?.id + '-' + index;
   }
 
@@ -95,9 +107,14 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
    * @param index
    * @private
    */
-  private setIdNameInChildElements(formlyField: FormlyFieldConfig, index: number) {
+  private setPropsInChildElements(formlyField: FormlyFieldConfig, index: number) {
     formlyField.fieldGroup!.forEach((field: FormlyFieldConfig) => {
       field.id = this.createRepeatId(field.id!, index);
+      field.props!.attributes = {
+        ...field.props!.attributes,
+        'aria-describedby': 'kontakt-hinweis',
+        'aria-required': field.props!.required ? 'true' : 'false',
+      };
     });
   }
 
