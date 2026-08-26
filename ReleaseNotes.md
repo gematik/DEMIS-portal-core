@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.3.2
+- Improved accessibility of the repeater component
+
 ## Release 4.3.1
 - Optimized single-option and defaultValue handling for filterable-select fields
 

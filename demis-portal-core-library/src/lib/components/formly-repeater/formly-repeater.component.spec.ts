@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { FormlyRepeaterComponent } from './formly-repeater.component';
@@ -132,6 +132,65 @@ describe('RepeaterComponent', () => {
     it('should not allow deletion if only one item is remaining', async () => {
       const deleteButtons = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[id^="emails-delete-button"]' }));
       expect(deleteButtons.length).toBe(0);
+    });
+  });
+
+  describe('label', () => {
+    it('should return an empty string when no repeated item exists', () => {
+      expect(component.label).toBe('');
+    });
+
+    it('should return the label of the repeated field', () => {
+      component.add();
+      fixture.detectChanges();
+
+      expect(component.label).toBe('E-Mail');
+    });
+  });
+
+  describe('getDeleteButtonAriaLabel', () => {
+    it('should return an empty string when no repeated field label exists', () => {
+      expect(component.getDeleteButtonAriaLabel(0)).toBe('');
+    });
+
+    it('should include the repeated field label and index when a label exists', () => {
+      component.add();
+      fixture.detectChanges();
+
+      expect(component.getDeleteButtonAriaLabel(0)).toBe('E-Mail 1 entfernen');
+    });
+  });
+
+  describe('aria attributes in repeated fields', () => {
+    it('should call setPropsInChildElements when adding a field', () => {
+      const setPropsInChildElementsSpy = vi.spyOn(component as any, 'setPropsInChildElements');
+      component.add();
+      fixture.detectChanges();
+
+      expect(setPropsInChildElementsSpy).toHaveBeenCalled();
+    });
+
+    it('should set aria-describedby and aria-required attributes on child elements', () => {
+      const mockField: FormlyFieldConfig = {
+        id: 'test-field',
+        key: 'test',
+        type: 'input',
+        props: { required: true },
+        fieldGroup: [
+          {
+            id: 'child-1',
+            key: 'child1',
+            type: 'input',
+            props: { required: true },
+          },
+        ],
+      };
+
+      (component as any).setPropsInChildElements(mockField, 0);
+
+      const childField = mockField.fieldGroup?.[0];
+      expect(childField?.props?.attributes?.['aria-describedby']).toBe('kontakt-hinweis');
+      expect(childField?.props?.attributes?.['aria-required']).toBe('true');
     });
   });
 
