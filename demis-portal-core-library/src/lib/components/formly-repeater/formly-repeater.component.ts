@@ -43,7 +43,8 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
   }
 
   get label(): string {
-    return this.field.fieldGroup?.[0]?.fieldGroup?.[0]?.props?.label ?? '';
+    const labeledChild = this.field.fieldGroup?.[0]?.fieldGroup?.find(f => !!f.props?.label);
+    return labeledChild?.props?.label ?? '';
   }
 
   getDeleteButtonAriaLabel(index: number): string {

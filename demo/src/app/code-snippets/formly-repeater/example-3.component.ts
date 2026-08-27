@@ -42,6 +42,9 @@ export class FormlyRepeaterExample3Component {
       fieldArray: {
         fieldGroup: [
           {
+            key: 'contactType',
+          },
+          {
             id: 'email',
             key: 'email',
             type: 'input',

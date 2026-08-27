@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.3.3
+- Fixed access to formly props for repeater to work dynamically
+
 ## Release 4.3.2
 - Improved accessibility of the repeater component
 
