@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.0
+- Introduced aria-disabled directive for primary buttons to properly handle disabled state for accessibility
+- Enabled side navigation to perform autofocus on the first focusable element in the step component
+
 ## Release 4.3.3
 - Fixed access to formly props for repeater to work dynamically
 

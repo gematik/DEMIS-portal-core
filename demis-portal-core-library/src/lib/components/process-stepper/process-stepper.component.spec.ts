@@ -64,7 +64,7 @@ describe('DemisProcessStepperComponent', () => {
         return stepper;
       },
       {} as Record<string, Mock>
-    ) as MockedObject<MatStepper>;
+    ) as unknown as MockedObject<MatStepper>;
 
     Object.defineProperty(mockStepper, 'selectedIndex', {
       value: selectedIndex,
@@ -408,8 +408,54 @@ describe('DemisProcessStepperComponent', () => {
         selectedStep: component.steps()[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: component.steps()[0],
+        focusFirstElement: false,
       });
       expect(component.currentStepIndex()).toBe(1);
+    });
+
+    it('sets focusFirstElement to true by default when navigating via next()', () => {
+      component.next();
+
+      const event: StepperSelectionEvent = {
+        selectedIndex: 1,
+        previouslySelectedIndex: 0,
+        selectedStep: {} as MatStep,
+        previouslySelectedStep: {} as MatStep,
+      };
+      component.onSelectionChange(event);
+
+      expect(stepChangeEmitSpy).toHaveBeenCalledWith(expect.objectContaining({ focusFirstElement: true }));
+    });
+
+    it('propagates focusFirstElement: false when navigating via next(false)', () => {
+      component.next(false);
+
+      const event: StepperSelectionEvent = {
+        selectedIndex: 1,
+        previouslySelectedIndex: 0,
+        selectedStep: {} as MatStep,
+        previouslySelectedStep: {} as MatStep,
+      };
+      component.onSelectionChange(event);
+
+      expect(stepChangeEmitSpy).toHaveBeenCalledWith(expect.objectContaining({ focusFirstElement: false }));
+    });
+
+    it('does not leak a previously set focusFirstElement flag into a subsequent, unrelated selection change', () => {
+      component.next();
+
+      const event: StepperSelectionEvent = {
+        selectedIndex: 1,
+        previouslySelectedIndex: 0,
+        selectedStep: {} as MatStep,
+        previouslySelectedStep: {} as MatStep,
+      };
+      component.onSelectionChange(event);
+      expect(stepChangeEmitSpy).toHaveBeenLastCalledWith(expect.objectContaining({ focusFirstElement: true }));
+
+      // Simulate a step header click, which triggers onSelectionChange without going through next()/previous()/goToStep().
+      component.onSelectionChange(event);
+      expect(stepChangeEmitSpy).toHaveBeenLastCalledWith(expect.objectContaining({ focusFirstElement: false }));
     });
 
     it('should prevent navigation to disabled step and revert to previous step', async () => {
@@ -735,7 +781,7 @@ describe('DemisProcessStepperComponent', () => {
 
     describe('ngAfterViewChecked', () => {
       it('should call postProcessRenderedSteps', () => {
-        vi.spyOn<any>(component, 'postProcessRenderedSteps');
+        vi.spyOn(component as any, 'postProcessRenderedSteps');
 
         component.ngAfterViewChecked();
 

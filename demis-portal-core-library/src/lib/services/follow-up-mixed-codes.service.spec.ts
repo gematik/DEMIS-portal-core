@@ -74,7 +74,7 @@ describe('FollowUpMixedCodesService', () => {
       service.openDialog(mockMixedCodesList);
 
       expect(dialog.open).toHaveBeenCalledTimes(1);
-      const args = vi.mocked(dialog.open as Mock).mock.lastCall;
+      const args = vi.mocked(dialog.open as Mock).mock.lastCall!;
       const component = args[0];
       const config = args[1];
 

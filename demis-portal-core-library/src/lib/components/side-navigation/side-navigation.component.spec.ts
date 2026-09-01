@@ -16,7 +16,9 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { Component, TemplateRef } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { FormControl, Validators } from '@angular/forms';
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from 'ng-mocks';
 import { createStepContent, SideNavigationComponent, StepContentComponent } from './side-navigation.component';
@@ -57,6 +59,14 @@ class TestStepContentWithDataComponent extends StepContentComponent<{
   name: string;
 }> {}
 
+// Test component exposing a focusable control, used to verify auto-focus after a step change
+@Component({
+  selector: 'gem-test-step-content-focusable',
+  template: '<button type="button">First focusable</button><input />',
+  standalone: true,
+})
+class TestStepContentFocusableComponent extends StepContentComponent<any> {}
+
 describe('SideNavigationComponent', () => {
   let component: SideNavigationComponent;
   let fixture: MockedComponentFixture<any>;
@@ -80,7 +90,9 @@ describe('SideNavigationComponent', () => {
     },
   ];
 
-  beforeEach(() => MockBuilder(SideNavigationComponent).keep(DemisProcessStepperComponent, { shallow: true }).provide(StepNavigationService));
+  beforeEach(() =>
+    MockBuilder(SideNavigationComponent).keep(DemisProcessStepperComponent, { shallow: true }).keep(InteractivityChecker).provide(StepNavigationService)
+  );
 
   describe('Component Creation and Initialization', () => {
     it('should create', () => {
@@ -113,6 +125,21 @@ describe('SideNavigationComponent', () => {
       expect(component.sideNavTitle()).toBe('Test Navigation Title');
       expect(component.stepsMap()).toBe(stepsMap);
       expect(component.steps().length).toBe(1);
+    });
+
+    it('should not request auto-focus for the initial step on first render', () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      expect((component.currentComponentInstance() as TestStepContentComponent).autoFocusRequested()).toBe(false);
     });
 
     it('should compute steps array from stepsMap', () => {
@@ -202,6 +229,7 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: steps[0],
+        focusFirstElement: true,
       };
 
       component.onStepChanged(event);
@@ -251,6 +279,7 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: steps[0],
+        focusFirstElement: true,
       };
 
       component.onStepChanged(event);
@@ -281,6 +310,7 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: steps[0],
+        focusFirstElement: true,
       };
 
       component.onStepChanged(event);
@@ -306,6 +336,7 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: undefined,
+        focusFirstElement: true,
       };
 
       expect(() => component.onStepChanged(event)).not.toThrow();
@@ -330,11 +361,157 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: steps[0],
+        focusFirstElement: true,
       };
 
       component.onStepChanged(event);
       fixture.detectChanges();
 
+      expect(component.currentComponentInstance()).toBeNull();
+    });
+  });
+
+  describe('Auto-focus after step change', () => {
+    it('should propagate focusFirstElement to the new step content as autoFocusRequested', () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentNoActionsComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+        focusFirstElement: true,
+      };
+      component.onStepChanged(event);
+
+      expect((component.currentComponentInstance() as TestStepContentNoActionsComponent).autoFocusRequested()).toBe(true);
+    });
+
+    it('should propagate focusFirstElement: false to the new step content as autoFocusRequested', () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentNoActionsComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+        focusFirstElement: false,
+      };
+      component.onStepChanged(event);
+
+      expect((component.currentComponentInstance() as TestStepContentNoActionsComponent).autoFocusRequested()).toBe(false);
+    });
+
+    it('should move focus to the first focusable element of the newly rendered step content', async () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentFocusableComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+        focusFirstElement: true,
+      };
+
+      component.onStepChanged(event);
+      fixture.detectChanges();
+
+      await vi.waitFor(
+        () => {
+          const button = fixture.nativeElement.querySelector('gem-test-step-content-focusable button');
+          expect(button).not.toBeNull();
+          expect(document.activeElement).toBe(button);
+        },
+        { timeout: 2000 }
+      );
+    });
+
+    it('should not move focus when focusFirstElement is false on the step change event', async () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentFocusableComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+        focusFirstElement: false,
+      };
+
+      component.onStepChanged(event);
+      fixture.detectChanges();
+
+      await fixture.whenStable();
+
+      const button = fixture.nativeElement.querySelector('gem-test-step-content-focusable button');
+      expect(button).not.toBeNull();
+      expect(document.activeElement).not.toBe(button);
+    });
+
+    it('should not throw when the newly selected step has no resolved content', async () => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap: stepsMap,
+      });
+
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      const event: StepChangeEvent = {
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+        focusFirstElement: true,
+      };
+
+      expect(() => component.onStepChanged(event)).not.toThrow();
+      fixture.detectChanges();
+
+      // Give the scheduled afterNextRender callback a chance to run; it must not throw or focus anything.
+      await new Promise(resolve => setTimeout(resolve, 50));
       expect(component.currentComponentInstance()).toBeNull();
     });
   });
@@ -440,7 +617,7 @@ describe('SideNavigationComponent', () => {
       if (stepper) {
         vi.spyOn(stepper, 'goToStep');
         navigationService.goToStep(1);
-        expect(stepper.goToStep).toHaveBeenCalledWith(1);
+        expect(stepper.goToStep).toHaveBeenCalledWith(1, true);
       }
     });
 
@@ -449,42 +626,42 @@ describe('SideNavigationComponent', () => {
       if (stepper) {
         vi.spyOn(stepper, 'goToStepByKey');
         navigationService.goToStepByKey('step2');
-        expect(stepper.goToStepByKey).toHaveBeenCalledWith('step2');
+        expect(stepper.goToStepByKey).toHaveBeenCalledWith('step2', true);
       }
     });
 
     it('should return false for canGoToNext when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(freshService.canGoToNext()).toBe(false);
     });
 
     it('should return false for canGoToPrevious when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(freshService.canGoToPrevious()).toBe(false);
     });
 
     it('should handle next() when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(() => freshService.next()).not.toThrow();
     });
 
     it('should handle previous() when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(() => freshService.previous()).not.toThrow();
     });
 
     it('should handle reset() when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(() => freshService.reset()).not.toThrow();
     });
 
     it('should handle goToStep() when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(() => freshService.goToStep(0)).not.toThrow();
     });
 
     it('should handle goToStepByKey() when stepper not registered', () => {
-      const freshService = new StepNavigationService();
+      const freshService = TestBed.runInInjectionContext(() => new StepNavigationService());
       expect(() => freshService.goToStepByKey('test')).not.toThrow();
     });
   });
@@ -585,6 +762,7 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[0],
         previouslySelectedIndex: 0,
         previouslySelectedStep: undefined,
+        focusFirstElement: true,
       };
 
       // Should not throw
@@ -612,6 +790,7 @@ describe('SideNavigationComponent', () => {
         selectedStep: steps[1],
         previouslySelectedIndex: 0,
         previouslySelectedStep: steps[0],
+        focusFirstElement: true,
       };
 
       component.onStepChanged(event);

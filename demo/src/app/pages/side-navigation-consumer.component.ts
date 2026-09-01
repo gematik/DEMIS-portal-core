@@ -80,6 +80,14 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
         <app-code-snippet-box language="ts" codeSnippetString='import { StepNavigation, provideStepNavigation } from "@gematik/demis-portal-core-library";' />
         <app-code-snippet-box language="ts" codeSnippetString="providers: [provideStepNavigation()]" />
 
+        <p>
+          After navigating to a step via <code>next()</code>, <code>previous()</code>, <code>goToStep()</code> or <code>goToStepByKey()</code>, the
+          <code>SideNavigationComponent</code> moves focus to the first focusable element of the newly rendered step content, using
+          <code>getFocusableElements()</code> internally. Each of these methods accepts an optional <code>focusFirstElement</code> boolean parameter (default
+          <code>true</code>) to opt out of this behavior for a specific call, e.g. <code>navigation.next(false)</code>. Navigating by clicking a step header
+          directly in the stepper never triggers this auto-focus, regardless of the parameter.
+        </p>
+
         <app-doc-table title="Methods" [dataSource]="navigationMethodsDocTableDataSource" />
         <app-doc-table title="Computed Signals" [dataSource]="navigationSignalsDocTableDataSource" />
 
@@ -91,6 +99,14 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
           Each step's content is rendered as a dynamically created component. Step content components must extend
           <code>StepContentComponent&lt;T&gt;</code> to receive typed input data and to expose action templates. Inject <code>StepNavigation</code> for
           navigation controls.
+        </p>
+
+        <p>
+          <code>StepContentComponent</code> also exposes an <code>autoFocusRequested</code> input, reflecting whether this step change should move focus (see
+          <code>focusFirstElement</code> above). Most components don't need it: <code>SideNavigationComponent</code> already focuses the first focusable element
+          once after creating the component. It matters only for components whose content re-renders asynchronously afterwards (e.g. replacing Formly fields
+          once an HTTP call resolves) - such a re-render can discard that initial focus, so the component should re-apply it itself, guarded by
+          <code>autoFocusRequested()</code>, once its own render has settled.
         </p>
 
         <app-code-snippet-box
@@ -118,6 +134,7 @@ import { SubsectionTitleComponent } from '../utils/subsection-title.component';
           </li>
           <li>Use <code>createStepContent()</code> for automatic TypeScript type inference when defining step contents.</li>
           <li>Disabled steps preserve their visual completed/error state from before being disabled.</li>
+          <li>Focus automatically moves to the first focusable element of a step's content after navigating to it.</li>
         </ul>
       </app-overview-section>
 
@@ -164,24 +181,30 @@ export class SideNavigationConsumerComponent {
 
   navigationMethodsDocTableDataSource = [
     {
-      name: '`next()`',
-      description: 'Navigates to the next step if possible.',
+      name: '`next(focusFirstElement = true)`',
+      description: 'Navigates to the next step if possible. Pass false to skip focusing the first focusable element of the new step content.',
     },
     {
-      name: '`previous()`',
-      description: 'Navigates to the previous step if possible.',
+      name: '`previous(focusFirstElement = true)`',
+      description: 'Navigates to the previous step if possible. Pass false to skip focusing the first focusable element of the new step content.',
     },
     {
-      name: '`reset()`',
-      description: 'Resets the stepper to the first step and restores all controls to their initial state.',
+      name: '`reset(focusFirstElement = true)`',
+      description:
+        'Resets the stepper to the first step and restores all controls to their initial state. Pass false to skip focusing the first focusable element.',
     },
     {
-      name: '`goToStep(index)`',
+      name: '`goToStep(index, focusFirstElement = true)`',
       description: 'Navigates directly to the step at the given zero-based index. Does nothing if the index is out of bounds or the target step is disabled.',
     },
     {
-      name: '`goToStepByKey(key)`',
+      name: '`goToStepByKey(key, focusFirstElement = true)`',
       description: 'Navigates directly to the step with the given unique key. Does nothing if the key is not found or the target step is disabled.',
+    },
+    {
+      name: '`getFocusableElements(container)`',
+      description:
+        'Returns all focusable elements within the given container, excluding elements inside aria-hidden or inert regions. Used internally to move focus to the first focusable element after a step change.',
     },
   ];
 
@@ -210,7 +233,7 @@ export class SideNavigationConsumerComponent {
     {
       name: '`StepContentComponent<T>`',
       description:
-        'Abstract base class that step content components must extend. Provides an inputData signal of type T for receiving data from the parent, and viewChild references (actionsLeft, actionsRight) for action templates.',
+        'Abstract base class that step content components must extend. Provides an inputData signal of type T for receiving data from the parent, viewChild references (actionsLeft, actionsRight) for action templates, and an autoFocusRequested signal (see above).',
     },
     {
       name: '`StepContent<C>`',

@@ -33,6 +33,10 @@ import { SideNavigationExample1Component } from './code-snippets/side-navigation
 import { SideNavigationExample2Component } from './code-snippets/side-navigation/example-2/example-2.component';
 import { SideNavigationExample3Component } from './code-snippets/side-navigation/example-3/example-3.component';
 import { ExampleStandaloneComponent } from './pages/example-standalone.component';
+import { AriaDisabledButtonConsumerComponent } from './pages/aria-disabled-button-consumer.component';
+import { AriaDisabledButtonExample1Component } from './code-snippets/aria-disabled-button/example-1.component';
+import { AriaDisabledButtonExample2Component } from './code-snippets/aria-disabled-button/example-2.component';
+import { AriaDisabledButtonExample3Component } from './code-snippets/aria-disabled-button/example-3.component';
 
 function prefixRoutes(prefix: string, routes: Routes): Routes {
   return routes.map(route => ({ ...route, path: `${prefix}/${route.path}` }));
@@ -124,7 +128,14 @@ const serviceConsumerRoutes: Routes = [
 ];
 
 // Routes for the directives
-const directiveConsumerRoutes: Routes = [];
+const directiveConsumerRoutes: Routes = [
+  {
+    path: 'aria-disabled-button',
+    title: 'ARIA Disabled Button',
+    pathMatch: 'full',
+    component: AriaDisabledButtonConsumerComponent,
+  },
+];
 
 // Routes for the pipes
 const pipeConsumerRoutes: Routes = [];
@@ -164,6 +175,39 @@ const standaloneExampleRoutes: Routes = [
       exampleComponent: SideNavigationExample3Component,
       fullViewport: true,
       consumerPath: '/components/side-navigation',
+    },
+  },
+  {
+    path: 'examples/directives/aria-disabled-button/example-1',
+    title: 'ARIA Disabled Button Example 1',
+    pathMatch: 'full',
+    component: ExampleStandaloneComponent,
+    data: {
+      exampleComponent: AriaDisabledButtonExample1Component,
+      fullViewport: true,
+      consumerPath: '/directives/aria-disabled-button',
+    },
+  },
+  {
+    path: 'examples/directives/aria-disabled-button/example-2',
+    title: 'ARIA Disabled Button Example 2',
+    pathMatch: 'full',
+    component: ExampleStandaloneComponent,
+    data: {
+      exampleComponent: AriaDisabledButtonExample2Component,
+      fullViewport: true,
+      consumerPath: '/directives/aria-disabled-button',
+    },
+  },
+  {
+    path: 'examples/directives/aria-disabled-button/example-3',
+    title: 'ARIA Disabled Button Example 3',
+    pathMatch: 'full',
+    component: ExampleStandaloneComponent,
+    data: {
+      exampleComponent: AriaDisabledButtonExample3Component,
+      fullViewport: true,
+      consumerPath: '/directives/aria-disabled-button',
     },
   },
 ];

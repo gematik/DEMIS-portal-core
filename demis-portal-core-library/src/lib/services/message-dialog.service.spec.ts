@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it, type MockedObject, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 
 import {
@@ -325,7 +325,7 @@ describe('MessageDialogService', () => {
       const openSpy = vi.spyOn(matDialog, 'open');
       service.showSubmitDialog(submitData);
 
-      const calledConfig = vi.mocked(openSpy).mock.lastCall[1];
+      const calledConfig = vi.mocked(openSpy).mock.lastCall![1];
       expect(calledConfig!.disableClose).toBe(true);
     });
 
@@ -337,7 +337,7 @@ describe('MessageDialogService', () => {
       const openSpy = vi.spyOn(matDialog, 'open');
       service.showSubmitDialog(submitData, customStyle);
 
-      const calledConfig = vi.mocked(openSpy).mock.lastCall[1];
+      const calledConfig = vi.mocked(openSpy).mock.lastCall![1];
       expect(calledConfig!.disableClose).toBe(true);
     });
   });
@@ -347,7 +347,7 @@ describe('MessageDialogService', () => {
       message: 'Meldung wird verarbeitet',
     } as SpinnerDialogProps;
 
-    let mockDialogRef: MockedObject<MatDialogRef<SpinnerDialogComponent>>;
+    let mockDialogRef: { close: Mock };
 
     beforeEach(() => {
       mockDialogRef = {
@@ -356,7 +356,7 @@ describe('MessageDialogService', () => {
     });
 
     it('should open the MatDialog with SpinnerDialogComponent and default style', () => {
-      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
+      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef as unknown as MatDialogRef<SpinnerDialogComponent>);
       service.showSpinnerDialog(spinnerData);
 
       expect(openSpy).toHaveBeenCalledWith(SpinnerDialogComponent, {
@@ -378,22 +378,22 @@ describe('MessageDialogService', () => {
         disableClose: true,
       };
 
-      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
+      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef as unknown as MatDialogRef<SpinnerDialogComponent>);
       service.showSpinnerDialog(spinnerData, customStyle);
 
       expect(openSpy).toHaveBeenCalledWith(SpinnerDialogComponent, expectedConfig);
     });
 
     it('should always set disableClose to true for spinner dialog', () => {
-      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
+      const openSpy = vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef as unknown as MatDialogRef<SpinnerDialogComponent>);
       service.showSpinnerDialog(spinnerData);
 
-      const calledConfig = vi.mocked(openSpy).mock.lastCall[1];
+      const calledConfig = vi.mocked(openSpy).mock.lastCall![1];
       expect(calledConfig!.disableClose).toBe(true);
     });
 
     it('should store the dialog reference for later closing', () => {
-      vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef);
+      vi.spyOn(matDialog, 'open').mockReturnValue(mockDialogRef as unknown as MatDialogRef<SpinnerDialogComponent>);
       service.showSpinnerDialog(spinnerData);
 
       service.closeSpinnerDialog();

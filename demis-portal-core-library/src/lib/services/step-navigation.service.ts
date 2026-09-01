@@ -15,7 +15,8 @@
     find details in the "Readme" file.
  */
 
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { DemisProcessStepperComponent } from '../components/process-stepper/process-stepper.component';
 import { StepNavigation } from './step-navigation';
 
@@ -32,30 +33,37 @@ import { StepNavigation } from './step-navigation';
 @Injectable()
 export class StepNavigationService extends StepNavigation {
   private readonly stepperRef = signal<DemisProcessStepperComponent | null>(null);
+  private readonly interactivityChecker = inject(InteractivityChecker);
 
   readonly canGoToNext = computed(() => this.stepperRef()?.canGoToNext() ?? false);
   readonly canGoToPrevious = computed(() => this.stepperRef()?.canGoToPrevious() ?? false);
   readonly currentStepIndex = computed(() => this.stepperRef()?.currentStepIndex() ?? 0);
   readonly currentStep = computed(() => this.stepperRef()?.currentStep() ?? undefined);
 
-  next(): void {
-    this.stepperRef()?.next();
+  getFocusableElements(container: HTMLElement): HTMLElement[] {
+    return Array.from(container.querySelectorAll<HTMLElement>('*')).filter(
+      element => this.interactivityChecker.isFocusable(element) && !element.closest('[aria-hidden="true"], [inert]')
+    );
   }
 
-  previous(): void {
-    this.stepperRef()?.previous();
+  next(focusFirstElement = true): void {
+    this.stepperRef()?.next(focusFirstElement);
   }
 
-  reset(): void {
-    this.stepperRef()?.reset();
+  previous(focusFirstElement = true): void {
+    this.stepperRef()?.previous(focusFirstElement);
   }
 
-  goToStep(index: number): void {
-    this.stepperRef()?.goToStep(index);
+  reset(focusFirstElement = true): void {
+    this.stepperRef()?.reset(focusFirstElement);
   }
 
-  goToStepByKey(key: string): void {
-    this.stepperRef()?.goToStepByKey(key);
+  goToStep(index: number, focusFirstElement = true): void {
+    this.stepperRef()?.goToStep(index, focusFirstElement);
+  }
+
+  goToStepByKey(key: string, focusFirstElement = true): void {
+    this.stepperRef()?.goToStepByKey(key, focusFirstElement);
   }
 
   registerStepper(stepper: DemisProcessStepperComponent): void {
