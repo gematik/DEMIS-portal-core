@@ -15,7 +15,8 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it, type MockedObject, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { signal, type Signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { StepNavigationService } from './step-navigation.service';
@@ -33,6 +34,32 @@ describe('StepNavigationService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  describe('getFocusableElements', () => {
+    it('should return focusable elements within the provided container', () => {
+      const container = document.createElement('main');
+      container.innerHTML = `
+        <a href="/next">Next</a>
+        <input>
+        <button disabled>Disabled</button>
+        <div tabindex="0">Material-like control</div>
+        <div aria-hidden="true"><button>Hidden</button></div>
+      `;
+      document.body.appendChild(container);
+
+      expect(service.getFocusableElements(container)).toEqual([
+        container.querySelector('a'),
+        container.querySelector('input'),
+        container.querySelector('[tabindex="0"]'),
+      ]);
+
+      container.remove();
+    });
+
+    it('should return an empty list for a container without focusable elements', () => {
+      expect(service.getFocusableElements(document.createElement('main'))).toEqual([]);
+    });
   });
 
   describe('before stepper registration', () => {
@@ -74,7 +101,17 @@ describe('StepNavigationService', () => {
   });
 
   describe('after stepper registration', () => {
-    let mockStepper: MockedObject<DemisProcessStepperComponent>;
+    let mockStepper: {
+      next: Mock;
+      previous: Mock;
+      reset: Mock;
+      goToStep: Mock;
+      goToStepByKey: Mock;
+      canGoToNext: Signal<boolean>;
+      canGoToPrevious: Signal<boolean>;
+      currentStepIndex: Signal<number>;
+      currentStep: Signal<ProcessStep | undefined>;
+    };
     const mockStep: ProcessStep = { key: 'step-3', label: 'Step 3', control: new FormControl() };
 
     beforeEach(() => {
@@ -84,13 +121,13 @@ describe('StepNavigationService', () => {
         reset: vi.fn().mockName('DemisProcessStepperComponent.reset'),
         goToStep: vi.fn().mockName('DemisProcessStepperComponent.goToStep'),
         goToStepByKey: vi.fn().mockName('DemisProcessStepperComponent.goToStepByKey'),
-        canGoToNext: vi.fn().mockReturnValue(true),
-        canGoToPrevious: vi.fn().mockReturnValue(false),
-        currentStepIndex: vi.fn().mockReturnValue(2),
-        currentStep: vi.fn().mockReturnValue(mockStep),
+        canGoToNext: signal(true),
+        canGoToPrevious: signal(false),
+        currentStepIndex: signal(2),
+        currentStep: signal(mockStep),
       };
 
-      service.registerStepper(mockStepper);
+      service.registerStepper(mockStepper as unknown as DemisProcessStepperComponent);
     });
 
     it('should delegate canGoToNext to stepper', () => {
@@ -126,12 +163,12 @@ describe('StepNavigationService', () => {
 
     it('should delegate goToStep() to stepper', () => {
       service.goToStep(3);
-      expect(mockStepper.goToStep).toHaveBeenCalledWith(3);
+      expect(mockStepper.goToStep).toHaveBeenCalledWith(3, true);
     });
 
     it('should delegate goToStepByKey() to stepper', () => {
       service.goToStepByKey('result');
-      expect(mockStepper.goToStepByKey).toHaveBeenCalledWith('result');
+      expect(mockStepper.goToStepByKey).toHaveBeenCalledWith('result', true);
     });
   });
 
@@ -139,21 +176,21 @@ describe('StepNavigationService', () => {
     it('should use the latest registered stepper', () => {
       const firstStepper = {
         next: vi.fn().mockName('first.next'),
-        canGoToNext: vi.fn().mockReturnValue(false),
-        canGoToPrevious: vi.fn().mockReturnValue(false),
-        currentStepIndex: vi.fn().mockReturnValue(0),
-        currentStep: vi.fn().mockReturnValue(undefined),
+        canGoToNext: signal(false),
+        canGoToPrevious: signal(false),
+        currentStepIndex: signal(0),
+        currentStep: signal(undefined),
       };
       const secondStepper = {
         next: vi.fn().mockName('second.next'),
-        canGoToNext: vi.fn().mockReturnValue(true),
-        canGoToPrevious: vi.fn().mockReturnValue(false),
-        currentStepIndex: vi.fn().mockReturnValue(1),
-        currentStep: vi.fn().mockReturnValue(undefined),
+        canGoToNext: signal(true),
+        canGoToPrevious: signal(false),
+        currentStepIndex: signal(1),
+        currentStep: signal(undefined),
       };
 
-      service.registerStepper(firstStepper);
-      service.registerStepper(secondStepper);
+      service.registerStepper(firstStepper as unknown as DemisProcessStepperComponent);
+      service.registerStepper(secondStepper as unknown as DemisProcessStepperComponent);
 
       service.next();
       expect(firstStepper.next).not.toHaveBeenCalled();

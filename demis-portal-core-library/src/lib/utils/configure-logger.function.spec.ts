@@ -57,12 +57,12 @@ describe('updateConfigurationForLogger', () => {
       serverLogLevel: NgxLoggerLevel.ERROR,
     };
 
-    updateConfigurationForLogger(loggerSpy, newConfig);
+    updateConfigurationForLogger(loggerSpy as unknown as NGXLogger, newConfig);
 
     expect(loggerSpy.getConfigSnapshot).toHaveBeenCalledTimes(1);
     expect(loggerSpy.updateConfig).toHaveBeenCalledTimes(1);
     expect(loggerSpy.updateConfig).toHaveBeenCalledWith(currentConfig as any);
-    expect(vi.mocked(loggerSpy.updateConfig).mock.lastCall[0] as object).toBe(currentConfig);
+    expect(vi.mocked(loggerSpy.updateConfig).mock.lastCall![0] as object).toBe(currentConfig);
   });
 
   it('should overwrite logger config values and keep unrelated properties', () => {
@@ -85,7 +85,7 @@ describe('updateConfigurationForLogger', () => {
       serverLogLevel: NgxLoggerLevel.ERROR,
     };
 
-    updateConfigurationForLogger(loggerSpy, newConfig);
+    updateConfigurationForLogger(loggerSpy as unknown as NGXLogger, newConfig);
 
     expect(currentConfig.level).toBe(NgxLoggerLevel.DEBUG);
     expect(currentConfig.disableConsoleLogging).toBe(true);
@@ -104,7 +104,7 @@ describe('updateConfigurationForLogger', () => {
       serverLogLevel: NgxLoggerLevel.WARN,
     } as any);
 
-    const result = updateConfigurationForLogger(loggerSpy, {
+    const result = updateConfigurationForLogger(loggerSpy as unknown as NGXLogger, {
       level: NgxLoggerLevel.DEBUG,
       disableConsoleLogging: true,
       serverLogLevel: NgxLoggerLevel.ERROR,

@@ -80,7 +80,7 @@ describe('MaxHeightContentContainerComponent', () => {
   });
 
   it('should subscribe to resizeTrigger and call refreshMaxClientHeight after debounce', async () => {
-    const refreshSpy = vi.spyOn<any>(maxHeightContainerComponent, 'refreshMaxClientHeight');
+    const refreshSpy = vi.spyOn(maxHeightContainerComponent as any, 'refreshMaxClientHeight');
     maxHeightContainerComponent.ngOnInit();
     (maxHeightContainerComponent as any).resizeTrigger.next();
 
@@ -89,7 +89,7 @@ describe('MaxHeightContentContainerComponent', () => {
   });
 
   it('should debounce multiple rapid resizeTrigger calls', async () => {
-    const refreshSpy = vi.spyOn<any>(maxHeightContainerComponent, 'refreshMaxClientHeight');
+    const refreshSpy = vi.spyOn(maxHeightContainerComponent as any, 'refreshMaxClientHeight');
 
     // Reset any existing calls from setup
     refreshSpy.mockClear();
@@ -118,8 +118,8 @@ describe('MaxHeightContentContainerComponent', () => {
   });
 
   it('should call registerObservers and refreshMaxClientHeight in ngAfterViewChecked', () => {
-    const registerObserversSpy = vi.spyOn<any>(maxHeightContainerComponent, 'registerObservers');
-    const refreshSpy = vi.spyOn<any>(maxHeightContainerComponent, 'refreshMaxClientHeight');
+    const registerObserversSpy = vi.spyOn(maxHeightContainerComponent as any, 'registerObservers');
+    const refreshSpy = vi.spyOn(maxHeightContainerComponent as any, 'refreshMaxClientHeight');
 
     maxHeightContainerComponent.ngAfterViewChecked();
 
@@ -128,8 +128,8 @@ describe('MaxHeightContentContainerComponent', () => {
   });
 
   it('should call registerObservers and refreshMaxClientHeight in ngOnChanges', () => {
-    const registerObserversSpy = vi.spyOn<any>(maxHeightContainerComponent, 'registerObservers');
-    const refreshSpy = vi.spyOn<any>(maxHeightContainerComponent, 'refreshMaxClientHeight');
+    const registerObserversSpy = vi.spyOn(maxHeightContainerComponent as any, 'registerObservers');
+    const refreshSpy = vi.spyOn(maxHeightContainerComponent as any, 'refreshMaxClientHeight');
 
     const changes = { elementSelectorsToSubtract: { currentValue: ['#new'], previousValue: ['#old'] } };
     maxHeightContainerComponent.ngOnChanges(changes as any);

@@ -35,9 +35,26 @@ export abstract class StepNavigation {
   abstract readonly currentStepIndex: Signal<number>;
   abstract readonly currentStep: Signal<ProcessStep | undefined>;
 
-  abstract next(): void;
-  abstract previous(): void;
-  abstract reset(): void;
-  abstract goToStep(index: number): void;
-  abstract goToStepByKey(key: string): void;
+  abstract getFocusableElements(container: HTMLElement): HTMLElement[];
+
+  /**
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
+   */
+  abstract next(focusFirstElement?: boolean): void;
+  /**
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
+   */
+  abstract previous(focusFirstElement?: boolean): void;
+  /**
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
+   */
+  abstract reset(focusFirstElement?: boolean): void;
+  /**
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
+   */
+  abstract goToStep(index: number, focusFirstElement?: boolean): void;
+  /**
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
+   */
+  abstract goToStepByKey(key: string, focusFirstElement?: boolean): void;
 }

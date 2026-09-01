@@ -58,12 +58,14 @@ export declare type ProcessStep = {
  * - selectedStep:            The newly selected step.
  * - previouslySelectedIndex: The index of the previously selected step.
  * - previouslySelectedStep:  The previously selected step.
+ * - focusFirstElement:       Whether the first focusable element of the new step content should be focused.
  */
 export declare type StepChangeEvent = {
   selectedIndex: number;
   selectedStep: ProcessStep;
   previouslySelectedIndex: number;
   previouslySelectedStep: ProcessStep | undefined;
+  focusFirstElement: boolean;
 };
 
 @Component({
@@ -98,6 +100,13 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
    * Key: step key, Value: object with touched and valid state
    */
   private readonly stepValidityStateBeforeDisabled = new Map<string, { touched: boolean; valid: boolean }>();
+
+  /**
+   * Set by next()/previous()/goToStep()/goToStepByKey()/reset() right before triggering a selection
+   * change, and consumed once in onSelectionChange(). Stays false for step changes not initiated
+   * through one of those methods (e.g. clicking a step header directly).
+   */
+  private pendingFocusFirstElement = false;
 
   /**
    * Snapshot of the initial enabled/disabled and value state of each step control,
@@ -457,11 +466,14 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
     }
 
     if (!previouslySelectedStep?.control.disabled) {
+      const focusFirstElement = this.pendingFocusFirstElement;
+      this.pendingFocusFirstElement = false;
       this.stepChange.emit({
         selectedIndex: targetIndex,
         selectedStep: targetStep,
         previouslySelectedIndex: previousIndex,
         previouslySelectedStep: previouslySelectedStep,
+        focusFirstElement,
       });
     }
     this.currentStepIndex.set(targetIndex);
@@ -469,15 +481,21 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
 
   /**
    * Moves to the next step in the stepper.
+   *
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
    */
-  next() {
+  next(focusFirstElement = true) {
+    this.pendingFocusFirstElement = focusFirstElement;
     this.stepper().next();
   }
 
   /**
    * Moves to the previous step in the stepper.
+   *
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
    */
-  previous() {
+  previous(focusFirstElement = true) {
+    this.pendingFocusFirstElement = focusFirstElement;
     this.stepper().previous();
   }
 
@@ -492,8 +510,11 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
    * receives the stepChange event and updates its rendered content.
    * After the reset, restoreInitialControlStates() restores the original
    * enabled/disabled states from the snapshot.
+   *
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
    */
-  reset() {
+  reset(focusFirstElement = true) {
+    this.pendingFocusFirstElement = focusFirstElement;
     this.steps().forEach(step => step.control.enable());
     this.stepValidityStateBeforeDisabled.clear();
     this.stepper().reset();
@@ -523,8 +544,9 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
    * Does nothing if the index is out of bounds or the target step is disabled.
    *
    * @param index The zero-based index of the target step.
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
    */
-  goToStep(index: number) {
+  goToStep(index: number, focusFirstElement = true) {
     const steps = this.steps();
     if (index < 0 || index >= steps.length) {
       return;
@@ -532,6 +554,7 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
     if (steps[index].control.disabled) {
       return;
     }
+    this.pendingFocusFirstElement = focusFirstElement;
     this.stepper().selectedIndex = index;
     this.currentStepIndex.set(index);
   }
@@ -541,11 +564,12 @@ export class DemisProcessStepperComponent implements AfterViewInit, AfterViewChe
    * Does nothing if the key is not found or the target step is disabled.
    *
    * @param key The unique key of the target step.
+   * @param focusFirstElement Whether to focus the first focusable element of the new step content. Defaults to true.
    */
-  goToStepByKey(key: string) {
+  goToStepByKey(key: string, focusFirstElement = true) {
     const index = this.steps().findIndex(step => step.key === key);
     if (index >= 0) {
-      this.goToStep(index);
+      this.goToStep(index, focusFirstElement);
     }
   }
 }

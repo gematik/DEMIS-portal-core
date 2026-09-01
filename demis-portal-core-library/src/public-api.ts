@@ -43,6 +43,7 @@ export * from './lib/components/tiled-content/tiled-content.component';
 /***********************************************
  * DIRECTIVES
  **********************************************/
+export * from './lib/directives/aria-disabled-button.directive';
 export * from './lib/directives/secondary-button.directive';
 
 /***********************************************

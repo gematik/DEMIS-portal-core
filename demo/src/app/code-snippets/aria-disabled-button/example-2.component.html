@@ -1,0 +1,11 @@
+<main style="display: flex; gap: 1rem; flex-direction: column; align-items: flex-start;">
+  <h1>Button with an explicit type="submit" attribute</h1>
+  <p>An explicit type="submit" attribute leads to the same automatic announcement as the implicit case in Example 1.</p>
+
+  <form method="submit" (submit)="onSubmit($event)">
+    <button mat-button class="btn style dark--color" [gemDemisAriaDisabled]="isDisabled()" type="submit"
+      (click)="onClick($event)">Submit</button>
+  </form>
+
+  <button mat-stroked-button type="button" (click)="isDisabled.set(!isDisabled())">Toggle availability</button>
+</main>

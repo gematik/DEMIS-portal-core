@@ -27,6 +27,7 @@ import {
   TemplateRef,
   Type,
   ViewContainerRef,
+  afterNextRender,
   computed,
   contentChild,
   inject,
@@ -71,13 +72,13 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
       this.navigationService.registerStepper(stepper);
     }
     const firstStepContent = this.stepsMap().get(this.steps()[0]);
-    this.setStepContent(firstStepContent);
+    this.setStepContent(firstStepContent, false);
   }
 
   ngOnChanges(): void {
     const currentStep = this.internalStepper()?.currentStep();
     const stepContent = this.stepsMap().get(currentStep!);
-    this.setStepContent(stepContent);
+    this.setStepContent(stepContent, false);
   }
 
   /**
@@ -88,7 +89,10 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
   onStepChanged(event: StepChangeEvent) {
     const resolvedStepContent = this.stepsMap().get(event.selectedStep);
     event.previouslySelectedStep?.control.markAllAsTouched();
-    this.setStepContent(resolvedStepContent);
+    this.setStepContent(resolvedStepContent, event.focusFirstElement);
+    if (event.focusFirstElement) {
+      this.focusFirstFocusableElement();
+    }
   }
 
   focusSection(targetId: string): void {
@@ -105,9 +109,13 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
   /**
    * Sets the current step content component and its inputs based on the provided step content.
    *
-   * @param stepContent  The step content containing the component and optional input data.
+   * @param stepContent        The step content containing the component and optional input data.
+   * @param autoFocusRequested Forwarded to the created component's `autoFocusRequested` input, so
+   *                           components with their own async-driven re-render (e.g. options loaded
+   *                           after an HTTP call) know whether they should focus their first
+   *                           focusable element once that re-render settles.
    */
-  private setStepContent<C extends Type<StepContentComponent<any>>>(stepContent: StepContent<C> | undefined) {
+  private setStepContent<C extends Type<StepContentComponent<any>>>(stepContent: StepContent<C> | undefined, autoFocusRequested: boolean) {
     // Clear previous component
     if (this.currentComponentRef) {
       this.currentComponentRef.destroy();
@@ -130,10 +138,25 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
       if (stepContent.inputData !== undefined) {
         this.currentComponentRef.setInput('inputData', stepContent.inputData);
       }
+      this.currentComponentRef.setInput('autoFocusRequested', autoFocusRequested);
 
       // Store component instance
       this.currentComponentInstance.set(this.currentComponentRef.instance);
     }
+  }
+
+  /** Moves focus to the first focusable element after its dynamically created view has rendered. */
+  private focusFirstFocusableElement(): void {
+    afterNextRender(
+      () => {
+        const container = this.currentComponentRef?.location.nativeElement as HTMLElement | undefined;
+        if (!container) {
+          return;
+        }
+        this.navigationService.getFocusableElements(container)[0]?.focus({ preventScroll: true });
+      },
+      { injector: this.injector }
+    );
   }
 }
 
@@ -213,4 +236,13 @@ export abstract class StepContentComponent<T> {
   inputData = input<T | undefined>(undefined);
   actionsLeft = viewChild<TemplateRef<any>>('actionsLeft');
   actionsRight = viewChild<TemplateRef<any>>('actionsRight');
+
+  /**
+   * Whether SideNavigationComponent wants the first focusable element of this step's content
+   * focused once rendering has settled. Always false for the initial step on first load.
+   * Components that re-render asynchronously after their own data has loaded (and would
+   * therefore discard the focus SideNavigationComponent already set right after creation)
+   * should read this and (re-)focus themselves once their async render is done.
+   */
+  autoFocusRequested = input<boolean>(false);
 }
