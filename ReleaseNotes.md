@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.1
+- Updated dependencies (minor)
+
 ## Release 4.4.0
 - Introduced aria-disabled directive for primary buttons to properly handle disabled state for accessibility
 - Enabled side navigation to perform autofocus on the first focusable element in the step component
