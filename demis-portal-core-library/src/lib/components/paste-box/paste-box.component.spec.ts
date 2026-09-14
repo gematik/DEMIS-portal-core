@@ -172,4 +172,78 @@ describe('PasteBoxComponent', () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
     expect(component.dataPasted.emit).toHaveBeenCalledWith(expectedParsedClipboardData);
   });
+
+  describe('Accessibility (WCAG)', () => {
+    it('should expose the paste box as a named landmark region (WCAG 1.3.1, 2.4.1)', () => {
+      const region: HTMLElement = fixture.nativeElement.querySelector('[role="region"]');
+      expect(region).toBeTruthy();
+
+      const labelledBy = region.getAttribute('aria-labelledby');
+      expect(labelledBy).toBe('paste-box-title');
+
+      const title = fixture.nativeElement.querySelector(`#${labelledBy}`);
+      expect(title).toBeTruthy();
+      expect(title.textContent?.trim()).toBe('Datenübernahme');
+    });
+
+    it('should render a polite, atomic live region for status messages (WCAG 4.1.3)', () => {
+      const status: HTMLElement = fixture.nativeElement.querySelector('#paste-status');
+      expect(status).toBeTruthy();
+      expect(status.getAttribute('aria-live')).toBe('polite');
+      expect(status.getAttribute('aria-atomic')).toBe('true');
+    });
+
+    it('should associate the button with the status live region via aria-describedby', () => {
+      const button: HTMLElement = fixture.nativeElement.querySelector('#btn-fill-form');
+      expect(button.getAttribute('aria-describedby')).toBe('paste-status');
+    });
+
+    it('should start with an empty status message', () => {
+      expect(component.pasteStatus()).toBe('');
+      const status: HTMLElement = fixture.nativeElement.querySelector('#paste-status');
+      expect(status.textContent?.trim()).toBe('');
+    });
+
+    it('should announce success in the live region after a successful paste (WCAG 4.1.3)', async () => {
+      vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue('URL P.family=Schulz');
+      vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+
+      component.readFromClipboard();
+      await new Promise(resolve => setTimeout(resolve, 0));
+      fixture.detectChanges();
+
+      expect(component.pasteStatus()).toBe('Inhalt eingefügt!');
+      const status: HTMLElement = fixture.nativeElement.querySelector('#paste-status');
+      expect(status.textContent?.trim()).toBe('Inhalt eingefügt!');
+    });
+
+    it('should announce an error in the live region when clipboard read fails (WCAG 4.1.3)', async () => {
+      vi.spyOn(navigator.clipboard, 'readText').mockRejectedValue(new Error('denied'));
+      vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+
+      component.readFromClipboard();
+      await new Promise(resolve => setTimeout(resolve, 0));
+      fixture.detectChanges();
+
+      expect(component.pasteStatus()).toBe('Fehler bei der Datenübernahme.');
+      const status: HTMLElement = fixture.nativeElement.querySelector('#paste-status');
+      expect(status.textContent?.trim()).toBe('Fehler bei der Datenübernahme.');
+    });
+
+    it('should announce an error in the live region when clipboard content is not parsable (WCAG 4.1.3)', async () => {
+      vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue('URL not_parsable_data');
+      vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+
+      component.readFromClipboard();
+      await new Promise(resolve => setTimeout(resolve, 0));
+      fixture.detectChanges();
+
+      expect(component.pasteStatus()).toBe('Fehler bei der Datenübernahme.');
+    });
+
+    it('should provide an accessible name for the button (WCAG 4.1.2)', () => {
+      const button: HTMLElement = fixture.nativeElement.querySelector('#btn-fill-form');
+      expect(button.getAttribute('aria-label')).toBe('Zwischenablage einfügen');
+    });
+  });
 });

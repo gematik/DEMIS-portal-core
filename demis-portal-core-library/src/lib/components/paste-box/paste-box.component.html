@@ -1,12 +1,14 @@
-<mat-card class="demis-paste-box">
+<mat-card class="demis-paste-box" role="region" aria-labelledby="paste-box-title">
   <div class="demis-paste-box-info">
-    <div class="demis-paste-box-title">Datenübernahme</div>
+    <div id="paste-box-title" class="demis-paste-box-title">Datenübernahme</div>
     <div class="demis-paste-box-description">Inhalte bequem aus der Zwischenablage übernehmen</div>
   </div>
   <div class="demis-paste-box-action">
-    <button id="btn-fill-form" type="button" class="btn style paste color" mat-stroked-button (click)="readFromClipboard()">
+    <button id="btn-fill-form" type="button" mat-stroked-button (click)="readFromClipboard()"
+            aria-label="Zwischenablage einfügen" aria-describedby="paste-status">
       <mat-icon class="material-icons-outlined">description</mat-icon>
       <span>Einfügen</span>
     </button>
   </div>
+  <div id="paste-status" class="cdk-visually-hidden" aria-live="polite" aria-atomic="true">{{ pasteStatus() }}</div>
 </mat-card>
