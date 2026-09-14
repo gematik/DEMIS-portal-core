@@ -1,12 +1,13 @@
 {
   "name": "portal-core",
-  "version": "4.4.1",
+  "version": "4.4.2",
   "overrides": {
     "ajv": "^8.18.0",
     "browserslist": "4.28.8",
     "fast-uri": "4.1.4",
     "magic-string": "0.30.21",
-    "picomatch@4": "4.0.5"
+    "picomatch@4": "4.0.5",
+    "@vitest/ui": "npm:@vitest/utils@4.1.11"
   },
   "scripts": {
     "ng": "ng",

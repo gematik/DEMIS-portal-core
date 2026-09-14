@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.2
+- Made paste box component a11y compliant
+
 ## Release 4.4.1
 - Updated dependencies (minor)
 

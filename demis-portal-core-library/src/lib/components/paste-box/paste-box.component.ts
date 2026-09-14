@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,6 +40,7 @@ export const DEMIS_PASTE_BOX_CLIPBOARD_ERROR = {
 })
 export class PasteBoxComponent {
   readonly dataPasted = output<Map<string, string>>();
+  readonly pasteStatus = signal('');
   private readonly messageDialogService = inject(MessageDialogService);
   private readonly logger = inject(NGXLogger);
 
@@ -52,9 +53,11 @@ export class PasteBoxComponent {
           throw new Error('The clipboard is empty or contains no parsable data.'); // internal error message, hence, in English
         }
         this.dataPasted.emit(parsedClipboardData);
+        this.pasteStatus.set('Inhalt eingefügt!');
       })
       .catch((err: any) => {
         this.logger.error('Clipboard read failed: ', err);
+        this.pasteStatus.set('Fehler bei der Datenübernahme.');
         this.messageDialogService.showErrorDialog(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
       })
       .finally(() => navigator.clipboard.writeText(''));

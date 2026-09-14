@@ -1,9 +1,11 @@
 .demis-paste-box {
-  border-radius: 16px;
+  border-radius: 8px;
   border: 1px solid var(--color-neutral-medium);
-  padding: 16px;
-  gap: 24px;
+  padding: 19px 9px 19px 9px;
+  gap: 10px;
   min-width: 240px;
+  max-width: 303px;
+  max-height: 144px;
 
   .demis-paste-box-info {
     gap: 8px;
@@ -13,10 +15,10 @@
     .demis-paste-box-title {
       color: var(--color-primary);
       font-family: Verdana, sans-serif;
-      font-weight: 400;
-      font-size: 17px;
-      line-height: 22px;
-      letter-spacing: 0px;
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 20px;
+      letter-spacing: 0;
       vertical-align: middle;
     }
 
@@ -24,9 +26,9 @@
       color: var(--color-black);
       font-family: Verdana, sans-serif;
       font-weight: 400;
-      font-size: 14px;
-      line-height: 19px;
-      letter-spacing: 0px;
+      font-size: 13px;
+      line-height: 18px;
+      letter-spacing: 0;
       vertical-align: middle;
     }
   }
@@ -35,5 +37,16 @@
     width: 100%;
     display: inline-flex;
     justify-content: end;
+
+    #btn-fill-form {
+      --mat-button-outlined-outline-color: var(--color-primary);
+      --mat-button-outlined-label-text-color: var(--color-primary);
+      padding: 8px;
+
+      &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+      }
+    }
   }
 }
