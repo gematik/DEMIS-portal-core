@@ -33,6 +33,7 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
   addButtonLabel!: string;
   showAddButtonLabel!: boolean;
   isSingleInputField!: boolean;
+  fieldAriaDescribedBy!: string;
 
   get repeaterAriaLabel(): string | null {
     return this.field.fieldGroup?.length ? null : 'Keine Kontaktmöglichkeiten hinzugefügt';
@@ -57,12 +58,24 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
       this.add();
     }
     this.field.props['setFieldCount'] = this.setFieldCount.bind(this);
+    this.updateChildFieldProps();
+  }
+
+  override add(i?: number, initialModel?: unknown, opts?: { markAsDirty: boolean }) {
+    super.add(i, initialModel, opts);
+    this.updateChildFieldProps();
+  }
+
+  override remove(i: number, opts?: { markAsDirty: boolean }) {
+    super.remove(i, opts);
+    this.updateChildFieldProps();
   }
 
   private initializeProperties() {
     this.addButtonLabel = this.repeaterProps?.addButtonLabel ?? 'Item hinzufügen';
     this.showAddButtonLabel = this.repeaterProps?.showAddButtonLabel ?? true;
     this.isSingleInputField = this.repeaterProps?.isSingleInputField ?? true;
+    this.fieldAriaDescribedBy = this.repeaterProps?.fieldAriaDescribedBy ?? 'kontakt-hinweis';
   }
 
   get deletable(): boolean {
@@ -95,9 +108,12 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
     }
   }
 
-  setIdNames(formlyField: FormlyFieldConfig, index: number): string {
-    this.setPropsInChildElements(formlyField, index);
+  getRepeatFieldId(formlyField: FormlyFieldConfig, index: number): string {
     return formlyField.parent?.id + '-' + index;
+  }
+
+  private updateChildFieldProps() {
+    this.field.fieldGroup?.forEach((child, index) => this.setPropsInChildElements(child, index));
   }
 
   /**
@@ -111,12 +127,36 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
   private setPropsInChildElements(formlyField: FormlyFieldConfig, index: number) {
     formlyField.fieldGroup!.forEach((field: FormlyFieldConfig) => {
       field.id = this.createRepeatId(field.id!, index);
+      const indexedLabel = this.getIndexedLabel(field, index);
+      if (indexedLabel !== undefined) {
+        field.props!.label = indexedLabel;
+      }
       field.props!.attributes = {
         ...field.props!.attributes,
-        'aria-describedby': 'kontakt-hinweis',
+        'aria-label': indexedLabel,
+        'aria-describedby': this.fieldAriaDescribedBy,
         'aria-required': field.props!.required ? 'true' : 'false',
       };
     });
+  }
+
+  /**
+   * Returns the child field label with an appended index suffix (e.g. "E-Mail 2").
+   * The first item keeps its original label untouched; the suffix starts
+   * at the second item. The original label is cached so repeated change detection
+   * cycles don't accumulate suffixes.
+   * @param field
+   * @param index
+   * @private
+   */
+  private getIndexedLabel(field: FormlyFieldConfig, index: number): string {
+    const props = field.props!;
+    props['baseLabel'] ??= props.label;
+    const baseLabel = props['baseLabel'];
+    if (!baseLabel || index < 1) {
+      return baseLabel;
+    }
+    return `${baseLabel} ${index + 1}`;
   }
 
   createRepeatId(identifier: string, index: number): string {
@@ -131,4 +171,5 @@ interface RepeaterCustomProps extends FormlyFieldProps {
   addButtonLabel?: string;
   showAddButtonLabel?: boolean;
   isSingleInputField?: boolean;
+  fieldAriaDescribedBy?: string;
 }
