@@ -2,7 +2,7 @@
 
       @for (currentField of field.fieldGroup; let i = $index; track i) {
       <div class="repeated-item-with-delete-icon" [ngClass]="currentField.className">
-        <formly-field [aria-describedby]="" [field]="currentField" [id]="setIdNames(currentField, i)" />
+        <formly-field [field]="currentField" [id]="getRepeatFieldId(currentField, i)" />
 
         @if (deletable) {
           <button [aria-label]="getDeleteButtonAriaLabel(i)" mat-icon-button type="button" class="remove-button" [id]="field.id + '-delete-button-' + i" (click)="remove(i)">
