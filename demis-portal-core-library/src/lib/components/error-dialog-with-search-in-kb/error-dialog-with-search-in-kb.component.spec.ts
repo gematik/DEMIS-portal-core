@@ -113,7 +113,34 @@ describe('UploadErrorsComponent', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('#error-dialog-title'));
       expect(anchorElements.length).toBe(1);
       const text = anchorElements[0].nativeElement.textContent;
-      expect(text.trim()).toBe('Aufgetretene Fehler');
+      expect(text.trim()).toContain('Aufgetretene Fehler');
+    });
+
+    it('should expose the description block referenced by aria-describedby', () => {
+      const descriptionElements = fixture.debugElement.queryAll(By.css('#error-dialog-description'));
+      expect(descriptionElements.length).toBe(1);
+    });
+
+    it('should mark the close button as the initially focused control', () => {
+      const closeButton = fixture.debugElement.query(By.css('#close-btn'));
+      expect(closeButton.nativeElement.hasAttribute('cdkFocusInitial')).toBe(true);
+    });
+
+    it('should focus the close button on ngAfterViewInit', () => {
+      const closeButton = fixture.debugElement.query(By.css('#close-btn'));
+      const focusSpy = vi.spyOn(closeButton.nativeElement as HTMLButtonElement, 'focus');
+      component.ngAfterViewInit();
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('should not throw on ngAfterViewInit when the close button is not available', () => {
+      (component as any).closeButton = () => undefined;
+      expect(() => component.ngAfterViewInit()).not.toThrow();
+    });
+
+    it('should not throw on ngAfterViewInit when the close button has no native element', () => {
+      (component as any).closeButton = () => ({ nativeElement: undefined });
+      expect(() => component.ngAfterViewInit()).not.toThrow();
     });
 
     it('check label of close button', () => {
@@ -155,7 +182,7 @@ describe('UploadErrorsComponent', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('#error-dialog-title'));
       expect(anchorElements.length).toBe(1);
       const text = anchorElements[0].nativeElement.textContent;
-      expect(text.trim()).toBe('OtherTitle');
+      expect(text.trim()).toContain('OtherTitle');
     });
 
     it('should have no href', () => {

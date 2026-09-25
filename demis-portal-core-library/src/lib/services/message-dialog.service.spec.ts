@@ -45,6 +45,9 @@ describe('MessageDialogService', () => {
     width: '800px',
     maxWidth: '800px',
     disableClose: false,
+    role: 'alertdialog',
+    ariaLabelledBy: 'error-dialog-title',
+    ariaDescribedBy: 'error-dialog-description',
   } as DialogStyle;
 
   const defaultSubmitStyle = {
