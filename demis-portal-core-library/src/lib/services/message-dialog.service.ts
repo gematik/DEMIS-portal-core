@@ -102,6 +102,9 @@ export class MessageDialogService {
       width: style?.width ?? '800px',
       maxWidth: style?.maxWidth ?? '800px',
       disableClose: dialogData.redirectToHome ?? false,
+      role: 'alertdialog',
+      ariaLabelledBy: 'error-dialog-title',
+      ariaDescribedBy: 'error-dialog-description',
     });
   }
 

@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.4
+- Improved accessibility and structure of error dialog component
+
 ## Release 4.4.3
 - Added dynamic labels and aria-labels for the repeater component to improve accessibility
 

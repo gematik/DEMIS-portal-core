@@ -1,5 +1,17 @@
+@use '../../styles/dialogs' as dialogs;
+
 ::ng-deep .mat-mdc-dialog-surface {
-  border-radius: 16px;
+  border-radius: 4px;
+}
+
+@include dialogs.buttons;
+
+#dialog-title {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 17px;
+  padding-left: 0;
 }
 
 .upload-error-content {

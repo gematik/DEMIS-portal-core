@@ -229,7 +229,7 @@ export class MessageDialogConsumerComponent {
   examples: CodeExampleBoxComponentOptions[] = [
     {
       expanderTitle: 'Example 1',
-      expanderDescription: 'A simple error dialog with 1 error',
+      expanderDescription: 'A simple error dialog with 1 error (deprecated)',
       codeSnippets: [
         {
           fileName: 'example-1.component.html',

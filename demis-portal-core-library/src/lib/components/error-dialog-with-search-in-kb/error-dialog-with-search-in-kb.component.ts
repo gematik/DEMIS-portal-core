@@ -16,7 +16,7 @@
  */
 
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,12 +30,13 @@ import { Router } from '@angular/router';
   templateUrl: './error-dialog-with-search-in-kb.component.html',
   styleUrl: './error-dialog-with-search-in-kb.component.scss',
 })
-export class ErrorDialogWithSearchInKbComponent {
+export class ErrorDialogWithSearchInKbComponent implements AfterViewInit {
   private readonly data = inject<ErrorsDialogProps>(MAT_DIALOG_DATA);
   private readonly router = inject(Router);
 
   readonly dialogRef = inject(MatDialogRef<ErrorDialogWithSearchInKbComponent>);
   private readonly clipboard = inject(Clipboard);
+  private readonly closeButton = viewChild('closeButton', { read: ElementRef });
   dataSource: ErrorMessage[];
   clipboardContent?: string;
   errorTitle: string;
@@ -46,6 +47,10 @@ export class ErrorDialogWithSearchInKbComponent {
     this.clipboardContent = this.data.clipboardContent;
     this.errorTitle = this.data.errorTitle ?? 'Aufgetretene Fehler';
     this.redirectToHome = this.data.redirectToHome ?? false;
+  }
+
+  ngAfterViewInit(): void {
+    this.closeButton()?.nativeElement?.focus();
   }
 
   get closeButtonLabel(): string {

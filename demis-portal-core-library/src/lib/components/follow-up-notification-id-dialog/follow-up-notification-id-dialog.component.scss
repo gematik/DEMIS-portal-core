@@ -1,54 +1,8 @@
-button {
-  font-weight: 700;
-  font-style: normal;
-  font-size: 14px;
-  line-height: 19px;
-  min-width: 100px !important;
-}
+@use '../../styles/dialogs' as dialogs;
 
-p {
-  font-size: 13px;
-}
-
-button.cdk-keyboard-focused.cdk-focused,
-button.cdk-program-focused.cdk-focused {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-#dialog-container {
-  border: 1px solid #000;
-  width: 610px;
-  height: 388px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 4px;
-}
-
-.button-container {
-  justify-content: flex-end;
-}
-
-.button-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: auto;
-}
-
-#dialog-title {
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  font-size: 22px;
-  padding-left: 0;
-}
-
-#dialog-paragraph {
-  margin-top: 0;
-  margin-bottom: 27px;
-}
+@include dialogs.buttons;
+@include dialogs.form-layout;
+@include dialogs.container(388px, 20px);
 
 #final-dialog-paragraph {
   margin-top: 10px;

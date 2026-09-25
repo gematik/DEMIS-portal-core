@@ -1,0 +1,66 @@
+/// Shared dialog styles.
+///
+/// These mixins collect styling that is otherwise duplicated across the
+/// library's dialog components. Include them from a component stylesheet via
+/// `@use '../../styles/dialogs' as dialogs;` and `@include dialogs.<mixin>;`.
+
+/// Button sizing and keyboard/program focus outline shared by all dialogs.
+@mixin buttons {
+  button {
+    font-weight: 700;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 19px;
+    min-width: 100px !important;
+  }
+
+  button.cdk-keyboard-focused.cdk-focused,
+  button.cdk-program-focused.cdk-focused {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/// Title, paragraph and action button layout shared by the follow-up dialogs.
+@mixin form-layout {
+  p {
+    font-size: 13px;
+  }
+
+  .button-container {
+    justify-content: flex-end;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  #dialog-title {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 22px;
+    padding-left: 0;
+  }
+
+  #dialog-paragraph {
+    margin-top: 0;
+    margin-bottom: 27px;
+  }
+}
+
+/// Outer dialog container box. Size varies per dialog, so it is parameterized.
+@mixin container($height, $padding) {
+  #dialog-container {
+    border: 1px solid #000;
+    width: 610px;
+    height: $height;
+    padding: $padding;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+  }
+}
