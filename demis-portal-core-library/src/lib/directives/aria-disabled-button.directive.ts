@@ -19,8 +19,6 @@ import { Directive, ElementRef, OnDestroy, OnInit, Renderer2, RendererStyleFlags
 
 const SUBMIT_ANNOUNCEMENT_TEXT = 'Abschicken derzeit nicht möglich. Bitte prüfen Sie das Formular auf Validierungsfehler oder nicht begonnene Schritte.';
 
-let uniqueSubmitAnnouncementId = 0;
-
 @Directive({
   /**
    * This directive is applied to a button element to make it ARIA-disabled while keeping it in the tab order.
@@ -29,13 +27,14 @@ let uniqueSubmitAnnouncementId = 0;
    * Once we have all the styles for all button types (most likely in portal-theme), we can remove this restriction and make it work for all buttons.
    *
    * The directive also adds an ARIA description to the button, which can be provided via the `gemDemisAriaDisabledDescribedBy` input.
-   * If the button is a submit button, it will also add a hidden announcement element to inform users that the form cannot be submitted due to validation errors.
+   * If the button is a submit button, it will also describe why the form cannot be submitted.
    */
   selector: 'button.btn.style.dark--color[gemDemisAriaDisabled]',
   standalone: true,
   host: {
     '[attr.aria-disabled]': 'gemDemisAriaDisabled() ? "true" : "false"',
     '[attr.aria-describedby]': 'describedBy()',
+    '[attr.aria-description]': 'submitDescription()',
     '[attr.tabindex]': 'gemDemisAriaDisabled() ? 0 : null',
     '[style.cursor]': 'gemDemisAriaDisabled() ? "not-allowed" : null',
   },
@@ -58,61 +57,21 @@ export class GemDemisAriaDisabledButtonDirective implements OnInit, OnDestroy {
   readonly gemDemisActivationBlocked = output<void>();
   private readonly disabledStyleEffect = effect(() => this.updateDisabledStyles());
 
-  /**
-   * A submit button gets its own hidden announcement so the fixed explanation is always
-   * available, without requiring a second directive import on the button.
-   */
-  private readonly submitAnnouncementId = `gem-demis-aria-disabled-submit-announcement-${++uniqueSubmitAnnouncementId}`;
   private isSubmitButton = false;
-  private submitAnnouncementElement: HTMLElement | null = null;
-  private readonly submitAnnouncementEffect = effect(() => this.updateSubmitAnnouncementText(this.gemDemisAriaDisabled()));
-
-  protected readonly describedBy = computed(() => {
-    const submitDescribedBy = this.gemDemisAriaDisabled() ? this.submitAnnouncementId : null;
-    const ids = [this.gemDemisAriaDisabledDescribedBy(), this.isSubmitButton ? submitDescribedBy : null].filter((id): id is string => !!id);
-    return ids.length ? ids.join(' ') : null;
-  });
+  protected readonly describedBy = computed(() => this.gemDemisAriaDisabledDescribedBy() || null);
+  protected readonly submitDescription = computed(() => (this.isSubmitButton && this.gemDemisAriaDisabled() ? SUBMIT_ANNOUNCEMENT_TEXT : null));
 
   ngOnInit(): void {
     this.hostElement.nativeElement.addEventListener('click', this.onClick, { capture: true, signal: this.abortController.signal });
     this.hostElement.nativeElement.addEventListener('keydown', this.onKeydown, { capture: true, signal: this.abortController.signal });
 
     this.isSubmitButton = this.hostElement.nativeElement.type === 'submit';
-    if (this.isSubmitButton) {
-      this.createSubmitAnnouncementElement();
-      this.updateSubmitAnnouncementText(this.gemDemisAriaDisabled());
-    }
   }
 
   ngOnDestroy(): void {
     this.abortController.abort();
     this.disabledStyleEffect.destroy();
-    this.submitAnnouncementEffect.destroy();
     this.restoreInitialInlineStyles();
-    if (this.submitAnnouncementElement?.parentNode) {
-      this.renderer.removeChild(this.submitAnnouncementElement.parentNode, this.submitAnnouncementElement);
-    }
-  }
-
-  private createSubmitAnnouncementElement(): void {
-    const announcement = this.renderer.createElement('span') as HTMLElement;
-    this.renderer.setAttribute(announcement, 'id', this.submitAnnouncementId);
-    this.renderer.setStyle(announcement, 'position', 'absolute');
-    this.renderer.setStyle(announcement, 'width', '1px');
-    this.renderer.setStyle(announcement, 'height', '1px');
-    this.renderer.setStyle(announcement, 'overflow', 'hidden');
-    this.renderer.setStyle(announcement, 'clip', 'rect(0, 0, 0, 0)');
-    this.renderer.setStyle(announcement, 'white-space', 'nowrap');
-    this.renderer.appendChild(this.hostElement.nativeElement.parentNode, announcement);
-    this.submitAnnouncementElement = announcement;
-  }
-
-  private updateSubmitAnnouncementText(isDisabled: boolean): void {
-    if (!this.submitAnnouncementElement) {
-      return;
-    }
-
-    this.renderer.setProperty(this.submitAnnouncementElement, 'textContent', isDisabled ? SUBMIT_ANNOUNCEMENT_TEXT : '');
   }
 
   private updateDisabledStyles(): void {

@@ -145,30 +145,28 @@ describe('GemDemisAriaDisabledButtonDirective on a submit button', () => {
     fixture.point.componentInstance.isDisabled = true;
     fixture.detectChanges();
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-    const describedByIds = button.getAttribute('aria-describedby')?.split(' ') ?? [];
-
-    expect(describedByIds).toHaveLength(1);
-    const announcement = document.getElementById(describedByIds[0]);
-    expect(announcement?.textContent).toBe(
+    expect(button.getAttribute('aria-description')).toBe(
       'Abschicken derzeit nicht möglich. Bitte prüfen Sie das Formular auf Validierungsfehler oder nicht begonnene Schritte.'
     );
+    expect(button.hasAttribute('aria-describedby')).toBe(false);
+    expect(document.querySelector('[id^="gem-demis-aria-disabled-submit-announcement-"]')).toBeNull();
   });
 
-  it('clears the announcement text once the button becomes available again', () => {
+  it('removes the submit description once the button becomes available again', () => {
     const fixture = MockRender(SubmitTestComponent);
     const component = fixture.point.componentInstance;
     component.isDisabled = true;
     fixture.detectChanges();
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-    const announcementId = button.getAttribute('aria-describedby') as string;
+    expect(button.hasAttribute('aria-description')).toBe(true);
 
     component.isDisabled = false;
     fixture.detectChanges();
 
-    expect(document.getElementById(announcementId)?.textContent).toBe('');
+    expect(button.hasAttribute('aria-description')).toBe(false);
   });
 
-  it('merges its announcement id with a consumer-provided aria-describedby id', () => {
+  it('retains a consumer-provided aria-describedby alongside the submit description', () => {
     const fixture = MockRender(SubmitTestComponent);
     const component = fixture.point.componentInstance;
     component.isDisabled = true;
@@ -176,7 +174,8 @@ describe('GemDemisAriaDisabledButtonDirective on a submit button', () => {
     fixture.detectChanges();
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
 
-    expect(button.getAttribute('aria-describedby')).toContain('consumer-hint');
+    expect(button.getAttribute('aria-describedby')).toBe('consumer-hint');
+    expect(button.hasAttribute('aria-description')).toBe(true);
   });
 });
 
