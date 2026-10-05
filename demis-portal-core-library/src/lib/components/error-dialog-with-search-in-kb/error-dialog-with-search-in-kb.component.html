@@ -1,7 +1,7 @@
 <mat-dialog-content class="upload-error-content">
   <h1 mat-dialog-title class="upload-error-title" id="error-dialog-title">
-    <mat-icon class="upload-error-title-icon">error</mat-icon>
-      {{ errorTitle }}
+    <mat-icon class="upload-error-title-icon" fontIcon="error" aria-hidden="true"></mat-icon>
+    {{ errorTitle }}
   </h1>
   <div class="table-header-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" id="errors-table-header">

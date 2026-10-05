@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.6
+- Changed error icon handling in error dialog
+
 ## Release 4.4.5
 - Fixed a bug in the aria-disabled directive regarding the description text for submit buttons
 
