@@ -19,8 +19,10 @@
   padding: 30px 30px 0 30px;
   background-color: var(--color-white);
 
-  .table-header-container,
   .table-content-container {
+    max-height: 338px;
+    overflow-y: auto;
+
     table {
       width: 100%;
       table-layout: auto;
@@ -31,42 +33,15 @@
       border-collapse: separate;
       /* Ensures rounded corners are visible */
       overflow: hidden;
-
-      .caption {
-        height: 0;
-        color: transparent;
-        font-size: 0;
-      }
-    }
-  }
-
-  .table-header-container {
-    table {
-      /* round the top corners of the table */
-      border-radius: 5px 5px 0 0;
+      border-radius: 5px;
 
       th {
         background-color: var(--color-neutral-lighter);
-        border-bottom: none
-      }
-    }
-  }
-
-  .table-content-container {
-    max-height: 338px;
-    overflow-y: auto;
-
-    table {
-      /* round the bottom corners of the tabel */
-      border-radius: 0 0 5px 5px;
-      border-top: none;
-
-      td {
         border-bottom: 1px solid var(--color-neutral-light);
       }
 
-      caption {
-        display: none;
+      td {
+        border-bottom: 1px solid var(--color-neutral-light);
       }
 
       td.mat-column-furtherInformation {

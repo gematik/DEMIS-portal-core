@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { Component, input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'gem-demis-forms-footer',
@@ -24,8 +24,4 @@ import { Component, input } from '@angular/core';
   templateUrl: './forms-footer.component.html',
   styleUrl: './forms-footer.component.css',
 })
-
-//can be removed when FEATURE_FLAG_FOOTER_LINKS_CORRECTION is removed
-export class FormsFooterComponent {
-  featureFlagFooterLink = input.required<boolean>();
-}
+export class FormsFooterComponent {}

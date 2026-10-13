@@ -15,7 +15,8 @@
     find details in the "Readme" file.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Injector, OnInit, afterNextRender, inject } from '@angular/core';
+import { InteractivityChecker, LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatIcon } from '@angular/material/icon';
 import { FieldArrayType, FieldTypeConfig, FormlyField, FormlyFieldConfig, FormlyFieldProps, provideFormlyCore } from '@ngx-formly/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -30,6 +31,11 @@ import { NgClass } from '@angular/common';
   providers: [provideFormlyCore()],
 })
 export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> implements OnInit {
+  private readonly hostElement: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly injector = inject(Injector);
+  private readonly interactivityChecker = inject(InteractivityChecker);
+  private readonly liveAnnouncer = inject(LiveAnnouncer);
+
   addButtonLabel!: string;
   showAddButtonLabel!: boolean;
   isSingleInputField!: boolean;
@@ -69,6 +75,33 @@ export class FormlyRepeaterComponent extends FieldArrayType<FieldTypeConfig> imp
   override remove(i: number, opts?: { markAsDirty: boolean }) {
     super.remove(i, opts);
     this.updateChildFieldProps();
+  }
+
+  addFromInteraction(): void {
+    const index = this.field.fieldGroup?.length ?? 0;
+    this.add();
+    this.focusItemAfterRender(index);
+  }
+
+  removeFromInteraction(index: number): void {
+    const label = this.label || 'Eintrag';
+    this.remove(index);
+    this.focusItemAfterRender(Math.min(index, (this.field.fieldGroup?.length ?? 0) - 1));
+    void this.liveAnnouncer.announce(`${label} ${index + 1} entfernt.`, 'polite');
+  }
+
+  private focusItemAfterRender(index: number): void {
+    afterNextRender(
+      () => {
+        const item = this.hostElement.nativeElement.querySelectorAll('.repeated-item-with-delete-icon').item(index);
+        const controls = Array.from(item?.querySelectorAll<HTMLElement>('input, textarea, select, button, [tabindex]') ?? []);
+        const target =
+          controls.find(control => this.interactivityChecker.isFocusable(control)) ??
+          this.hostElement.nativeElement.querySelector<HTMLButtonElement>('button.add-button');
+        target?.focus();
+      },
+      { injector: this.injector }
+    );
   }
 
   private initializeProperties() {

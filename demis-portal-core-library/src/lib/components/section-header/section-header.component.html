@@ -2,12 +2,12 @@
   <!-- allows switch between h1 and h2 -->
   @switch (level()) {
     @case (1) {
-      <h1 class="section-header">
+      <h1 class="section-header" [id]="id() ?? undefined">
         <span class="section-header-title">{{ titleText() }}</span>
       </h1>
     }
     @default {
-      <h2 class="section-header">
+      <h2 class="section-header" [id]="id() ?? undefined">
         <span class="section-header-title">{{ titleText() }}</span>
       </h2>
     }

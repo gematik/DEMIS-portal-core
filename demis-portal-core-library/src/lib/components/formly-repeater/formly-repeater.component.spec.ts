@@ -15,8 +15,9 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ComponentFixture } from '@angular/core/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { InteractivityChecker, LiveAnnouncer } from '@angular/cdk/a11y';
 
 import { FormlyRepeaterComponent } from './formly-repeater.component';
 import { MockBuilder, MockRender } from 'ng-mocks';
@@ -41,6 +42,8 @@ describe('RepeaterComponent', () => {
     return MockBuilder(MockComponent)
       .keep(FormlyRepeaterComponent)
       .keep(ReactiveFormsModule)
+      .keep(InteractivityChecker)
+      .provide({ provide: LiveAnnouncer, useValue: { announce: vi.fn().mockResolvedValue(undefined) } })
       .keep(
         FormlyModule.forRoot({
           types: [
@@ -61,6 +64,56 @@ describe('RepeaterComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('interaction focus', () => {
+    beforeEach(() => document.body.appendChild(fixture.nativeElement));
+    afterEach(() => fixture.nativeElement.remove());
+
+    it('focuses a newly added input', async () => {
+      const addButton = await getButton(loader, '#emails-add-button');
+      await addButton.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await vi.waitFor(() => expect(document.activeElement).toBe(fixture.nativeElement.querySelector('#email-0')));
+    });
+
+    it.each([0, 1, 2])('restores focus after removing item %s', async index => {
+      component.add();
+      component.add();
+      component.add();
+      fixture.detectChanges();
+      const deleteButton = await getButton(loader, `#emails-delete-button-${index}`);
+      await deleteButton.focus();
+      await deleteButton.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await vi.waitFor(() => expect(document.activeElement).toBe(fixture.nativeElement.querySelector(`#email-${Math.min(index, 1)}`)));
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenCalledWith(`E-Mail ${index + 1} entfernt.`, 'polite');
+    });
+
+    it('focuses the add button when the last removable item is removed', async () => {
+      component.add();
+      fixture.detectChanges();
+      const deleteButton = await getButton(loader, '#emails-delete-button-0');
+      await deleteButton.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await vi.waitFor(() => expect(document.activeElement).toBe(fixture.nativeElement.querySelector('#emails-add-button')));
+    });
+
+    it('does not move focus for programmatic additions', async () => {
+      const addButton = await getButton(loader, '#emails-add-button');
+      await addButton.focus();
+      component.add();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(document.activeElement).toBe(fixture.nativeElement.querySelector('#emails-add-button'));
+    });
   });
 
   describe('test default behavior', () => {

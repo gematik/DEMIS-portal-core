@@ -42,6 +42,8 @@ import { SectionHeaderComponent } from '../section-header/section-header.compone
 import { StepNavigationService } from '../../services/step-navigation.service';
 import { SideNavigationStylesComponent } from './side-navigation-styles/side-navigation-styles.component';
 
+export type StepFocusTarget = 'first-control' | 'heading';
+
 @Component({
   selector: 'gem-demis-side-navigation',
   imports: [NgTemplateOutlet, MatSidenavModule, FormsFooterComponent, DemisProcessStepperComponent, SectionHeaderComponent, SideNavigationStylesComponent],
@@ -55,6 +57,7 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
   private readonly dynamicComponentContainer = viewChild<any, ViewContainerRef>('dynamicComponentContainer', { read: ViewContainerRef });
 
   sideNavTitle = input.required<string>();
+  stepFocusTarget = input<StepFocusTarget>('first-control');
   stepsMap = input<Map<ProcessStep, StepContent<any>>>(new Map());
   steps = computed(() => Array.from(this.stepsMap().keys()));
   currentComponentInstance = signal<StepContentComponent<any> | null>(null);
@@ -91,7 +94,7 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
     event.previouslySelectedStep?.control.markAllAsTouched();
     this.setStepContent(resolvedStepContent, event.focusFirstElement);
     if (event.focusFirstElement) {
-      this.focusFirstFocusableElement();
+      this.focusRequestedStepTarget();
     }
   }
 
@@ -102,8 +105,18 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    targetElement.scrollIntoView({ block: 'center', inline: 'nearest' });
-    targetElement.focus({ preventScroll: true });
+    let focusTarget = targetElement;
+    if (targetId === 'side-nav-main-content') {
+      focusTarget = targetElement.querySelector<HTMLElement>('h1, h2, h3, h4, h5, h6, [role="heading"]') ?? targetElement;
+    } else if (targetId === 'side-nav-step-navigation') {
+      focusTarget = targetElement.querySelector<HTMLElement>('[aria-current="step"]') ?? targetElement;
+    }
+
+    if (targetId === 'side-nav-main-content' && focusTarget !== targetElement && !focusTarget.hasAttribute('tabindex')) {
+      focusTarget.setAttribute('tabindex', '-1');
+    }
+    focusTarget.scrollIntoView({ block: 'center', inline: 'nearest' });
+    focusTarget.focus({ preventScroll: true });
   }
 
   /**
@@ -139,19 +152,31 @@ export class SideNavigationComponent implements AfterViewInit, OnChanges {
         this.currentComponentRef.setInput('inputData', stepContent.inputData);
       }
       this.currentComponentRef.setInput('autoFocusRequested', autoFocusRequested);
+      this.currentComponentRef.setInput('stepFocusTarget', this.stepFocusTarget());
 
       // Store component instance
       this.currentComponentInstance.set(this.currentComponentRef.instance);
     }
   }
 
-  /** Moves focus to the first focusable element after its dynamically created view has rendered. */
-  private focusFirstFocusableElement(): void {
+  /** Focuses the requested target after the dynamically created step has rendered. */
+  private focusRequestedStepTarget(): void {
     afterNextRender(
       () => {
         const container = this.currentComponentRef?.location.nativeElement as HTMLElement | undefined;
         if (!container) {
           return;
+        }
+        if (this.stepFocusTarget() === 'heading') {
+          const heading = container.querySelector<HTMLElement>('h1, h2, h3, h4, h5, h6, [role="heading"]');
+          if (heading) {
+            if (!heading.hasAttribute('tabindex')) {
+              heading.setAttribute('tabindex', '-1');
+            }
+            heading.scrollIntoView({ block: 'start', inline: 'nearest' });
+            heading.focus({ preventScroll: true });
+            return;
+          }
         }
         this.navigationService.getFocusableElements(container)[0]?.focus({ preventScroll: true });
       },
@@ -234,12 +259,13 @@ export function createStepContent<C extends Type<StepContentComponent<any>>>(con
 @Directive()
 export abstract class StepContentComponent<T> {
   inputData = input<T | undefined>(undefined);
+  stepFocusTarget = input<StepFocusTarget>('first-control');
   actionsLeft = viewChild<TemplateRef<any>>('actionsLeft');
   actionsRight = viewChild<TemplateRef<any>>('actionsRight');
 
   /**
-   * Whether SideNavigationComponent wants the first focusable element of this step's content
-   * focused once rendering has settled. Always false for the initial step on first load.
+   * Whether SideNavigationComponent requests focus in this step once rendering has settled.
+   * The destination is specified by stepFocusTarget. Always false for the initial step on first load.
    * Components that re-render asynchronously after their own data has loaded (and would
    * therefore discard the focus SideNavigationComponent already set right after creation)
    * should read this and (re-)focus themselves once their async render is done.

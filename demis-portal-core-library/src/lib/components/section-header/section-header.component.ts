@@ -30,4 +30,5 @@ export const SECTION_TITLE_DEFAULT_LEVEL: SectionTitleLevel = 2;
 export class SectionHeaderComponent {
   titleText = input.required<string>();
   level = input<SectionTitleLevel>(SECTION_TITLE_DEFAULT_LEVEL);
+  id = input<string | null>(null);
 }

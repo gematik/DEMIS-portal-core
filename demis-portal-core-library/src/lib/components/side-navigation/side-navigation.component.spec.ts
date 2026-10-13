@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InteractivityChecker } from '@angular/cdk/a11y';
 import { Component, TemplateRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -66,6 +66,13 @@ class TestStepContentWithDataComponent extends StepContentComponent<{
   standalone: true,
 })
 class TestStepContentFocusableComponent extends StepContentComponent<any> {}
+
+@Component({
+  selector: 'gem-test-step-content-heading',
+  template: '<h1>Step heading</h1><p>Step instructions</p><button type="button">First control</button>',
+  standalone: true,
+})
+class TestStepContentHeadingComponent extends StepContentComponent<any> {}
 
 describe('SideNavigationComponent', () => {
   let component: SideNavigationComponent;
@@ -422,7 +429,7 @@ describe('SideNavigationComponent', () => {
       expect((component.currentComponentInstance() as TestStepContentNoActionsComponent).autoFocusRequested()).toBe(false);
     });
 
-    it('should move focus to the first focusable element of the newly rendered step content', async () => {
+    it.each(['first-control', 'heading'] as const)('focuses the first control when no heading exists in %s mode', async mode => {
       const steps = createMockSteps();
       const stepsMap = new Map();
       stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
@@ -431,6 +438,7 @@ describe('SideNavigationComponent', () => {
       fixture = MockRender(SideNavigationComponent, {
         sideNavTitle: 'Test Title',
         stepsMap: stepsMap,
+        stepFocusTarget: mode,
       });
 
       component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
@@ -454,6 +462,38 @@ describe('SideNavigationComponent', () => {
         },
         { timeout: 2000 }
       );
+    });
+
+    it.each(['first-control', 'heading'] as const)('uses the configured %s focus target and forwards it to the step', async mode => {
+      const steps = createMockSteps();
+      const stepsMap = new Map();
+      stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
+      stepsMap.set(steps[1], createStepContent({ component: TestStepContentHeadingComponent }));
+      fixture = MockRender(SideNavigationComponent, {
+        sideNavTitle: 'Test Title',
+        stepsMap,
+        stepFocusTarget: mode,
+      });
+      component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+
+      component.onStepChanged({
+        selectedIndex: 1,
+        selectedStep: steps[1],
+        previouslySelectedIndex: 0,
+        previouslySelectedStep: steps[0],
+        focusFirstElement: true,
+      });
+      fixture.detectChanges();
+
+      await vi.waitFor(() => {
+        const target = fixture.nativeElement.querySelector(`gem-test-step-content-heading ${mode === 'heading' ? 'h1' : 'button'}`);
+        expect(target).not.toBeNull();
+        expect(document.activeElement).toBe(target);
+      });
+      expect(component.currentComponentInstance()?.stepFocusTarget()).toBe(mode);
+      if (mode === 'heading') {
+        expect(fixture.nativeElement.querySelector('gem-test-step-content-heading h1').tabIndex).toBe(-1);
+      }
     });
 
     it('should not move focus when focusFirstElement is false on the step change event', async () => {
@@ -800,7 +840,7 @@ describe('SideNavigationComponent', () => {
   });
 
   describe('Focus and Skip Links', () => {
-    it('should focus the target section and ignore missing targets', () => {
+    beforeEach(() => {
       const steps = createMockSteps();
       const stepsMap = new Map();
       stepsMap.set(steps[0], createStepContent({ component: TestStepContentComponent }));
@@ -811,7 +851,12 @@ describe('SideNavigationComponent', () => {
       });
 
       component = ngMocks.findInstance(fixture.debugElement, SideNavigationComponent);
+      document.body.appendChild(fixture.nativeElement);
+    });
 
+    afterEach(() => fixture.nativeElement.remove());
+
+    it('should focus the target section and ignore missing targets', () => {
       expect(() => component.focusSection('does-not-exist')).not.toThrow();
 
       const mainContent = fixture.point.nativeElement.querySelector('#side-nav-main-content') as HTMLElement;
@@ -822,6 +867,52 @@ describe('SideNavigationComponent', () => {
 
       expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'center', inline: 'nearest' });
       expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+    });
+
+    it('focuses the current form heading without adding a tab stop', () => {
+      const mainContent = fixture.point.nativeElement.querySelector('#side-nav-main-content') as HTMLElement;
+      const heading = document.createElement('h1');
+      heading.textContent = 'Current step';
+      mainContent.prepend(heading);
+
+      component.focusSection('side-nav-main-content');
+
+      expect(document.activeElement).toBe(heading);
+      expect(heading.tabIndex).toBe(-1);
+    });
+
+    it('preserves an existing heading tabindex', () => {
+      const mainContent = fixture.point.nativeElement.querySelector('#side-nav-main-content') as HTMLElement;
+      const heading = document.createElement('h1');
+      heading.tabIndex = 0;
+      mainContent.prepend(heading);
+
+      component.focusSection('side-nav-main-content');
+
+      expect(document.activeElement).toBe(heading);
+      expect(heading.tabIndex).toBe(0);
+    });
+
+    it('focuses the active step instead of reading the entire navigation landmark', () => {
+      const navigation = fixture.point.nativeElement.querySelector('#side-nav-step-navigation') as HTMLElement;
+      navigation.querySelectorAll('[aria-current="step"]').forEach(element => element.removeAttribute('aria-current'));
+      const step = document.createElement('button');
+      step.setAttribute('aria-current', 'step');
+      step.textContent = 'Current step';
+      navigation.appendChild(step);
+
+      component.focusSection('side-nav-step-navigation');
+
+      expect(document.activeElement).toBe(step);
+    });
+
+    it('falls back to the navigation landmark when no current step is available', () => {
+      const navigation = fixture.point.nativeElement.querySelector('#side-nav-step-navigation') as HTMLElement;
+      navigation.querySelectorAll('[aria-current="step"]').forEach(element => element.removeAttribute('aria-current'));
+
+      component.focusSection('side-nav-step-navigation');
+
+      expect(document.activeElement).toBe(navigation);
     });
   });
 });

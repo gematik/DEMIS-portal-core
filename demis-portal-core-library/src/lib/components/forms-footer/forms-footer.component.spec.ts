@@ -31,8 +31,6 @@ describe('FormsFooterComponent', () => {
 
     fixture = TestBed.createComponent(FormsFooterComponent);
     component = fixture.componentInstance;
-    // Set required inputs before detecting changes
-    fixture.componentRef.setInput('featureFlagFooterLink', true);
     fixture.detectChanges();
   });
 
@@ -46,6 +44,7 @@ describe('FormsFooterComponent', () => {
     const links: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('a.footer-link'));
     const labels = links.map(l => l.textContent?.trim());
     expect(labels).toEqual(['Barrierefreiheit', 'Impressum', 'Datenschutz']);
+    expect(links.map(l => l.getAttribute('href'))).toEqual(['#accessibility-statement', '#imprint', '#privacy-policy']);
   });
 
   it('contains a semantic structure', () => {
