@@ -15,12 +15,15 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageDialogService } from '../../services/message-dialog.service';
 import { NGXLogger } from 'ngx-logger';
+
+export type ClipboardImportResult = 'success' | 'partial' | 'empty';
 
 export const DEMIS_PASTE_BOX_CLIPBOARD_ERROR = {
   errorTitle: 'Fehler bei der Datenübernahme',
@@ -40,27 +43,41 @@ export const DEMIS_PASTE_BOX_CLIPBOARD_ERROR = {
 })
 export class PasteBoxComponent {
   readonly dataPasted = output<Map<string, string>>();
+  readonly importData = input<(data: Map<string, string>) => ClipboardImportResult | Promise<ClipboardImportResult>>();
   readonly pasteStatus = signal('');
+  private readonly liveAnnouncer = inject(LiveAnnouncer);
   private readonly messageDialogService = inject(MessageDialogService);
   private readonly logger = inject(NGXLogger);
 
-  readFromClipboard() {
-    navigator.clipboard
+  readFromClipboard(): Promise<void> {
+    return navigator.clipboard
       .readText()
-      .then(clipboardContent => {
+      .then(async clipboardContent => {
         const parsedClipboardData = this.parseClipboardData(clipboardContent);
         if (parsedClipboardData.size === 0) {
           throw new Error('The clipboard is empty or contains no parsable data.'); // internal error message, hence, in English
         }
-        this.dataPasted.emit(parsedClipboardData);
-        this.pasteStatus.set('Inhalt eingefügt!');
+        const importer = this.importData();
+        const result = importer ? await importer(parsedClipboardData) : 'success';
+        if (result === 'empty') {
+          throw new Error('No supported data was imported.');
+        }
+        if (!importer) {
+          this.dataPasted.emit(parsedClipboardData);
+        }
+        this.announceStatus(result === 'partial' ? 'Verwendbare Angaben eingefügt. Einige Angaben wurden nicht übernommen.' : 'Inhalt eingefügt!');
       })
       .catch((err: any) => {
         this.logger.error('Clipboard read failed: ', err);
-        this.pasteStatus.set('Fehler bei der Datenübernahme.');
+        this.announceStatus('Fehler bei der Datenübernahme.');
         this.messageDialogService.showErrorDialog(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
       })
       .finally(() => navigator.clipboard.writeText(''));
+  }
+
+  private announceStatus(message: string): void {
+    this.pasteStatus.set(message);
+    void this.liveAnnouncer.announce(message, 'polite');
   }
 
   private parseClipboardData(clipboardData: string): Map<string, string> {

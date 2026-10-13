@@ -58,8 +58,9 @@ export default defineConfig({
       screenshotDirectory: './.vitest-attachments/__screenshots__',
     },
     testTimeout: 10000,
+    isolate: false,
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
       exclude: ['demis-portal-core-library/src/api/**'],
       reporter: ['text', 'text-summary', 'html', 'lcov', 'cobertura'],
       reportsDirectory: './coverage',

@@ -87,7 +87,7 @@ describe('UploadErrorsComponent', () => {
     it('should have the correct hrefs for the anchor tags', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('a'));
 
-      expect(anchorElements.length).toBe(2);
+      expect(anchorElements).toHaveLength(2);
 
       const firstHref = anchorElements[0].nativeElement.getAttribute('href');
       const secondHref = anchorElements[1].nativeElement.getAttribute('href');
@@ -100,7 +100,7 @@ describe('UploadErrorsComponent', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('.mat-column-text'));
 
       //Header also found
-      expect(anchorElements.length).toBe(3);
+      expect(anchorElements).toHaveLength(3);
 
       const firstText = anchorElements[1].nativeElement.textContent;
       const secondText = anchorElements[2].nativeElement.textContent;
@@ -111,14 +111,33 @@ describe('UploadErrorsComponent', () => {
 
     it('should have default title', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('#error-dialog-title'));
-      expect(anchorElements.length).toBe(1);
+      expect(anchorElements).toHaveLength(1);
       const text = anchorElements[0].nativeElement.textContent;
       expect(text.trim()).toContain('Aufgetretene Fehler');
     });
 
     it('should expose the description block referenced by aria-describedby', () => {
       const descriptionElements = fixture.debugElement.queryAll(By.css('#error-dialog-description'));
-      expect(descriptionElements.length).toBe(1);
+      expect(descriptionElements).toHaveLength(1);
+    });
+
+    it('associates nonempty column headers and error data in one table', () => {
+      const tables = fixture.nativeElement.querySelectorAll('table') as NodeListOf<HTMLTableElement>;
+      expect(tables).toHaveLength(1);
+      const headers = Array.from(tables[0].querySelectorAll('th'));
+      expect(headers.map(header => header.textContent?.trim())).toEqual(['Fehlermeldungen', 'Weitere Informationen']);
+      expect(headers[1].querySelector('.cdk-visually-hidden')?.textContent).toBe('Weitere Informationen');
+      expect(headers.every(header => header.getAttribute('scope') === 'col')).toBe(true);
+      expect(tables[0].querySelectorAll('td')).toHaveLength(4);
+      expect(tables[0].querySelector('caption')?.textContent).toBe('Fehlermeldungen');
+      expect(tables[0].textContent).not.toContain('Error table');
+    });
+
+    it('describes knowledge-base links as opening in a new tab', () => {
+      const links = Array.from(fixture.nativeElement.querySelectorAll('a')) as HTMLAnchorElement[];
+      expect(links).toHaveLength(2);
+      expect(links.every(link => link.getAttribute('aria-label')?.includes('in neuem Tab öffnen'))).toBe(true);
+      expect(links.every(link => link.target === '_blank' && link.rel.includes('noopener'))).toBe(true);
     });
 
     it('should mark the close button as the initially focused control', () => {
@@ -180,14 +199,21 @@ describe('UploadErrorsComponent', () => {
 
     it('should have custom title', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('#error-dialog-title'));
-      expect(anchorElements.length).toBe(1);
+      expect(anchorElements).toHaveLength(1);
       const text = anchorElements[0].nativeElement.textContent;
       expect(text.trim()).toContain('OtherTitle');
     });
 
     it('should have no href', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('a'));
-      expect(anchorElements.length).toBe(0);
+      expect(anchorElements).toHaveLength(0);
+    });
+
+    it('renders only the meaningful error column when no knowledge-base links exist', () => {
+      const table = fixture.nativeElement.querySelector('table') as HTMLTableElement;
+      expect(table.querySelectorAll('th')).toHaveLength(1);
+      expect(table.querySelector('th')?.textContent?.trim()).toBe('Fehlermeldungen');
+      expect(table.querySelectorAll('td')).toHaveLength(2);
     });
 
     it('should have not copy error button', async () => {
@@ -232,7 +258,7 @@ describe('UploadErrorsComponent', () => {
     it('should have the correct href for the anchor tag', () => {
       const anchorElements = fixture.debugElement.queryAll(By.css('a'));
 
-      expect(anchorElements.length).toBe(1);
+      expect(anchorElements).toHaveLength(1);
 
       const firstHref = anchorElements[0].nativeElement.getAttribute('href');
 

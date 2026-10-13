@@ -16,6 +16,8 @@
  */
 
 import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockBuilder, MockRender } from 'ng-mocks';
 import { GemDemisAriaDisabledButtonDirective } from './aria-disabled-button.directive';
@@ -42,7 +44,11 @@ class TestComponent {
 }
 
 describe('GemDemisAriaDisabledButtonDirective', () => {
-  beforeEach(() => MockBuilder(TestComponent).keep(GemDemisAriaDisabledButtonDirective));
+  beforeEach(() =>
+    MockBuilder(TestComponent)
+      .keep(GemDemisAriaDisabledButtonDirective)
+      .provide({ provide: LiveAnnouncer, useValue: { announce: vi.fn().mockResolvedValue(undefined) } })
+  );
 
   it('keeps an ARIA-disabled button in the tab order and references its description', () => {
     const fixture = MockRender(TestComponent);
@@ -102,6 +108,8 @@ describe('GemDemisAriaDisabledButtonDirective', () => {
     const spaceEvent = new KeyboardEvent('keydown', { key: ' ', cancelable: true });
     button.dispatchEvent(spaceEvent);
     expect(spaceEvent.defaultPrevented).toBe(true);
+    expect(component.onBlocked).toHaveBeenCalledTimes(2);
+    expect(component.onAction).not.toHaveBeenCalled();
   });
 
   it('does not prevent other keydowns while ARIA-disabled', () => {
@@ -138,7 +146,58 @@ class SubmitTestComponent {
 }
 
 describe('GemDemisAriaDisabledButtonDirective on a submit button', () => {
-  beforeEach(() => MockBuilder(SubmitTestComponent).keep(GemDemisAriaDisabledButtonDirective));
+  beforeEach(() =>
+    MockBuilder(SubmitTestComponent)
+      .keep(GemDemisAriaDisabledButtonDirective)
+      .provide({ provide: LiveAnnouncer, useValue: { announce: vi.fn().mockResolvedValue(undefined) } })
+  );
+
+  it.each(['click', 'Enter', ' '])('announces the reason on every blocked %s activation without moving focus', activation => {
+    const fixture = MockRender(SubmitTestComponent);
+    fixture.point.componentInstance.isDisabled = true;
+    fixture.detectChanges();
+    document.body.appendChild(fixture.nativeElement);
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    button.focus();
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (activation === 'click') {
+        button.click();
+      } else {
+        const event = new KeyboardEvent('keydown', { key: activation, cancelable: true });
+        button.dispatchEvent(event);
+        expect(event.defaultPrevented).toBe(true);
+      }
+    }
+
+    expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenCalledTimes(2);
+    expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenLastCalledWith(button.getAttribute('aria-description'), 'polite');
+    expect(document.activeElement).toBe(button);
+    fixture.nativeElement.remove();
+  });
+
+  it('blocks held-key repeats without repeating the announcement', () => {
+    const fixture = MockRender(SubmitTestComponent);
+    fixture.point.componentInstance.isDisabled = true;
+    fixture.detectChanges();
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    const event = new KeyboardEvent('keydown', { key: 'Enter', repeat: true, cancelable: true });
+
+    button.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(TestBed.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
+  });
+
+  it('does not announce a block when the submit button is enabled', () => {
+    const fixture = MockRender(SubmitTestComponent);
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+
+    button.click();
+    button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', cancelable: true }));
+
+    expect(TestBed.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
+  });
 
   it('announces that submitting is currently not possible when ARIA-disabled, without a second directive import', () => {
     const fixture = MockRender(SubmitTestComponent);

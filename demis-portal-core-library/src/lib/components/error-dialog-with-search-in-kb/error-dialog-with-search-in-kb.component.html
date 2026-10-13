@@ -3,37 +3,21 @@
     <mat-icon class="upload-error-title-icon" fontIcon="error" aria-hidden="true"></mat-icon>
     {{ errorTitle }}
   </h1>
-  <div class="table-header-container">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" id="errors-table-header">
-      <caption class="caption">Error table headers</caption>
-      <ng-container matColumnDef="text">
-        <th mat-header-cell *matHeaderCellDef>Fehlermeldungen</th>
-      </ng-container>
-
-      @if (atLeastOneErrorHaveQueryString()) {
-        <ng-container matColumnDef="furtherInformation">
-          <th mat-header-cell *matHeaderCellDef></th>
-        </ng-container>
-      }
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-    </table>
-  </div>
   <div class="table-content-container" id="error-dialog-description">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" id="errors-table">
-      <caption class="caption">Error table content</caption>
+      <caption class="cdk-visually-hidden">Fehlermeldungen</caption>
       <ng-container matColumnDef="text">
-        <th mat-header-cell *matHeaderCellDef>Fehlermeldungen</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Fehlermeldungen</th>
         <td mat-cell *matCellDef="let element" class="upload-error-cell">{{ element.text }}</td>
       </ng-container>
 
       @if (atLeastOneErrorHaveQueryString()) {
         <ng-container matColumnDef="furtherInformation">
-          <th mat-header-cell *matHeaderCellDef>Weitere Informationen</th>
+          <th mat-header-cell *matHeaderCellDef scope="col"><span class="cdk-visually-hidden">Weitere Informationen</span></th>
           <td mat-cell class="furtherInformation" *matCellDef="let element">
             @if (element.queryString) {
               <a mat-icon-button
-                 [aria-label]="'Link zu weiteren Informationen in der Wissensdatenbank'"
+                 [aria-label]="'Weitere Informationen in der Wissensdatenbank in neuem Tab öffnen'"
                  [href]="'https://wiki.gematik.de/dosearchsite.action?where=DSKB&queryString=' + encodeQueryString(element.queryString)"
                  target="_blank" rel="noopener noreferrer">
                 <mat-icon class="knowledge-db-search-icon">menu_book</mat-icon>
@@ -43,6 +27,7 @@
         </ng-container>
       }
 
+      <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
       <tr mat-row *matRowDef="let row;  columns: displayedColumns(); let i = index" [attr.id]="'error-item-' + i"></tr>
     </table>
   </div>

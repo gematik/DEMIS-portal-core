@@ -16,6 +16,7 @@
  */
 
 import { Directive, ElementRef, OnDestroy, OnInit, Renderer2, RendererStyleFlags2, computed, effect, inject, input, output } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 const SUBMIT_ANNOUNCEMENT_TEXT = 'Abschicken derzeit nicht möglich. Bitte prüfen Sie das Formular auf Validierungsfehler oder nicht begonnene Schritte.';
 
@@ -42,6 +43,7 @@ const SUBMIT_ANNOUNCEMENT_TEXT = 'Abschicken derzeit nicht möglich. Bitte prüf
 export class GemDemisAriaDisabledButtonDirective implements OnInit, OnDestroy {
   private readonly hostElement = inject(ElementRef<HTMLButtonElement>);
   private readonly renderer = inject(Renderer2);
+  private readonly liveAnnouncer = inject(LiveAnnouncer);
   private readonly abortController = new AbortController();
   private readonly disabledStyles = new Map([
     ['background-color', '#D9D9D9'],
@@ -117,7 +119,7 @@ export class GemDemisAriaDisabledButtonDirective implements OnInit, OnDestroy {
 
     event.preventDefault();
     event.stopImmediatePropagation();
-    this.gemDemisActivationBlocked.emit();
+    this.notifyBlockedActivation();
   };
 
   private readonly onKeydown = (event: KeyboardEvent): void => {
@@ -126,5 +128,17 @@ export class GemDemisAriaDisabledButtonDirective implements OnInit, OnDestroy {
     }
 
     event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!event.repeat) {
+      this.notifyBlockedActivation();
+    }
   };
+
+  private notifyBlockedActivation(): void {
+    const description = this.submitDescription();
+    if (description) {
+      void this.liveAnnouncer.announce(description, 'polite');
+    }
+    this.gemDemisActivationBlocked.emit();
+  }
 }

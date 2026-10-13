@@ -17,6 +17,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MockBuilder, MockProvider } from 'ng-mocks';
@@ -29,7 +30,10 @@ describe('PasteBoxComponent', () => {
   let fixture: ComponentFixture<PasteBoxComponent>;
 
   beforeEach(() =>
-    MockBuilder([PasteBoxComponent, MatButtonModule, MatIconModule]).provide(MockProvider(MessageDialogService)).provide(MockProvider(NGXLogger))
+    MockBuilder([PasteBoxComponent, MatButtonModule, MatIconModule])
+      .provide(MockProvider(MessageDialogService))
+      .provide(MockProvider(NGXLogger))
+      .provide({ provide: LiveAnnouncer, useValue: { announce: vi.fn().mockResolvedValue(undefined) } })
   );
 
   beforeEach(async () => {
@@ -186,11 +190,10 @@ describe('PasteBoxComponent', () => {
       expect(title.textContent?.trim()).toBe('Datenübernahme');
     });
 
-    it('should render a polite, atomic live region for status messages (WCAG 4.1.3)', () => {
+    it('keeps the status description without a duplicate automatic live announcement', () => {
       const status: HTMLElement = fixture.nativeElement.querySelector('#paste-status');
       expect(status).toBeTruthy();
-      expect(status.getAttribute('aria-live')).toBe('polite');
-      expect(status.getAttribute('aria-atomic')).toBe('true');
+      expect(status.getAttribute('aria-live')).toBe('off');
     });
 
     it('should associate the button with the status live region via aria-describedby', () => {
@@ -244,6 +247,55 @@ describe('PasteBoxComponent', () => {
     it('should provide an accessible name for the button (WCAG 4.1.2)', () => {
       const button: HTMLElement = fixture.nativeElement.querySelector('#btn-fill-form');
       expect(button.getAttribute('aria-label')).toBe('Zwischenablage einfügen');
+    });
+  });
+
+  describe('import outcomes and repeated announcements', () => {
+    beforeEach(() => {
+      vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue('URL B.adultsOccupied=12');
+      vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    });
+
+    it('announces both consecutive imports with identical success text', async () => {
+      await component.readFromClipboard();
+      await component.readFromClipboard();
+
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenCalledTimes(2);
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenNthCalledWith(1, 'Inhalt eingefügt!', 'polite');
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenNthCalledWith(2, 'Inhalt eingefügt!', 'polite');
+    });
+
+    it('reports an empty domain import as an error instead of success', async () => {
+      const importer = vi.fn().mockReturnValue('empty');
+      const showErrorDialog = vi.spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
+      fixture.componentRef.setInput('importData', importer);
+      const emit = vi.spyOn(component.dataPasted, 'emit');
+
+      await component.readFromClipboard();
+
+      expect(importer).toHaveBeenCalledWith(new Map([['B.adultsOccupied', '12']]));
+      expect(emit).not.toHaveBeenCalled();
+      expect(component.pasteStatus()).toBe('Fehler bei der Datenübernahme.');
+      expect(showErrorDialog).toHaveBeenCalledWith(DEMIS_PASTE_BOX_CLIPBOARD_ERROR);
+    });
+
+    it('waits for a successful domain import before announcing its result', async () => {
+      const importer = vi.fn().mockResolvedValue('partial');
+      fixture.componentRef.setInput('importData', importer);
+
+      await component.readFromClipboard();
+
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Verwendbare Angaben eingefügt. Einige Angaben wurden nicht übernommen.', 'polite');
+      expect(component.pasteStatus()).toContain('Einige Angaben');
+    });
+
+    it('announces failed imports again on a subsequent attempt', async () => {
+      fixture.componentRef.setInput('importData', () => 'empty');
+      await component.readFromClipboard();
+      await component.readFromClipboard();
+
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenCalledTimes(2);
+      expect(TestBed.inject(LiveAnnouncer).announce).toHaveBeenLastCalledWith('Fehler bei der Datenübernahme.', 'polite');
     });
   });
 });
