@@ -18,8 +18,20 @@
 import '@angular/compiler';
 import '@analogjs/vitest-angular/setup-zone';
 import { setupTestBed } from '@analogjs/vitest-angular/setup-testbed';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { Directionality } from '@angular/cdk/bidi';
+import { ngMocks } from 'ng-mocks';
 
 setupTestBed({
   zoneless: false,
   teardown: { destroyAfterEach: true },
 });
+
+// ng-mocks >= 14.18.0 auto-mocks these root-provided CDK services, which breaks
+// Angular Material directives that use them inside their constructors.
+ngMocks.globalKeep(MediaMatcher, true);
+ngMocks.globalKeep(UniqueSelectionDispatcher, true);
+ngMocks.globalKeep(FocusMonitor, true);
+ngMocks.globalKeep(Directionality, true);

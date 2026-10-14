@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.8
+- Updated minor/patch versions of dependencies
+- Updated peerDependencies and dependencies in package.json to use tilde versioning
+- Adapted renovate.json
+
 ## Release 4.4.7
 - Added several accessibility improvements across various components
 - Removed FEATURE_FLAG_FOOTER_LINKS_CORRECTION
