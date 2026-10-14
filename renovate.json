@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "groupName": "minor and patch versions",
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "major versions",
+      "matchUpdateTypes": ["major"]
+    },
+    {
+      "matchPackageNames": ["playwright"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["@angular/**", "@angular-*/**", "@schematics/angular", "@single-spa-community/angular"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["@angular/**", "@angular-*/**", "@schematics/angular", "@single-spa-community/angular"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "minor and patch versions",
+      "enabled": true
+    }
+  ]
+}
