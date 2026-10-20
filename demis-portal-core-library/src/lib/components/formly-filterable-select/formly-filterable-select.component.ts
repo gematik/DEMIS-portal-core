@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { Component, computed, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, DoCheck, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -46,11 +46,12 @@ import { FilterableSelectStylesComponent } from './filterable-select-styles.comp
   templateUrl: './formly-filterable-select.component.html',
   styleUrl: './formly-filterable-select.component.scss',
 })
-export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> implements OnInit, OnDestroy {
+export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> implements OnInit, DoCheck, OnDestroy {
   searchControl = new FormControl('');
   private readonly destroy$ = new Subject<void>();
   private readonly searchTerm = signal('');
   private readonly allOptions = signal<any[]>([]);
+  private optionsReference: FilterableSelectCustomProps['options'] | undefined;
   readonly currentValue = signal<any>(null);
   readonly matSelectRef = viewChild.required(MatSelect);
 
@@ -99,7 +100,8 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
     this.optionValueKey.set(props.optionValueKey ?? 'value');
     this.optionLabelKey.set(props.optionLabelKey ?? 'label');
     this.optionDescriptionKey.set(props.optionDescriptionKey ?? 'description');
-    this.allOptions.set(props.options ?? []);
+    this.optionsReference = props.options;
+    this.allOptions.set(this.optionsReference ?? []);
     this.applyConfiguredDefaultValue();
     this.applySingleOption();
 
@@ -112,6 +114,15 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
     this.searchControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
       this.searchTerm.set(value ?? '');
     });
+  }
+
+  ngDoCheck(): void {
+    const options = (this.props as FilterableSelectCustomProps).options;
+    if (options !== this.optionsReference) {
+      this.optionsReference = options;
+      this.allOptions.set(options ?? []);
+      this.applySingleOption();
+    }
   }
 
   override ngOnDestroy(): void {

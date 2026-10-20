@@ -66,6 +66,12 @@ import { FilterableSelectExample5Component } from '../code-snippets/formly-filte
           domain objects. Defaults are <code>value</code>, <code>label</code>, and <code>description</code> matching the <code>SelectOption</code> interface.
         </p>
 
+        <app-subsection-title>Dynamic options</app-subsection-title>
+        <p>
+          To update options after initialization, replace <code>props.options</code> with a new array rather than mutating the existing array. The component
+          refreshes the filtered options and selects the only available option for required fields without an existing value.
+        </p>
+
         <app-subsection-title>Type-safe builder</app-subsection-title>
         <p>
           For full compile-time safety, use the <code>filterableSelectField&lt;T&gt;()</code> builder function instead of plain

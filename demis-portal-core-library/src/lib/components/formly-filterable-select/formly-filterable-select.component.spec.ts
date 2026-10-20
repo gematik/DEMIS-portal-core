@@ -127,6 +127,92 @@ describe('FormlyFilterableSelectComponent', () => {
     });
   });
 
+  describe('Options updates', () => {
+    let component: FormlyFilterableSelectComponent;
+
+    beforeEach(() => {
+      component = fixture.debugElement.query(By.directive(FormlyFilterableSelectComponent)).componentInstance;
+    });
+
+    it('should render replacement options after initialization', async () => {
+      component.props.options = [SINGLE_OPTION];
+      fixture.detectChanges();
+
+      expect(component.filteredOptions()).toEqual([SINGLE_OPTION]);
+      const select = await loader.getHarness(MatSelectHarness.with({ selector: '#singleSelect' }));
+      await select.open();
+      const options = await select.getOptions();
+      expect(options.length).toBe(2);
+      expect(await options[1].getText()).toContain(SINGLE_OPTION.label);
+    });
+
+    it('should apply the current search term to replacement options', () => {
+      component.searchControl.setValue('Only');
+      component.props.options = [MOCK_OPTIONS[0], SINGLE_OPTION];
+      fixture.detectChanges();
+
+      expect(component.filteredOptions()).toEqual([SINGLE_OPTION]);
+    });
+
+    it.each([[], undefined])('should clear options when replaced with %s', options => {
+      component.props.options = options;
+      fixture.detectChanges();
+
+      expect(component.filteredOptions()).toEqual([]);
+    });
+
+    it('should not auto-select a replacement option for an optional field', () => {
+      component.props.options = [SINGLE_OPTION];
+      fixture.detectChanges();
+
+      expect(component.formControl.value).toBeUndefined();
+    });
+
+    it.each(['singleSelect', 'multiSelect'])('should auto-select a new single option for required %s', key => {
+      component = fixture.debugElement
+        .queryAll(By.directive(FormlyFilterableSelectComponent))
+        .map(element => element.componentInstance as FormlyFilterableSelectComponent)
+        .find(select => select.field.key === key)!;
+      component.props.required = true;
+      component.props.options = [];
+      fixture.detectChanges();
+
+      component.props.options = [SINGLE_OPTION];
+      fixture.detectChanges();
+
+      const expected = component.multiple() ? [SINGLE_OPTION] : SINGLE_OPTION;
+      expect(component.formControl.value).toEqual(expected);
+      expect(component.currentValue()).toEqual(expected);
+    });
+
+    it.each(['singleSelect', 'multiSelect'])('should preserve existing values when options change for %s', key => {
+      component = fixture.debugElement
+        .queryAll(By.directive(FormlyFilterableSelectComponent))
+        .map(element => element.componentInstance as FormlyFilterableSelectComponent)
+        .find(select => select.field.key === key)!;
+      const existingValue = component.multiple() ? [MOCK_OPTIONS[0]] : MOCK_OPTIONS[0];
+      component.formControl.setValue(existingValue);
+      component.props.required = true;
+      component.props.options = [SINGLE_OPTION];
+      fixture.detectChanges();
+
+      expect(component.formControl.value).toEqual(existingValue);
+    });
+
+    it('should not reapply single-option selection when the options reference is unchanged', () => {
+      component.props.required = true;
+      component.props.options = [SINGLE_OPTION];
+      fixture.detectChanges();
+      component.formControl.setValue(null);
+      const setValue = vi.spyOn(component.formControl, 'setValue');
+
+      fixture.detectChanges();
+
+      expect(component.formControl.value).toBeNull();
+      expect(setValue).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Multi select', () => {
     it('should auto-select the only available option as an array in multi-select mode', () => {
       expect(mockComponent.form.get('singleOptionMultiSelect')?.value).toEqual([SINGLE_OPTION] as any);

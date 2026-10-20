@@ -39,22 +39,34 @@ depsToSync.forEach(dep => {
 });
 
 /**
+ * Converts a plain semver version or a simple range into a tilde range (e.g. "1.2.3" -> "~1.2.3").
+ * Complex ranges (e.g. ">=1 <2", "1 || 2", "workspace:*") are returned unchanged.
+ * @param {string} version - Version string from the root package.json
+ * @returns {string} - Tilde range or the original version if it cannot be converted
+ */
+function toTildeRange(version) {
+  const match = /^[\^~]?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z-.]+)?)$/.exec(version.trim());
+  return match ? `~${match[1]}` : version;
+}
+
+/**
  * Syncs versions from the root package.json to the target object.
  * First looks in dependencies, then in devDependencies.
  * @param {string[]} depsToSync - List of dependency names to sync
  * @param {Object} targetObj - Target object to write versions to
+ * @param {(version: string) => string} [transformVersion] - Optional transformation applied to the resolved version
  * @returns {{ synced: number, skipped: string[] }} - Sync result with count and skipped deps
  */
-function syncVersions(depsToSync, targetObj) {
+function syncVersions(depsToSync, targetObj, transformVersion = version => version) {
   let synced = 0;
   const skipped = [];
 
   depsToSync.forEach(dep => {
     if (rootPkg.dependencies && rootPkg.dependencies[dep]) {
-      targetObj[dep] = rootPkg.dependencies[dep];
+      targetObj[dep] = transformVersion(rootPkg.dependencies[dep]);
       synced++;
     } else if (rootPkg.devDependencies && rootPkg.devDependencies[dep]) {
-      targetObj[dep] = rootPkg.devDependencies[dep];
+      targetObj[dep] = transformVersion(rootPkg.devDependencies[dep]);
       synced++;
     } else {
       skipped.push(dep);
@@ -64,8 +76,8 @@ function syncVersions(depsToSync, targetObj) {
   return { synced, skipped };
 }
 
-const peerResult = syncVersions(peerDepsToSync, libPkg.peerDependencies);
-const depsResult = syncVersions(depsToSync, libPkg.dependencies);
+const peerResult = syncVersions(peerDepsToSync, libPkg.peerDependencies, toTildeRange);
+const depsResult = syncVersions(depsToSync, libPkg.dependencies, toTildeRange);
 
 fs.writeFileSync(libPkgPath, JSON.stringify(libPkg, null, 2) + '\n');
 
