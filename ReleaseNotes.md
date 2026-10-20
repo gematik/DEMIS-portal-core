@@ -2,6 +2,14 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.9
+- Removed deprecated process-stepper component
+- Updated sync-dependencies.js script to use tilde versioning
+- Added min-release-age to .npmrc
+- Adapted build step in package.json
+- Updated minor/patch versions of dependencies
+- Updated formly filterable select component to register changes in props options after initialization
+
 ## Release 4.4.8
 - Updated minor/patch versions of dependencies
 - Updated peerDependencies and dependencies in package.json to use tilde versioning
