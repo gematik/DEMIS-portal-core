@@ -27,7 +27,7 @@ import { MatCalendarHarness, MatDatepickerInputHarness, MatDatepickerToggleHarne
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { format, isValid, setDate } from 'date-fns';
@@ -48,7 +48,7 @@ describe('FormlyDatepickerComponent', () => {
     return MockBuilder(FormlyDatepickerMockComponent)
       .keep(FormlyDatepickerComponent)
       .keep(ReactiveFormsModule)
-      .keep(NoopAnimationsModule)
+      .provide({ provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } })
       .keep(MatFormFieldModule)
       .keep(MatInputModule)
       .keep(FormlyMaterialModule)

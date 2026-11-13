@@ -19,6 +19,7 @@ import { Routes } from '@angular/router';
 import { SectionHeaderConsumerComponent } from './pages/section-header-consumer.component';
 import { HomeComponent } from './pages/home.component';
 import { MessageDialogConsumerComponent } from './pages/message-dialog-consumer.component';
+import { MarkdownConsumerComponent } from './pages/markdown-consumer.component';
 import { FormlyDatepickerConsumerComponent } from './pages/formly-datepicker-consumer.component';
 import { PasteBoxConsumerComponent } from './pages/paste-box-consumer.component';
 import { FormlyRepeaterConsumerComponent } from './pages/formly-repeater-consumer.component';
@@ -107,6 +108,12 @@ const formlyConsumerRoutes: Routes = [
 
 // Routes for the services
 const serviceConsumerRoutes: Routes = [
+  {
+    path: 'markdown',
+    title: 'Markdown Service',
+    pathMatch: 'full',
+    component: MarkdownConsumerComponent,
+  },
   {
     path: 'message-dialog',
     title: 'Message Dialog Service',

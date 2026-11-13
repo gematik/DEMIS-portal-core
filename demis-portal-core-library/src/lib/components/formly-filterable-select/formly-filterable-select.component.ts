@@ -64,6 +64,7 @@ export class FormlyFilterableSelectComponent extends FieldType<FieldTypeConfig> 
   readonly optionLabelKey = signal('label');
   readonly optionDescriptionKey = signal('description');
 
+  readonly showSearch = computed(() => this.allOptions().length > 9);
   readonly filteredOptions = computed(() =>
     filterOptions(this.allOptions(), this.searchTerm(), this.showValue(), this.optionLabelKey(), this.optionValueKey())
   );

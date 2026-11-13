@@ -15,11 +15,16 @@
     find details in the "Readme" file.
  */
 
-import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PasteBoxComponent, SideNavigationComponent, provideStepNavigation, createStepContent } from '@gematik/demis-portal-core-library';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  type ClipboardImportResult,
+  PasteBoxComponent,
+  SideNavigationComponent,
+  provideStepNavigation,
+  createStepContent,
+} from '@gematik/demis-portal-core-library';
 import {
   Example3CommonContentComponent,
   Example3ConditionContentComponent,
@@ -48,26 +53,9 @@ import { getStepData } from './example-3.step-data';
     `,
   ],
 })
-export class SideNavigationExample3Component implements OnInit, OnDestroy {
+export class SideNavigationExample3Component {
   messageService = inject(MessageService);
   notificationService = inject(NotificationService);
-
-  private readonly destroy$ = new Subject<void>();
-
-  ngOnInit(): void {
-    /* Subscribe to disease choice changes to enable/disable subsequent steps.
-     * We watch the diseaseChoice FormGroup's valueChanges instead of the individual control
-     * because Formly creates the controls dynamically after template rendering.
-     */
-    this.notificationService.diseaseChoiceGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.notificationService.updateStepAvailability();
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   /**
    * Define the step contents with their respective components and input data.
@@ -100,71 +88,40 @@ export class SideNavigationExample3Component implements OnInit, OnDestroy {
     return new Map(stepData.map((step, index) => [step, this.stepContents()[index]]));
   });
 
-  /**
-   * Maps DEMIS clipboard key prefixes to internal form group names.
-   * Keys use the DEMIS standard format: PREFIX.field (e.g. N.given, P.family, D.code)
-   * See: https://wiki.gematik.de/spaces/DSKB/pages/474112380
-   */
-  private static readonly PREFIX_TO_GROUP: Record<string, string> = {
-    N: 'notifyingPerson',
-    F: 'notifyingPerson',
-    P: 'notifiedPerson',
-    D: 'diseaseChoice',
-    C: 'commonData',
-    B: 'commonData',
-    T: 'commonData',
-    S: 'notifyingPerson',
-  };
+  private static readonly CLIPBOARD_FIELDS = new Map([
+    ['N.given', ['notifyingPerson', 'given']],
+    ['N.family', ['notifyingPerson', 'family']],
+    ['P.given', ['notifiedPerson', 'given']],
+    ['P.family', ['notifiedPerson', 'family']],
+    ['D.code', ['diseaseChoice', 'code']],
+    ['D.status', ['condition', 'status']],
+    ['C.importantInfo', ['commonData', 'importantInfo']],
+    ['C.hospitalized', ['questionnaire', 'hospitalized']],
+  ]);
 
-  /** D.* keys that belong to the condition step instead of diseaseChoice */
-  private static readonly CONDITION_KEYS = new Set(['status', 'start', 'diagnosis', 'symptoms', 'note', 'note.status']);
+  readonly importClipboardData = (clipboardData: Map<string, string>): ClipboardImportResult => {
+    const formData: Record<string, Record<string, string>> = {};
+    let importedCount = 0;
 
-  /** C.* keys that belong to the questionnaire step instead of commonData */
-  private static readonly QUESTIONNAIRE_KEYS = new Set(['hospitalized', 'death', 'deathDate', 'military']);
-
-  /**
-   * Handler for PasteBox data pasted event.
-   * Converts the flat key-value map from clipboard into nested structure and applies to form.
-   *
-   * Expected clipboard format: URL key=value&key2=value2&...
-   * Keys use the DEMIS standard: PREFIX.field (e.g. N.given, P.family, D.code)
-   */
-  onDataPasted(data: Map<string, string>): void {
-    const formData: any = {
-      notifyingPerson: {},
-      notifiedPerson: {},
-      diseaseChoice: {},
-      condition: {},
-      commonData: {},
-      questionnaire: {},
-    };
-
-    data.forEach((value, key) => {
-      const dotIndex = key.indexOf('.');
-      if (dotIndex < 0) return;
-
-      const prefix = key.substring(0, dotIndex);
-      const field = key.substring(dotIndex + 1);
-      if (!prefix || !field) return;
-
-      let group = SideNavigationExample3Component.PREFIX_TO_GROUP[prefix];
-      if (!group) return;
-
-      // Route specific D.* and C.* keys to their correct step
-      if (prefix === 'D' && SideNavigationExample3Component.CONDITION_KEYS.has(field)) {
-        group = 'condition';
-      } else if (prefix === 'C' && SideNavigationExample3Component.QUESTIONNAIRE_KEYS.has(field)) {
-        group = 'questionnaire';
+    clipboardData.forEach((value, key) => {
+      const target = SideNavigationExample3Component.CLIPBOARD_FIELDS.get(key);
+      if (!target || value.trim() === '' || (key === 'D.code' && !['cvdd', 'msvd'].includes(value))) {
+        return;
       }
 
-      if (formData[group]) {
-        formData[group][field] = value;
-      }
+      const [group, field] = target;
+      formData[group] ??= {};
+      formData[group][field] = value;
+      importedCount++;
     });
 
-    // Apply the data to the form
+    if (importedCount === 0) {
+      return 'empty';
+    }
+
     this.notificationService.patchFormData(formData);
-  }
+    return importedCount === clipboardData.size ? 'success' : 'partial';
+  };
 
   /**
    * Copies the test data string to clipboard for easy testing.

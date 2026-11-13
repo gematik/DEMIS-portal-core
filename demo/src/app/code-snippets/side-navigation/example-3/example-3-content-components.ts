@@ -16,6 +16,7 @@
  */
 
 import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { FormlyModule } from '@ngx-formly/core';
@@ -78,10 +79,13 @@ export class Example3ConditionContentComponent extends StepContentComponent<void
   protected notificationService = inject(NotificationService);
   protected fieldConfig = inject(FieldConfigService);
   protected navigation = inject(StepNavigation);
+  private readonly diseaseChoice = toSignal(this.notificationService.diseaseChoiceGroup.valueChanges, {
+    initialValue: this.notificationService.diseaseChoiceGroup.getRawValue(),
+  });
 
   // Computed property to decide which fields to show based on disease choice
   readonly fieldsToShow = computed(() => {
-    const diseaseValue = this.notificationService.diseaseChoiceGroup.get('code')?.value;
+    const diseaseValue = this.diseaseChoice().code;
     return diseaseValue === 'cvdd' ? this.fieldConfig.conditionRadioFields : this.fieldConfig.conditionFields;
   });
 }

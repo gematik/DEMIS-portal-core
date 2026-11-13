@@ -38,15 +38,17 @@
     <mat-select-trigger>&nbsp;</mat-select-trigger>
   }
 
-  <mat-option (keydown)="onSearchKeydown($event)">
-    <ngx-mat-select-search
-      [formControl]="searchControl"
-      [placeholderLabel]="searchPlaceholder()"
-      [noEntriesFoundLabel]="noEntriesFoundLabel()"
-      [ariaLabel]="searchPlaceholder()"
-      [disableScrollToActiveOnOptionsChanged]="true">
-    </ngx-mat-select-search>
-  </mat-option>
+  @if (showSearch()) {
+    <mat-option (keydown)="onSearchKeydown($event)">
+      <ngx-mat-select-search
+        [formControl]="searchControl"
+        [placeholderLabel]="searchPlaceholder()"
+        [noEntriesFoundLabel]="noEntriesFoundLabel()"
+        [ariaLabel]="searchPlaceholder()"
+        [disableScrollToActiveOnOptionsChanged]="true">
+      </ngx-mat-select-search>
+    </mat-option>
+  }
 
   @for (option of filteredOptions(); track option[optionValueKey()]) {
     <mat-option [value]="option" [id]="field.id + '-opt-' + option[optionValueKey()]" [class]="'opt-' + option[optionValueKey()]">

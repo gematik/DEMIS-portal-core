@@ -26,6 +26,11 @@ export const MOCK_OPTIONS: SelectOption[] = [
   { value: 'OPT3', label: 'Option Gamma' },
   { value: 'OPT4', label: 'Delta Element', description: 'Kategorie > Unterkategorie' },
   { value: 'OPT5', label: 'Epsilon Eintrag' },
+  { value: 'OPT6', label: 'Zeta Eintrag' },
+  { value: 'OPT7', label: 'Eta Eintrag' },
+  { value: 'OPT8', label: 'Theta Eintrag' },
+  { value: 'OPT9', label: 'Iota Eintrag' },
+  { value: 'OPT10', label: 'Kappa Eintrag' },
 ];
 export const SINGLE_OPTION: SelectOption = { value: 'ONLY', label: 'Only Option' };
 
