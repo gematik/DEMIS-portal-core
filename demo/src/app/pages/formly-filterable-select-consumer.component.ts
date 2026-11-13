@@ -27,6 +27,7 @@ import { ExpandableSectionsComponent } from '../utils/expandable-sections.compon
 import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 import { FilterableSelectExample5Component } from '../code-snippets/formly-filterable-select/example-5.component';
+import { FilterableSelectExample6Component } from '../code-snippets/formly-filterable-select/example-6.component';
 
 @Component({
   selector: 'app-formly-filterable-select-consumer',
@@ -43,6 +44,7 @@ import { FilterableSelectExample5Component } from '../code-snippets/formly-filte
     CodeExampleBoxComponent,
     RouterLink,
     FilterableSelectExample5Component,
+    FilterableSelectExample6Component,
   ],
 
   template: `
@@ -64,6 +66,12 @@ import { FilterableSelectExample5Component } from '../code-snippets/formly-filte
         <p>
           The component accepts any object array as options. Use <code>valueKey</code>, <code>labelKey</code>, and <code>descriptionKey</code> to map your
           domain objects. Defaults are <code>value</code>, <code>label</code>, and <code>description</code> matching the <code>SelectOption</code> interface.
+        </p>
+
+        <app-subsection-title>Search visibility</app-subsection-title>
+        <p>
+          The search input is only shown when there are more than 4 options. With 4 or fewer options, the component behaves like a plain
+          <code>mat-select</code>. See Example 6 below.
         </p>
 
         <app-subsection-title>Dynamic options</app-subsection-title>
@@ -108,6 +116,9 @@ import { FilterableSelectExample5Component } from '../code-snippets/formly-filte
       </app-code-example-box>
       <app-code-example-box [options]="examples[4]">
         <app-filterable-select-example-5 />
+      </app-code-example-box>
+      <app-code-example-box [options]="examples[5]">
+        <app-filterable-select-example-6 />
       </app-code-example-box>
     </app-expandable-sections>
   `,
@@ -255,6 +266,22 @@ export class FormlyFilterableSelectConsumerComponent {
         },
         {
           fileName: 'example-5.component.ts',
+          language: 'ts',
+          codeSnippetPath: 'code-snippets/formly-filterable-select',
+        },
+      ],
+    },
+    {
+      expanderTitle: 'Beispiel 6',
+      expanderDescription: 'Einzelauswahl ohne Suche (4 oder weniger Optionen)',
+      codeSnippets: [
+        {
+          fileName: 'example-6.component.html',
+          language: 'html',
+          codeSnippetPath: 'code-snippets/formly-filterable-select',
+        },
+        {
+          fileName: 'example-6.component.ts',
           language: 'ts',
           codeSnippetPath: 'code-snippets/formly-filterable-select',
         },

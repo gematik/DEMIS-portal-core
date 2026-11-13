@@ -24,6 +24,7 @@ import { OverviewSectionComponent } from '../utils/overview-section.component';
 import { SubsectionTitleComponent } from '../utils/subsection-title.component';
 import { CodeSnippetBoxComponent } from '../utils/code-snippet-box.component';
 import { SectionHeaderExample1Component } from '../code-snippets/section-header/example-1.component';
+import { SectionHeaderExample3Component } from '../code-snippets/section-header/example-3.component';
 
 @Component({
   selector: 'app-section-header-consumer',
@@ -36,6 +37,7 @@ import { SectionHeaderExample1Component } from '../code-snippets/section-header/
     CodeExampleBoxComponent,
     CodeSnippetBoxComponent,
     SectionHeaderExample1Component,
+    SectionHeaderExample3Component,
   ],
   template: `
     <app-expandable-sections>
@@ -59,8 +61,11 @@ import { SectionHeaderExample1Component } from '../code-snippets/section-header/
         <app-subsection-title>Subtitle contents</app-subsection-title>
         <p>Use Angular content projection to insert some HTML template code to be rendered as subtitle contents. This is optional.</p>
 
-        <app-subsection-title>Used CSS variables</app-subsection-title>
-        <app-doc-table [dataSource]="cssVariablesDocTableDataSource" />
+        <app-subsection-title>Heading ID</app-subsection-title>
+        <p>
+          Bind [id] to set the ID of the rendered h1 or h2, not the component host. Other elements can reference this heading using aria-labelledby. Use a
+          unique ID for each heading. Binding [attr.id] on the component sets only the host attribute and does not populate the id input.
+        </p>
       </app-overview-section>
 
       <app-code-example-box [options]="examples[0]">
@@ -70,6 +75,10 @@ import { SectionHeaderExample1Component } from '../code-snippets/section-header/
       <app-code-example-box [options]="examples[1]">
         <app-section-header-example-2 />
       </app-code-example-box>
+
+      <app-code-example-box [options]="examples[2]">
+        <app-section-header-example-3 />
+      </app-code-example-box>
     </app-expandable-sections>
   `,
 })
@@ -77,14 +86,12 @@ export class SectionHeaderConsumerComponent {
   propertiesDocTableDataSource = [
     {
       name: '`level`',
-      description: '`[optional]` Visual level (1 or 2). 1 for page title, 2 for section title. Default: 2.',
+      description: '`[optional]` Heading level: 1 renders an h1, 2 renders an h2. Default: 2. Both levels use the same title typography.',
     },
     { name: '`titleText`', description: '`[required]` The visible title text.' },
-  ];
-  cssVariablesDocTableDataSource = [
     {
-      name: '`--gem-demis-primary-color`',
-      description: 'Used as text color for the title text',
+      name: '`id`',
+      description: '`[optional]` string | null. Sets the ID of the inner h1 or h2. Default: null (no heading ID attribute).',
     },
   ];
 
@@ -116,6 +123,22 @@ export class SectionHeaderConsumerComponent {
         },
         {
           fileName: 'example-2.component.ts',
+          language: 'ts',
+          codeSnippetPath: 'code-snippets/section-header',
+        },
+      ],
+    },
+    {
+      expanderTitle: 'Example 3 - Heading ID',
+      expanderDescription: 'Set the heading ID through the component input and reference it as the accessible name of a section.',
+      codeSnippets: [
+        {
+          fileName: 'example-3.component.html',
+          language: 'html',
+          codeSnippetPath: 'code-snippets/section-header',
+        },
+        {
+          fileName: 'example-3.component.ts',
           language: 'ts',
           codeSnippetPath: 'code-snippets/section-header',
         },

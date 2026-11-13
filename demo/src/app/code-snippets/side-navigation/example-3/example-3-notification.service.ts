@@ -15,8 +15,12 @@
     find details in the "Readme" file.
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormlyFormBuilder } from '@ngx-formly/core';
+import { DeepMergeService } from '@gematik/demis-portal-core-library';
+import { FieldConfigService } from './example-3-field-config.service';
 
 /**
  * Central service to manage the notification form data across all 6 steps.
@@ -26,11 +30,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 @Injectable()
 export class NotificationService {
   private readonly fb = new FormBuilder();
+  private readonly formlyBuilder = inject(FormlyFormBuilder);
+  private readonly fieldConfig = inject(FieldConfigService);
+  private readonly deepMergeService = inject(DeepMergeService);
 
   /**
    * Formly model objects for each step.
-   * These are initialized once and should NOT be mutated directly after Formly renders.
-   * Use patchFormData() method to update values after initialization.
+   * Stable model objects shared by the eagerly built controls and rendered forms.
+   * Use patchFormData() to merge imported values into models and controls together.
    */
   readonly notifyingPersonModel: any = {};
   readonly notifiedPersonModel: any = {};
@@ -54,6 +61,17 @@ export class NotificationService {
   });
 
   constructor() {
+    const steps = [
+      { group: this.notifyingPersonGroup, model: this.notifyingPersonModel, fields: this.fieldConfig.notifyingPersonFields },
+      { group: this.notifiedPersonGroup, model: this.notifiedPersonModel, fields: this.fieldConfig.notifiedPersonFields },
+      { group: this.diseaseChoiceGroup, model: this.diseaseChoiceModel, fields: this.fieldConfig.diseaseChoiceFields },
+      { group: this.conditionGroup, model: this.conditionModel, fields: this.fieldConfig.conditionFields },
+      { group: this.commonDataGroup, model: this.commonDataModel, fields: this.fieldConfig.commonDataFields },
+      { group: this.questionnaireGroup, model: this.questionnaireModel, fields: this.fieldConfig.questionnaireFields },
+    ];
+    steps.forEach(({ group, model, fields }) => this.formlyBuilder.buildForm(group, fields, model, {}));
+    this.diseaseChoiceGroup.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.updateStepAvailability());
+
     // Disable steps 4, 5, 6 initially
     this.conditionGroup.disable();
     this.commonDataGroup.disable();
@@ -62,11 +80,9 @@ export class NotificationService {
 
   /**
    * Set or update form data at any time.
-   * Uses a hybrid approach to work in all scenarios:
-   * - Updates model objects (for steps not yet rendered - Formly will use these when creating controls)
-   * - Updates FormGroups via patchValue (for already rendered steps - immediate update)
-   *
-   * This ensures data is applied correctly regardless of whether the step has been visited/rendered yet.
+   * Deep-merges imported values into the current form values and models.
+   * All controls and Formly validators exist before a step is first rendered,
+   * so imported data immediately updates the side-navigation validation state.
    *
    * Example usage:
    * ```
@@ -116,10 +132,9 @@ export class NotificationService {
    * Helper method to update both model and FormGroup for a single step.
    */
   private patchStep(model: any, group: FormGroup, data: any): void {
-    // Update model for not-yet-rendered forms
-    Object.assign(model, data);
-    // Update FormGroup for already-rendered forms
-    group.patchValue(data);
+    const mergedData = this.deepMergeService.deepMerge(group.getRawValue(), data);
+    Object.assign(model, mergedData);
+    group.patchValue(mergedData);
   }
 
   /**
@@ -133,12 +148,11 @@ export class NotificationService {
   /**
    * Updates the availability (enabled/disabled state) of steps 4-6 based on disease selection.
    * Steps 4, 5, 6 are only enabled when a valid disease is selected.
-   * This method is public so it can be called from valueChanges subscriptions in components.
    */
   updateStepAvailability(): void {
-    const diseaseValue = this.diseaseChoiceModel.code || this.diseaseChoiceGroup.value?.code;
+    const diseaseValue = this.diseaseChoiceGroup.get('code')?.value;
 
-    if (diseaseValue && diseaseValue !== null) {
+    if (['cvdd', 'msvd'].includes(diseaseValue)) {
       // Enable steps 4, 5, 6 when disease is selected
       this.conditionGroup.enable({ emitEvent: false });
       this.commonDataGroup.enable({ emitEvent: false });
@@ -184,7 +198,7 @@ export class NotificationService {
    * Get the current form data as a plain JavaScript object.
    */
   getFormData(): any {
-    return this.notificationForm.value;
+    return this.notificationForm.getRawValue();
   }
 
   /**
@@ -202,9 +216,6 @@ export class NotificationService {
    * - Disabling steps 4, 5, 6 again
    */
   resetForm(): void {
-    // Reset all FormGroups
-    this.notificationForm.reset();
-
     // Clear all model objects
     Object.keys(this.notifyingPersonModel).forEach(key => delete this.notifyingPersonModel[key]);
     Object.keys(this.notifiedPersonModel).forEach(key => delete this.notifiedPersonModel[key]);
@@ -212,6 +223,11 @@ export class NotificationService {
     Object.keys(this.conditionModel).forEach(key => delete this.conditionModel[key]);
     Object.keys(this.commonDataModel).forEach(key => delete this.commonDataModel[key]);
     Object.keys(this.questionnaireModel).forEach(key => delete this.questionnaireModel[key]);
+
+    const emptyData = Object.fromEntries(
+      Object.entries(this.notificationForm.controls).map(([key, group]) => [key, Object.fromEntries(Object.keys(group.controls).map(field => [field, null]))])
+    );
+    this.notificationForm.reset(emptyData);
 
     // Disable steps 4, 5, 6 again (initial state)
     this.conditionGroup.disable();

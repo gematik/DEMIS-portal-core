@@ -1,0 +1,17 @@
+<mat-form-field appearance="outline">
+  <mat-label id="markdown-label">Markdown</mat-label>
+  <textarea
+    id="markdown-input"
+    matInput
+    aria-labelledby="markdown-label"
+    rows="14"
+    [ngModel]="markdown()"
+    (ngModelChange)="markdown.set($event)"
+    spellcheck="false"></textarea>
+</mat-form-field>
+
+<h3>Preview</h3>
+<div class="markdown-preview" [innerHTML]="sanitizedHtml()"></div>
+
+<h3>Sanitized HTML</h3>
+<pre><code>{{ sanitizedHtml() }}</code></pre>

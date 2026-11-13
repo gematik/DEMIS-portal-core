@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.10
+- Updated minor/patch versions of dependencies 
+- Added search visibility logic to filterable select component
+- Removed deprecated angular packages
+
 ## Release 4.4.9
 - Removed deprecated process-stepper component
 - Updated sync-dependencies.js script to use tilde versioning

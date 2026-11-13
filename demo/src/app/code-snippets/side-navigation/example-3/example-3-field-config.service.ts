@@ -15,9 +15,8 @@
     find details in the "Readme" file.
  */
 
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { NotificationService } from './example-3-notification.service';
 
 /**
  * Service providing Formly field configurations for all form steps.
@@ -25,8 +24,6 @@ import { NotificationService } from './example-3-notification.service';
  */
 @Injectable()
 export class FieldConfigService {
-  private readonly notificationService = inject(NotificationService);
-
   readonly notifyingPersonFields: FormlyFieldConfig[] = [
     {
       key: 'given',
@@ -95,13 +92,6 @@ export class FieldConfigService {
         label: 'Meldungsstatus (D.status)',
         placeholder: 'e.g. final, preliminary',
         required: true,
-      },
-      expressions: {
-        'props.type': () => {
-          const diseaseValue = this.notificationService.diseaseChoiceModel.code;
-          // Show radio buttons for COVID-19, text input for other diseases
-          return diseaseValue === 'cvdd' ? 'hidden' : 'input';
-        },
       },
     },
   ];

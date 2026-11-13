@@ -23,7 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSelectHarness } from '@angular/material/select/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { MockBuilder, MockRender } from 'ng-mocks';
@@ -41,7 +41,7 @@ describe('FormlyFilterableSelectComponent', () => {
     return MockBuilder(FormlyFilterableSelectMockComponent)
       .keep(FormlyFilterableSelectComponent)
       .keep(ReactiveFormsModule)
-      .keep(NoopAnimationsModule)
+      .provide({ provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } })
       .keep(MatFormFieldModule)
       .keep(MatSelectModule)
       .keep(FormlyMaterialModule)
@@ -142,8 +142,8 @@ describe('FormlyFilterableSelectComponent', () => {
       const select = await loader.getHarness(MatSelectHarness.with({ selector: '#singleSelect' }));
       await select.open();
       const options = await select.getOptions();
-      expect(options.length).toBe(2);
-      expect(await options[1].getText()).toContain(SINGLE_OPTION.label);
+      expect(options.length).toBe(1);
+      expect(await options[0].getText()).toContain(SINGLE_OPTION.label);
     });
 
     it('should apply the current search term to replacement options', () => {
@@ -210,6 +210,47 @@ describe('FormlyFilterableSelectComponent', () => {
 
       expect(component.formControl.value).toBeNull();
       expect(setValue).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Search visibility', () => {
+    let component: FormlyFilterableSelectComponent;
+
+    beforeEach(() => {
+      component = fixture.debugElement.query(By.directive(FormlyFilterableSelectComponent)).componentInstance;
+    });
+
+    it('should render the search input when there are more than 9 options', async () => {
+      expect(component.showSearch()).toBe(true);
+      const select = await loader.getHarness(MatSelectHarness.with({ selector: '#singleSelect' }));
+      await select.open();
+
+      expect(document.querySelector('.filterable-select-panel ngx-mat-select-search')).not.toBeNull();
+      expect((await select.getOptions()).length).toBe(MOCK_OPTIONS.length + 1);
+      await select.close();
+    });
+
+    it('should not render the search input when there are exactly 9 options', async () => {
+      component.props.options = MOCK_OPTIONS.slice(0, 9);
+      fixture.detectChanges();
+
+      expect(component.showSearch()).toBe(false);
+      const select = await loader.getHarness(MatSelectHarness.with({ selector: '#singleSelect' }));
+      await select.open();
+
+      expect(document.querySelector('.filterable-select-panel ngx-mat-select-search')).toBeNull();
+      const options = await select.getOptions();
+      expect(options.length).toBe(9);
+      await options[0].click();
+      expect(mockComponent.form.get('singleSelect')?.value).toEqual(MOCK_OPTIONS[0] as any);
+    });
+
+    it('should keep the search input visible when the search term reduces the results to 9 or fewer', () => {
+      component.searchControl.setValue('Alpha');
+      fixture.detectChanges();
+
+      expect(component.filteredOptions().length).toBe(1);
+      expect(component.showSearch()).toBe(true);
     });
   });
 
