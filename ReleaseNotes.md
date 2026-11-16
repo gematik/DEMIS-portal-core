@@ -2,6 +2,10 @@
 
 # Release Notes Portal-Core
 
+## Release 4.4.11
+- Adapted release pipeline
+- Updated minor/patch versions of dependencies
+
 ## Release 4.4.10
 - Updated minor/patch versions of dependencies 
 - Added search visibility logic to filterable select component
