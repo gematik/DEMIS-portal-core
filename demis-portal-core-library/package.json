@@ -1,6 +1,6 @@
 {
   "name": "@gematik/demis-portal-core-library",
-  "version": "4.4.10",
+  "version": "4.4.11",
   "peerDependencies": {
     "@angular/cdk": "~21.2.14",
     "@angular/common": "~21.2.26",
@@ -11,8 +11,8 @@
     "@angular/platform-browser": "~21.2.26",
     "@angular/material-date-fns-adapter": "~21.2.14",
     "@angular/router": "~21.2.26",
-    "@ngx-formly/core": "~7.1.0",
-    "@ngx-formly/material": "~7.1.0",
+    "@ngx-formly/core": "~7.2.0",
+    "@ngx-formly/material": "~7.2.0",
     "ngx-logger": "~5.0.12",
     "rxjs": "~7.8.2",
     "zone.js": "~0.16.3",
