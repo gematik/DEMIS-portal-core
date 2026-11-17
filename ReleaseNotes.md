@@ -2,6 +2,9 @@
 
 # Release Notes Portal-Core
 
+## Release 4.5.0
+- Added optional filterable select for gender and country in notified person configs
+
 ## Release 4.4.11
 - Adapted release pipeline
 - Updated minor/patch versions of dependencies

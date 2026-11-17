@@ -67,6 +67,10 @@ export enum FormlyConstants {
 
 export type selectOption = { label: string; value: any };
 
+export interface NotifiedPersonConfigOptions {
+  filterableSelectIsActivated?: boolean;
+}
+
 export type customCodeDisplay = {
   code: string;
   display: string;

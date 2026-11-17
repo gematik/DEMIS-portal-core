@@ -16,12 +16,14 @@
  */
 
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { FormlyConstants, formlyInputField, formlyRow, GERMANY_COUNTRY_CODE, selectOption } from './commons';
+import { FormlyConstants, formlyInputField, formlyRow, GERMANY_COUNTRY_CODE, NotifiedPersonConfigOptions, selectOption } from './commons';
+import { filterableSelectField, SelectOption } from '../components/formly-filterable-select/filterable-select-shared';
 
 export const notifiedPersonAnonymousConfigFields = (
   countryOptionList: selectOption[],
   genderOptionList: selectOption[],
-  infoNotificationText?: string
+  infoNotificationText?: string,
+  { filterableSelectIsActivated = false }: NotifiedPersonConfigOptions = {}
 ): FormlyFieldConfig[] => {
   return [
     formlyRow([
@@ -43,16 +45,22 @@ export const notifiedPersonAnonymousConfigFields = (
         className: '',
         template: '<h2>Allgemein</h2>',
       },
-      {
-        id: 'gender',
-        key: 'info.gender',
-        type: 'select',
-        className: FormlyConstants.COLMD5,
-        props: {
-          label: 'Geschlecht',
-          options: genderOptionList,
-        },
-      },
+      // TODO remove select once all portals use the filterable select
+      filterableSelectIsActivated
+        ? {
+            ...filterableSelectField<SelectOption>({ id: 'gender', key: 'info.gender', label: 'Geschlecht', options: genderOptionList, clearable: true }),
+            className: FormlyConstants.COLMD5,
+          }
+        : {
+            id: 'gender',
+            key: 'info.gender',
+            type: 'select',
+            className: FormlyConstants.COLMD5,
+            props: {
+              label: 'Geschlecht',
+              options: genderOptionList,
+            },
+          },
       {
         id: 'birthDate',
         key: 'info.birthDate',
@@ -71,17 +79,30 @@ export const notifiedPersonAnonymousConfigFields = (
         className: '',
         template: '<h2>Wohnsitz</h2>',
       },
-      {
-        id: 'residence-address-country',
-        key: 'residenceAddress.country',
-        className: FormlyConstants.COLMD10,
-        type: 'select',
-        defaultValue: GERMANY_COUNTRY_CODE,
-        props: {
-          label: 'Land',
-          options: countryOptionList,
-        },
-      },
+      // TODO remove select once all portals use the filterable select
+      filterableSelectIsActivated
+        ? {
+            ...filterableSelectField<SelectOption>({
+              id: 'residence-address-country',
+              key: 'residenceAddress.country',
+              label: 'Land',
+              options: countryOptionList,
+              clearable: true,
+              defaultValue: countryOptionList.find(option => option.value === GERMANY_COUNTRY_CODE),
+            }),
+            className: FormlyConstants.COLMD10,
+          }
+        : {
+            id: 'residence-address-country',
+            key: 'residenceAddress.country',
+            className: FormlyConstants.COLMD10,
+            type: 'select',
+            defaultValue: GERMANY_COUNTRY_CODE,
+            props: {
+              label: 'Land',
+              options: countryOptionList,
+            },
+          },
       {
         className: '',
         template: '<h3>Erste drei Ziffern der Postleitzahl (Deutschland) der untersuchten Person</h3>',
