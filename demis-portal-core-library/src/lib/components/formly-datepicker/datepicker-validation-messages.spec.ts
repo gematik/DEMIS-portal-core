@@ -39,7 +39,7 @@ describe('datepicker-validation-messages', () => {
       };
 
       const result = getMessage('formatMismatch', true, field);
-      expect(result).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ | MM.JJJJ | JJJJ');
+      expect(result).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ oder MM.JJJJ oder JJJJ');
     });
 
     it('should show single format when only day precision is allowed', () => {
@@ -59,14 +59,14 @@ describe('datepicker-validation-messages', () => {
       };
 
       const result = getMessage('formatMismatch', true, field);
-      expect(result).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ | MM.JJJJ | JJJJ');
+      expect(result).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ oder MM.JJJJ oder JJJJ');
     });
 
     it('should default all precisions precision when props is undefined', () => {
       const field: FormlyFieldConfig = {};
 
       const result = getMessage('formatMismatch', true, field);
-      expect(result).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ | MM.JJJJ | JJJJ');
+      expect(result).toBe('Es sind nur folgende Formate erlaubt: TT.MM.JJJJ oder MM.JJJJ oder JJJJ');
     });
 
     it('should show month and year formats', () => {
@@ -77,7 +77,7 @@ describe('datepicker-validation-messages', () => {
       };
 
       const result = getMessage('formatMismatch', true, field);
-      expect(result).toBe('Es sind nur folgende Formate erlaubt: MM.JJJJ | JJJJ');
+      expect(result).toBe('Es sind nur folgende Formate erlaubt: MM.JJJJ oder JJJJ');
     });
   });
 

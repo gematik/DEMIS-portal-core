@@ -2,6 +2,11 @@
 
 # Release Notes Portal-Core
 
+## Release 4.5.1
+- Updated @gematik/demis-portal-theme-library to 1.3.2
+- Added format hints to datepickers and abbreviated postal code fields
+- Updated minor/patch versions of dependencies
+
 ## Release 4.5.0
 - Added optional filterable select for gender and country in notified person configs
 

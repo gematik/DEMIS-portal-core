@@ -170,6 +170,7 @@ export const notifiedPersonNotByNameConfigFields = (
         props: {
           maxLength: 3,
           label: 'Postleitzahl',
+          description: 'Erwartet werden die ersten 3 Ziffern der Postleitzahl.',
         },
         validators: ['germanShortZipValidator'],
       }),
