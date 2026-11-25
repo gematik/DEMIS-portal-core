@@ -71,6 +71,18 @@ describe('FormlyDatepickerComponent', () => {
       const datepicker = fixture.debugElement.query(By.directive(FormlyDatepickerComponent));
       expect(datepicker).toBeTruthy();
     });
+
+    it.each([
+      ['datepickerWithConstraints', 'Erwartet wird ein Datum im Format TT.MM.JJJJ.'],
+      ['monthYearDatepicker', 'Erwartet wird ein Datum im Format MM.JJJJ oder JJJJ.'],
+      ['defaultDatepicker', 'Erwartet wird ein Datum im Format TT.MM.JJJJ oder MM.JJJJ oder JJJJ.'],
+      ['datepickerWithDescription', 'Individueller Hinweis'],
+    ])('should render the correct hint for %s', (id, expected) => {
+      fixture.detectChanges();
+      const input: HTMLElement = fixture.nativeElement.querySelector(`#${id}-datepicker-input-field`);
+      const hint = input.closest('mat-form-field')?.querySelector('mat-hint');
+      expect(hint?.textContent?.trim()).toBe(expected);
+    });
   });
 
   describe('User enters date manually', () => {

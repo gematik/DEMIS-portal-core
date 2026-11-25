@@ -154,8 +154,8 @@ export class FormlyDatepickerComponent extends FieldType<FieldTypeConfig> implem
     this.datepickerStateService.initSharedState(this.allowedPrecisions, this.minDate, this.maxDate, this.multiYear);
     this.setCurrentPrecision(this.datepickerStateService.highestPrecisionAvailable);
 
-    const hint = this.allowedPrecisions.map(it => VALID_FORMATS.get(it)!.display).join(' | ');
-    this.props['hintStart'] = hint;
+    const hint = this.allowedPrecisions.map(it => VALID_FORMATS.get(it)!.display).join(' oder ');
+    this.props['hintStart'] = `Erwartet wird ein Datum im Format ${hint}.`;
   }
 
   private detectAndApplyPrecisionOnProgrammaticValue(): void {

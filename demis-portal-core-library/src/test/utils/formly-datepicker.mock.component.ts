@@ -79,6 +79,23 @@ export class FormlyDatepickerMockComponent {
       type: 'datepicker',
     },
     {
+      id: 'monthYearDatepicker',
+      key: 'monthYearDatepicker',
+      type: 'datepicker',
+      props: {
+        allowedPrecisions: ['month', 'year'],
+      },
+    },
+    {
+      id: 'datepickerWithDescription',
+      key: 'datepickerWithDescription',
+      type: 'datepicker',
+      props: {
+        allowedPrecisions: ['day'],
+        description: 'Individueller Hinweis',
+      },
+    },
+    {
       id: 'defaultDatepickerMandatory',
       key: 'defaultDatepickerMandatory',
       type: 'datepicker',

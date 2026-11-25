@@ -28,12 +28,12 @@ type ValidationMessageOption = NonNullable<ConfigOption['validationMessages']>[n
 /**
  * Generates a hint string showing all allowed date formats.
  * @param field - The Formly field configuration
- * @returns A string with allowed formats (e.g., "TT.MM.JJJJ | MM.JJJJ")
+ * @returns A string with allowed formats (e.g., "TT.MM.JJJJ oder MM.JJJJ")
  */
 function getAllowedDateFormats(field: FormlyFieldConfig): string {
   const props = field.props as DatepickerCustomProps;
   const allowedPrecisions = props?.allowedPrecisions ?? DEFAULT_PRECISION_LEVEL;
-  return allowedPrecisions.map(precision => VALID_FORMATS.get(precision)?.display).join(' | ');
+  return allowedPrecisions.map(precision => VALID_FORMATS.get(precision)?.display).join(' oder ');
 }
 
 /**
